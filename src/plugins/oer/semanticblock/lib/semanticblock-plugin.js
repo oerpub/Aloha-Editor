@@ -71,6 +71,30 @@
           jQuery(this).parents('.type-container').first().children('.type').text(jQuery(this).text());
           return jQuery(this).parents('.aloha-oer-block').first().attr('data-type', jQuery(this).text().toLowerCase());
         }
+      }, {
+        name: 'focusin',
+        selector: '[placeholder]',
+        callback: function() {
+          var element;
+          element = jQuery(this);
+          if (element.attr('placeholder')) {
+            element.removeClass('placeholder');
+            if (element.attr('placeholder') === element.text()) {
+              return element.text('');
+            }
+          }
+        }
+      }, {
+        name: 'focusout',
+        selector: '[placeholder]',
+        callback: function() {
+          var element;
+          element = jQuery(this);
+          if (element.attr('placeholder') && element.text() === '') {
+            element.text(element.attr('placeholder'));
+            return element.addClass('placeholder');
+          }
+        }
       }
     ];
     insertElement = function(element) {};
@@ -154,24 +178,6 @@
       },
       init: function() {
         var _this = this;
-        Aloha.bind('aloha-editable-activated', function(e, params) {
-          var element;
-          element = jQuery(params.editable.obj);
-          if (element.attr('placeholder')) {
-            element.removeClass('placeholder');
-            if (element.attr('placeholder') === element.text()) {
-              return element.text('');
-            }
-          }
-        });
-        Aloha.bind('aloha-editable-deactivated', function(e, params) {
-          var element;
-          element = jQuery(params.editable.obj);
-          if (element.attr('placeholder') && element.text() === '') {
-            element.text(element.attr('placeholder'));
-            return element.addClass('placeholder');
-          }
-        });
         return Aloha.bind('aloha-editable-created', function(e, params) {
           var $root, classes, selector;
           $root = params.obj;

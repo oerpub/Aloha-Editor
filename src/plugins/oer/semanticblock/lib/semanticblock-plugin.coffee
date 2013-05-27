@@ -53,6 +53,22 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       e.preventDefault()
       jQuery(this).parents('.type-container').first().children('.type').text jQuery(this).text()
       jQuery(this).parents('.aloha-oer-block').first().attr 'data-type', jQuery(this).text().toLowerCase()
+  ,
+    name: 'focusin'
+    selector: '[placeholder]'
+    callback: ->
+      element = jQuery(this)
+      if element.attr('placeholder')
+        element.removeClass 'placeholder'
+        element.text '' if element.attr('placeholder') is element.text()
+  ,
+    name: 'focusout'
+    selector: '[placeholder]'
+    callback: ->
+      element = jQuery(this)
+      if element.attr('placeholder') and element.text() == ''
+        element.text element.attr('placeholder')
+        element.addClass 'placeholder'
   ]
   insertElement = (element) ->
 
@@ -112,16 +128,6 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       cleanIds(content)
 
     init: ->
-      Aloha.bind 'aloha-editable-activated', (e, params) =>
-        element = jQuery(params.editable.obj)
-        if element.attr('placeholder')
-          element.removeClass 'placeholder'
-          element.text '' if element.attr('placeholder') is element.text()
-      Aloha.bind 'aloha-editable-deactivated', (e, params) =>
-        element = jQuery(params.editable.obj)
-        if element.attr('placeholder') and element.text() == ''
-          element.text element.attr('placeholder')
-          element.addClass 'placeholder'
 
       Aloha.bind 'aloha-editable-created', (e, params) =>
         $root = params.obj
