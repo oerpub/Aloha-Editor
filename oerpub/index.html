@@ -371,6 +371,31 @@
                         </ul>
                         <button class="btn action insertMath" rel="tooltip" title="Insert Math"><i class="icon-math-insert"></i></button>
                       </div>
+                      <span class="separator"></span>
+                      <div class="btn-group">
+                        <button class="btn btn-text dropdown-toggle" data-toggle="dropdown" rel="tooltip" title="Add a new...">
+                          Add a new...
+                          <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                          <li><a href="#" class="action insertNote">Note to Reader</a></li>
+                          <li><a href="#" class="action insertExercise">Exercise</a></li>
+                        </ul>
+                      </div>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <h4>Drag to add a new ...</h4>
+
+                        <div class="semantic-drag-source">
+                            <div class="note" data-type="note">
+                                <div class="title"></div>
+                            </div>
+
+                            <div class="exercise" data-type="exercise">
+                                <div class="problem"></div>
+                            </div>
+                        </div>
                     </div>
                 </div><!-- / ".toolbar" -->
                 </metal:toolbar>
@@ -380,7 +405,7 @@
                         <metal:editor define-macro="editor">
                         <div id="statusmessage"></div>
                         <div id="editor">
-                            <div id="canvas"></div>
+                            <div id="canvas" style="margin-left: 200px;"></div>
                         </div>
                         </metal:editor>
                     </div>
