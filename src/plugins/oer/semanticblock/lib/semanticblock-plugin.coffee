@@ -54,7 +54,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       jQuery(this).parents('.type-container').first().children('.type').text jQuery(this).text()
       jQuery(this).parents('.aloha-oer-block').first().attr 'data-type', jQuery(this).text().toLowerCase()
   ,
-    name: 'focusin'
+    name: 'click'
     selector: '[placeholder]'
     callback: ->
       element = jQuery(this)

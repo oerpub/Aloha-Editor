@@ -72,7 +72,7 @@
           return jQuery(this).parents('.aloha-oer-block').first().attr('data-type', jQuery(this).text().toLowerCase());
         }
       }, {
-        name: 'focusin',
+        name: 'click',
         selector: '[placeholder]',
         callback: function() {
           var element;
