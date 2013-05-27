@@ -31,6 +31,6 @@
     display: none;
 }
 
-.semantic-container > .note > .title-container .title.placeholder {
+.semantic-container.focused > .note > .type-container .title.placeholder {
     display: inline;
 }
