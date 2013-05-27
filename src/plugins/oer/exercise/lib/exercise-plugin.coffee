@@ -82,7 +82,9 @@ define [
 
           element.children().remove()
 
-          jQuery("<div>").addClass('problem').html(problem.html()).appendTo(element)
+          jQuery("<div>").addClass('problem').html(
+            jQuery('<p>').append(problem.html())
+          ).appendTo(element)
 
           element.append(solutions)
         )
@@ -103,11 +105,11 @@ define [
             .aloha()
         )
         semanticBlock.deactivateHandler('solution', (element) ->
-          content = element.children('.body')
+          content = element.children('.body').html()
  
           element.children().remove()
 
-          element.append(content.html())
+          jQuery('<p>').append(content).appendTo(element)
         )
         
         UI.adopt 'insertExercise', Button,
