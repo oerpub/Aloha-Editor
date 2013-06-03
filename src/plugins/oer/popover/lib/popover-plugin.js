@@ -357,9 +357,12 @@ There are 3 variables that are stored on each element;
       Aloha.bind('aloha-selection-changed', function(event, rangeObject) {
         var $el, nodes;
 
+        if (!(helper.populator && helper.selector)) {
+          return;
+        }
         $el = jQuery(rangeObject.getCommonAncestorContainer());
         if (!$el.is(helper.selector)) {
-          $el = $el.parents(helper.selector);
+          $el = $el.parents(helper.selector).eq(0);
         }
         if (Aloha.activeEditable) {
           nodes = jQuery(Aloha.activeEditable.obj).find(helper.selector);
@@ -369,7 +372,7 @@ There are 3 variables that are stored on each element;
           if (insideScope !== enteredLinkScope) {
             insideScope = enteredLinkScope;
             if (!$el.is(helper.selector)) {
-              $el = $el.parents(helper.selector);
+              $el = $el.parents(helper.selector).eq(0);
             }
             if (enteredLinkScope) {
               $el.trigger('show');
