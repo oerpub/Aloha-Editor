@@ -57,7 +57,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', '
           <label class="radio inline mime-type-mathml">
               <input type="radio" name="mime-type" value="math/mml"> MathML
           </label>
-          <label class="checkbox inline">
+          <label class="cheatsheet-label checkbox inline">
             <input id="cheatsheet-activator" type="checkbox" name="cheatsheet-activator"> Show cheat sheet
           </label>
           <button class="btn btn-primary done">Done</button>
@@ -245,6 +245,15 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', '
   # $span contains the span with LaTeX/ASCIIMath
   buildEditor = ($span) ->
     $editor = jQuery(EDITOR_HTML)
+
+    # If cheat sheet feature not active, remove checkbox
+    try
+      if not Aloha.settings.plugins.math.cheatsheet
+        $editor.find('.cheatsheet-label').remove()
+    catch err
+      # Default to removing it
+      $editor.find('.cheatsheet-label').remove()
+
     # Bind some actions for the buttons
     $editor.find('.done').on 'click', =>
       if not $span.next().is '.aloha-ephemera-wrapper'
@@ -430,94 +439,100 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', '
     markerclass: 'math-popover'
 
   # When this plugin is loaded, add some html machinery at the bottom of the
-  # window to facilitate the help system.
-  help = jQuery('''
-    <div id="math-cheatsheet">
-      <div class="cheatsheet-open">
-        <img src="''' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/open-cheat-sheet-01.png' + '''" alt="open" />
-      </div>
-      <div class="cheatsheet">
-        <div class="cheatsheet-close">
-          <img src="''' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/close-cheat-sheet-01.png' + '''" alt="open" />
+  # window to facilitate the help system, if configured to do so.
+
+
+  try
+    if Aloha.settings.plugins.math.cheatsheet
+      help = jQuery('''
+        <div id="math-cheatsheet">
+          <div class="cheatsheet-open">
+            <img src="''' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/open-cheat-sheet-01.png' + '''" alt="open" />
+          </div>
+          <div class="cheatsheet">
+            <div class="cheatsheet-close">
+              <img src="''' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/close-cheat-sheet-01.png' + '''" alt="open" />
+            </div>
+            <div class="cheatsheet-title"><strong>Math Cheat Sheet</strong>: Copy the "code" that matches the display you want. Paste it into the math entry box above. Adjust as needed.</div>
+            <div class="cheatsheet-type">
+              <div><input type="radio" name="cs-math-type" id="cs_radio_ascii" value="ascii" checked="checked"> <label for="cs_radio_ascii">ASCIIMath</label></div>
+              <div><input type="radio" name="cs-math-type" id="cs_radio_latex" value="latex"> <label for="cs_radio_latex">LaTeX</label></div>
+            </div>
+            <div class="cheatsheet-values cheatsheet-ascii">
+              <table>
+                <tr>
+                  <td><strong>Display:</strong></td>
+                  <td><img src="''' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/root2over2.gif' + '''" /></td>
+                  <td><img src="''' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/pirsq.gif' + '''" /></td>
+                  <td><img src="''' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/xltoet0.gif' + '''" /></td>
+                  <td><img src="''' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/infinity.gif' + '''" /></td>
+                  <td><img src="''' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/aplusxover2.gif' + '''" /></td>
+                  <td><img src="''' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/choose.gif' + '''" /></td>
+                  <td><img src="''' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/integral.gif' + '''" /></td>
+                  <td><img src="''' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/function-01.gif' + '''" /></td>
+                  <td><img src="''' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/matrix-01.gif' + '''" /></td>
+                  <td><img src="''' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/sin-01.gif' + '''" /></td>
+                  <td><img src="''' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/piecewise-01.gif' + '''" /></td>
+                  <td><img src="''' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/standard-product-01.gif' + '''" /></td>
+                </tr>
+                <tr>
+                  <td><strong>ASCIIMath code:</strong></td>
+                  <td>sqrt(2)/2</td>
+                  <td>pir^2  or  pi r^2</td>
+                  <td>x &lt;= 0</td>
+                  <td>x -&gt; oo</td>
+                  <td>((A+X)/2 , (B+Y)/2)</td>
+                  <td>sum_{k=0}^{s-1} ((n),(k))</td>
+                  <td>int_-2^2 4-x^2dx</td>
+                  <td>d/dxf(x)=lim_(h-&gt;0)(f(x+h)-f(x))/h</td>
+                  <td>[[a,b],[c,d]]((n),(k))</td>
+                  <td>sin^-1(x)</td>
+                  <td>x/x={(1,if x!=0),(text{undefined},if x=0):}</td>
+                  <td>((a*b))/c</td>
+                </tr>
+              </table>
+            </div>
+            <div class="cheatsheet-values cheatsheet-latex">TODO<br /><br /><br /><br /><br /><br /></div>
+            <div style="clear: both"></div>
+          </div>
         </div>
-        <div class="cheatsheet-title"><strong>Math Cheat Sheet</strong>: Copy the "code" that matches the display you want. Paste it into the math entry box above. Adjust as needed.</div>
-        <div class="cheatsheet-type">
-          <div><input type="radio" name="cs-math-type" id="cs_radio_ascii" value="ascii" checked="checked"> <label for="cs_radio_ascii">ASCIIMath</label></div>
-          <div><input type="radio" name="cs-math-type" id="cs_radio_latex" value="latex"> <label for="cs_radio_latex">LaTeX</label></div>
-        </div>
-        <div class="cheatsheet-values cheatsheet-ascii">
-          <table>
-            <tr>
-              <td><strong>Display:</strong></td>
-              <td><img src="''' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/root2over2.gif' + '''" /></td>
-              <td><img src="''' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/pirsq.gif' + '''" /></td>
-              <td><img src="''' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/xltoet0.gif' + '''" /></td>
-              <td><img src="''' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/infinity.gif' + '''" /></td>
-              <td><img src="''' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/aplusxover2.gif' + '''" /></td>
-              <td><img src="''' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/choose.gif' + '''" /></td>
-              <td><img src="''' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/integral.gif' + '''" /></td>
-              <td><img src="''' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/function-01.gif' + '''" /></td>
-              <td><img src="''' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/matrix-01.gif' + '''" /></td>
-              <td><img src="''' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/sin-01.gif' + '''" /></td>
-              <td><img src="''' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/piecewise-01.gif' + '''" /></td>
-              <td><img src="''' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/standard-product-01.gif' + '''" /></td>
-            </tr>
-            <tr>
-              <td><strong>ASCIIMath code:</strong></td>
-              <td>sqrt(2)/2</td>
-              <td>pir^2  or  pi r^2</td>
-              <td>x &lt;= 0</td>
-              <td>x -&gt; oo</td>
-              <td>((A+X)/2 , (B+Y)/2)</td>
-              <td>sum_{k=0}^{s-1} ((n),(k))</td>
-              <td>int_-2^2 4-x^2dx</td>
-              <td>d/dxf(x)=lim_(h-&gt;0)(f(x+h)-f(x))/h</td>
-              <td>[[a,b],[c,d]]((n),(k))</td>
-              <td>sin^-1(x)</td>
-              <td>x/x={(1,if x!=0),(text{undefined},if x=0):}</td>
-              <td>((a*b))/c</td>
-            </tr>
-          </table>
-        </div>
-        <div class="cheatsheet-values cheatsheet-latex">TODO<br /><br /><br /><br /><br /><br /></div>
-        <div style="clear: both"></div>
-      </div>
-    </div>
-  ''')
-  jQuery('body').append(help)
-  opener = help.find('.cheatsheet-open')
-
-  help.on 'show', (e) ->
-    opener.hide()
-    # It says slideDown, but it really causes it to slid up.
-    jQuery(@).find('.cheatsheet').slideDown "fast", () ->
-      # Adjust the height of the document, to allow scrolling to the
-      # bottom
-      if Aloha.activeEditable
-          a = jQuery(@).height()
-          h = Aloha.activeEditable.obj.height()
-          h = Aloha.activeEditable.obj.height(a+h+50)
-
-  help.on 'hide', (e) ->
-    Aloha.activeEditable.obj.height('auto') if Aloha.activeEditable
-    jQuery(@).find('.cheatsheet').slideUp "fast", () ->
-        opener.show()
-
-  opener.on 'click', (e) ->
-    help.trigger 'show'
-    # Tick the cheat sheet activator tickbox
-    jQuery('body > .popover .math-editor-dialog #cheatsheet-activator').prop('checked', true)
-
-  help.find('.cheatsheet-close').on "click", (e) ->
-    help.trigger "hide"
-    # Untick activator
-    jQuery('body > .popover .math-editor-dialog #cheatsheet-activator').prop('checked', false)
-
-  help.find('.cheatsheet-type input').on "change", (e) ->
-    sh = jQuery(e.target).val()
-    help.find('.cheatsheet-ascii').hide()
-    help.find('.cheatsheet-latex').hide()
-    help.find(".cheatsheet-#{sh}").show()
-  help.on 'mousedown', (e) ->
-    # Stop the click from bubbling up and closing the math plugin
-    e.stopPropagation()
+      ''')
+      jQuery('body').append(help)
+      opener = help.find('.cheatsheet-open')
+    
+      help.on 'show', (e) ->
+        opener.hide()
+        # It says slideDown, but it really causes it to slid up.
+        jQuery(@).find('.cheatsheet').slideDown "fast", () ->
+          # Adjust the height of the document, to allow scrolling to the
+          # bottom
+          if Aloha.activeEditable
+              a = jQuery(@).height()
+              h = Aloha.activeEditable.obj.height()
+              h = Aloha.activeEditable.obj.height(a+h+50)
+    
+      help.on 'hide', (e) ->
+        Aloha.activeEditable.obj.height('auto') if Aloha.activeEditable
+        jQuery(@).find('.cheatsheet').slideUp "fast", () ->
+            opener.show()
+    
+      opener.on 'click', (e) ->
+        help.trigger 'show'
+        # Tick the cheat sheet activator tickbox
+        jQuery('body > .popover .math-editor-dialog #cheatsheet-activator').prop('checked', true)
+    
+      help.find('.cheatsheet-close').on "click", (e) ->
+        help.trigger "hide"
+        # Untick activator
+        jQuery('body > .popover .math-editor-dialog #cheatsheet-activator').prop('checked', false)
+    
+      help.find('.cheatsheet-type input').on "change", (e) ->
+        sh = jQuery(e.target).val()
+        help.find('.cheatsheet-ascii').hide()
+        help.find('.cheatsheet-latex').hide()
+        help.find(".cheatsheet-#{sh}").show()
+      help.on 'mousedown', (e) ->
+        # Stop the click from bubbling up and closing the math plugin
+        e.stopPropagation()
+  catch err
+    # Ignore the error, default to false in other words.
