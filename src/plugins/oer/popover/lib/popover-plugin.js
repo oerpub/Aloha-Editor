@@ -74,7 +74,7 @@ There are 3 variables that are stored on each element;
     var Bootstrap_Popover__position, Bootstrap_Popover_hide, Bootstrap_Popover_show, Helper, Popover, bindHelper, findMarkup, monkeyPatch, selectionChangeHandler;
 
     Bootstrap_Popover__position = function($tip) {
-      var actualHeight, actualWidth, inside, placement, pos, tp;
+      var actualHeight, actualPlacement, actualWidth, inside, placement, pos, tp;
 
       placement = (typeof this.options.placement === "function" ? this.options.placement.call(this, $tip[0], this.$element[0]) : this.options.placement);
       inside = /in/.test(placement);
@@ -104,13 +104,20 @@ There are 3 variables that are stored on each element;
           };
           break;
         case "right":
-          tp = {
-            top: pos.top + pos.height / 2 - actualHeight / 2,
-            left: pos.left + pos.width
-          };
+          if (hint) {
+            tp = {
+              top: hint.top - actualHeight / 2,
+              left: hint.left
+            };
+          } else {
+            tp = {
+              top: pos.top + pos.height / 2 - actualHeight / 2,
+              left: pos.left + pos.width
+            };
+          }
       }
-      if (tp.top < 0 || tp.left < 0) {
-        placement = 'bottom';
+      if (actualPlacement === 'top' && tp.top < (Aloha.activeEditable && Aloha.activeEditable.obj.position().top || 0) + jQuery(window).scrollTop()) {
+        actualPlacement = 'bottom';
         tp.top = pos.top + pos.height;
       }
       if (tp.left < 0) {

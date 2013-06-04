@@ -119,12 +119,22 @@ define [ 'aloha', 'jquery' ], (Aloha, jQuery) ->
             top: pos.top + pos.height / 2 - actualHeight / 2
             left: pos.left - actualWidth
         when "right"
-          tp =
-            top: pos.top + pos.height / 2 - actualHeight / 2
-            left: pos.left + pos.width
+          if hint
+            tp =
+              top: hint.top - actualHeight / 2
+              left: hint.left
+          else
+            tp =
+              top: pos.top + pos.height / 2 - actualHeight / 2
+              left: pos.left + pos.width
 
-      if tp.top < 0 or tp.left < 0
-        placement = 'bottom'
+      # If no space at top, move to bottom. This attempts to keep the
+      # popover inside the editable area by considering the top of
+      # the editor and how far the document is scrolled.
+      if actualPlacement == 'top' and tp.top < (
+        Aloha.activeEditable and Aloha.activeEditable.obj.position().top or 0
+        ) + jQuery(window).scrollTop()
+        actualPlacement = 'bottom'
         tp.top = pos.top + pos.height
 
       if tp.left < 0

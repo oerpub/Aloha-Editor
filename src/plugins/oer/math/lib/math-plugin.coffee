@@ -41,6 +41,10 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', '
 
   EDITOR_HTML = '''
     <div class="math-editor-dialog">
+        <div class="math-help-link">
+            <a title="Help using the math editor"
+               href="javascript:;">See help</a>
+        </div>
         <div class="math-container">
             <pre><span></span><br></pre>
             <textarea type="text" class="formula" rows="1"
@@ -250,6 +254,24 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', '
   buildEditor = ($span) ->
     $editor = jQuery(EDITOR_HTML)
 
+    $editor.find('.math-help-link a').on 'click', (e) ->
+      HELP_TEMPLATE = '<div class="popover math-editor-help-text"><div class="arrow"></div><div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content"></div></div></div>'
+      $h = jQuery(@)
+      $h.unbind 'click'
+      jQuery.get(Aloha.settings.baseUrl + '/../plugins/oer/math/lib/help.html', (d) ->
+        $h.popover(
+          content: d,
+          placement: 'right'
+          html: true
+          template: HELP_TEMPLATE
+        ).on('shown-popover', (e)->
+          jQuery(e.target).data('popover').$tip.find('.math-editor-help-text-close').on 'click', () ->
+            jQuery(e.target).popover('hide')
+          jQuery(e.target).data('popover').$tip.find('.cheatsheet-activator').on 'click', (e) ->
+            jQuery('#math-cheatsheet').trigger "toggle"
+        ).popover('show')
+      )
+
     # If cheat sheet feature not active, remove checkbox
     try
       if not Aloha.settings.plugins.math.cheatsheet
@@ -357,6 +379,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', '
       , 10)
 
     $span.off('hidden-popover').on 'hidden-popover', () ->
+      $editor.find('.math-help-link a').popover('destroy')
       jQuery('#math-cheatsheet').trigger 'hide'
       jQuery('#math-cheatsheet .cheatsheet-open').hide()
       $span.css 'background-color', ''
@@ -529,6 +552,12 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', '
       help.on 'hide', (e) ->
         jQuery(@).find('.cheatsheet').slideUp "fast", () ->
             opener.show()
+
+      help.on 'toggle', (e) ->
+        if jQuery(@).find('.cheatsheet').is(':visible')
+          jQuery(@).trigger 'hide'
+        else
+          jQuery(@).trigger 'show'
     
       opener.on 'click', (e) ->
         help.trigger 'show'

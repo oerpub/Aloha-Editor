@@ -46,6 +46,7 @@ math,
 .math-container {
     position: relative;
     margin-bottom: 1em;
+    width: 85%;
 }
 
 .math-container textarea,
@@ -102,6 +103,31 @@ math,
 
 button.done {
     float: right;
+}
+
+.math-editor-dialog .math-help-link {
+    float: right;
+}
+
+.math-editor-help-text {
+    max-width: 45%;
+}
+
+.math-editor-help-text-inner {
+    position: relative;
+}
+
+.math-editor-help-text-close {
+    display: inline-block;
+    background-image: url(../img/remove-01.png);
+    background-repeat: no-repeat;
+    background-position: right top;
+    position: absolute;
+    right: -16px;
+    width: 16px;
+    top: -1px;
+    height: 16px;
+    margin-right: 1em;
 }
 
 #math-cheatsheet {
