@@ -328,9 +328,14 @@ define [ 'aloha', 'jquery' ], (Aloha, jQuery) ->
         insideScope = false
 
     Aloha.bind 'aloha-selection-changed', (event, rangeObject) ->
+      # How this is even possible I do not understand, but apparently it is
+      # possible for our helper to not be completely initialised at this point.
+      if not (helper.populator and helper.selector)
+        return
+
       # Hide all popovers except for the current one maybe?
       $el = jQuery(rangeObject.getCommonAncestorContainer())
-      $el = $el.parents(helper.selector) if not $el.is(helper.selector)
+      $el = $el.parents(helper.selector).eq(0) if not $el.is(helper.selector)
 
       if Aloha.activeEditable
         # Hide other tooltips of the same type
@@ -342,7 +347,7 @@ define [ 'aloha', 'jquery' ], (Aloha, jQuery) ->
         if insideScope isnt enteredLinkScope
           insideScope = enteredLinkScope
           if not $el.is(helper.selector)
-            $el = $el.parents(helper.selector)
+            $el = $el.parents(helper.selector).eq(0)
           if enteredLinkScope
             $el.trigger 'show'
             $el.data('aloha-bubble-selected', true)
