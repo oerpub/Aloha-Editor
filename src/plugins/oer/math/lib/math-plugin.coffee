@@ -57,6 +57,9 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', '
           <label class="radio inline mime-type-mathml">
               <input type="radio" name="mime-type" value="math/mml"> MathML
           </label>
+          <label class="radio inline">
+              <input type="radio" name="mime-type" value="text/plain"> Plain text
+          </label>
           <button class="btn btn-primary done">Done</button>
         </div>
     </div>
@@ -66,6 +69,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', '
     'math/asciimath': {open: '`', close: '`', raw:false}
     'math/tex': {open: '[TEX_START]', close: '[TEX_END]', raw:false}
     'math/mml': {raw: true}
+    'text/plain': {raw: true}
 
   MATHML_ANNOTATION_MIME_ENCODINGS    = [ 'math/tex', 'math/asciimath' ]
   MATHML_ANNOTATION_NONMIME_ENCODINGS =
@@ -275,29 +279,41 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', '
 
     keyTimeout = null
     keyDelay = () ->
-      # Try and parse it as ASCIIMath
-      formula = jQuery(@).val() # $span.data('math-formula')
-      mimeType = $editor.find('input[name=mime-type]:checked').val()
+      formula = jQuery(@).val()
+      type = $editor.find('input[name=mime-type]:checked').val()
 
-      $mathPoint = $span.children('.mathjax-wrapper')
-      if not $mathPoint[0]
+      $mathPoint = $span.children('.mathjax-wrapper').eq(0)
+      if not $mathPoint.length
         $mathPoint = jQuery('<span class="mathjax-wrapper aloha-ephemera"></span>')
         $span.prepend $mathPoint
 
-      if LANGUAGES[mimeType].raw
-        $formula = jQuery(formula)
-        $mathPoint.text('').append($formula)
+      if type == 'text/plain'
+        # Temporarily squirel away the math formula in a script tag with the
+        # relevant mime type. If the user changes his mind at this point and
+        # selects a different mimetype, everything works as expected. Once
+        # the user closes the popover we will unmathify and clean this up if
+        # plain text is still selected.
+        jQuery('<script type="text/plain"></script>').text(
+            formula).appendTo($span)
+        $mathPoint.text(formula)
       else
-        formulaWrapped = LANGUAGES[mimeType].open + formula + LANGUAGES[mimeType].close
-        $mathPoint.text(formulaWrapped)
-      triggerMathJax $span, ->
-        # Save the Edited text into the math annotation element
-        $mathml = $span.find('math')
-        if $mathml[0]
-          if mimeType in MATHML_ANNOTATION_MIME_ENCODINGS
-            addAnnotation $span, formula, mimeType
-          makeCloseIcon($span)
-        Aloha.activeEditable.smartContentChange {type: 'block-change'}
+        # Clean up any <script> tags that might have been added for plain text,
+        # which happens if you switch away from plain text.
+        $span.find('script[type="text/plain"]').remove()
+        if LANGUAGES[type].raw
+          $formula = jQuery(formula)
+          $mathPoint.text('').append($formula)
+        else
+          formulaWrapped = LANGUAGES[type].open + formula + LANGUAGES[type].close
+          $mathPoint.text(formulaWrapped)
+        triggerMathJax $span, ->
+          # Save the Edited text into the math annotation element
+          $mathml = $span.find('math')
+          if $mathml[0]
+            if type in MATHML_ANNOTATION_MIME_ENCODINGS
+              addAnnotation $span, formula, type
+            makeCloseIcon($span)
+          Aloha.activeEditable.smartContentChange {type: 'block-change'}
 
       # TODO: Async save the input when MathJax correctly parses and typesets the text
       $span.data('math-formula', formula)
@@ -332,6 +348,11 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', '
       tt = jQuery(@).data('tooltip')
       tt.enable() if tt
       cleanupFormula($editor, jQuery(@))
+
+      # If the user changed the content to plain text, then drop the wrappers
+      if $span.find('script[type="text/plain"]').length
+        $span.replaceWith(
+            $span.find('.mathjax-wrapper').html())
 
     $editor
 

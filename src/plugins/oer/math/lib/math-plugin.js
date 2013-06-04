@@ -5,7 +5,7 @@
   define(['aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', 'css!../../../oer/math/css/math.css'], function(Aloha, Plugin, jQuery, Popover, UI) {
     var EDITOR_HTML, LANGUAGES, MATHML_ANNOTATION_MIME_ENCODINGS, MATHML_ANNOTATION_NONMIME_ENCODINGS, SELECTOR, TOOLTIP_TEMPLATE, addAnnotation, buildEditor, cleanupFormula, findFormula, getEncoding, getMathFor, insertMath, makeCloseIcon, squirrelMath, triggerMathJax;
 
-    EDITOR_HTML = '<div class="math-editor-dialog">\n    <div class="math-container">\n        <pre><span></span><br></pre>\n        <textarea type="text" class="formula" rows="1"\n                  placeholder="Insert your math notation here"></textarea>\n    </div>\n    <div class="footer">\n      <span>This is:</span>\n      <label class="radio inline">\n          <input type="radio" name="mime-type" value="math/asciimath"> ASCIIMath\n      </label>\n      <label class="radio inline">\n          <input type="radio" name="mime-type" value="math/tex"> LaTeX\n      </label>\n      <label class="radio inline mime-type-mathml">\n          <input type="radio" name="mime-type" value="math/mml"> MathML\n      </label>\n      <button class="btn btn-primary done">Done</button>\n    </div>\n</div>';
+    EDITOR_HTML = '<div class="math-editor-dialog">\n    <div class="math-container">\n        <pre><span></span><br></pre>\n        <textarea type="text" class="formula" rows="1"\n                  placeholder="Insert your math notation here"></textarea>\n    </div>\n    <div class="footer">\n      <span>This is:</span>\n      <label class="radio inline">\n          <input type="radio" name="mime-type" value="math/asciimath"> ASCIIMath\n      </label>\n      <label class="radio inline">\n          <input type="radio" name="mime-type" value="math/tex"> LaTeX\n      </label>\n      <label class="radio inline mime-type-mathml">\n          <input type="radio" name="mime-type" value="math/mml"> MathML\n      </label>\n      <label class="radio inline">\n          <input type="radio" name="mime-type" value="text/plain"> Plain text\n      </label>\n      <button class="btn btn-primary done">Done</button>\n    </div>\n</div>';
     LANGUAGES = {
       'math/asciimath': {
         open: '`',
@@ -18,6 +18,9 @@
         raw: false
       },
       'math/mml': {
+        raw: true
+      },
+      'text/plain': {
         raw: true
       }
     };
@@ -214,36 +217,42 @@
       }
       keyTimeout = null;
       keyDelay = function() {
-        var $mathPoint, formulaWrapped;
+        var $mathPoint, formulaWrapped, type;
 
         formula = jQuery(this).val();
-        mimeType = $editor.find('input[name=mime-type]:checked').val();
-        $mathPoint = $span.children('.mathjax-wrapper');
-        if (!$mathPoint[0]) {
+        type = $editor.find('input[name=mime-type]:checked').val();
+        $mathPoint = $span.children('.mathjax-wrapper').eq(0);
+        if (!$mathPoint.length) {
           $mathPoint = jQuery('<span class="mathjax-wrapper aloha-ephemera"></span>');
           $span.prepend($mathPoint);
         }
-        if (LANGUAGES[mimeType].raw) {
-          $formula = jQuery(formula);
-          $mathPoint.text('').append($formula);
+        if (type === 'text/plain') {
+          jQuery('<script type="text/plain"></script>').text(formula).appendTo($span);
+          $mathPoint.text(formula);
         } else {
-          formulaWrapped = LANGUAGES[mimeType].open + formula + LANGUAGES[mimeType].close;
-          $mathPoint.text(formulaWrapped);
-        }
-        triggerMathJax($span, function() {
-          var $mathml;
-
-          $mathml = $span.find('math');
-          if ($mathml[0]) {
-            if (__indexOf.call(MATHML_ANNOTATION_MIME_ENCODINGS, mimeType) >= 0) {
-              addAnnotation($span, formula, mimeType);
-            }
-            makeCloseIcon($span);
+          $span.find('script[type="text/plain"]').remove();
+          if (LANGUAGES[type].raw) {
+            $formula = jQuery(formula);
+            $mathPoint.text('').append($formula);
+          } else {
+            formulaWrapped = LANGUAGES[type].open + formula + LANGUAGES[type].close;
+            $mathPoint.text(formulaWrapped);
           }
-          return Aloha.activeEditable.smartContentChange({
-            type: 'block-change'
+          triggerMathJax($span, function() {
+            var $mathml;
+
+            $mathml = $span.find('math');
+            if ($mathml[0]) {
+              if (__indexOf.call(MATHML_ANNOTATION_MIME_ENCODINGS, type) >= 0) {
+                addAnnotation($span, formula, type);
+              }
+              makeCloseIcon($span);
+            }
+            return Aloha.activeEditable.smartContentChange({
+              type: 'block-change'
+            });
           });
-        });
+        }
         $span.data('math-formula', formula);
         return $formula.trigger('focus');
       };
@@ -285,7 +294,10 @@
         if (tt) {
           tt.enable();
         }
-        return cleanupFormula($editor, jQuery(this));
+        cleanupFormula($editor, jQuery(this));
+        if ($span.find('script[type="text/plain"]').length) {
+          return $span.replaceWith($span.find('.mathjax-wrapper').html());
+        }
       });
       return $editor;
     };
