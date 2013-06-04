@@ -404,20 +404,9 @@
         opener = help.find('.cheatsheet-open');
         help.on('show', function(e) {
           opener.hide();
-          return jQuery(this).find('.cheatsheet').slideDown("fast", function() {
-            var a, h;
-
-            if (Aloha.activeEditable) {
-              a = jQuery(this).height();
-              h = Aloha.activeEditable.obj.height();
-              return h = Aloha.activeEditable.obj.height(a + h + 50);
-            }
-          });
+          return jQuery(this).find('.cheatsheet').slideDown("fast");
         });
         help.on('hide', function(e) {
-          if (Aloha.activeEditable) {
-            Aloha.activeEditable.obj.height('auto');
-          }
           return jQuery(this).find('.cheatsheet').slideUp("fast", function() {
             return opener.show();
           });
