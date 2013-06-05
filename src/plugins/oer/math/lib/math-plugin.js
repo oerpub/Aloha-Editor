@@ -443,7 +443,7 @@
         });
         help.on('hide', function(e) {
           return jQuery(this).find('.cheatsheet').slideUp("fast", function() {
-            return opener.show();
+            return opener.show('slow');
           });
         });
         help.on('toggle', function(e) {

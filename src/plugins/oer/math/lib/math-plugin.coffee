@@ -551,7 +551,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', '
     
       help.on 'hide', (e) ->
         jQuery(@).find('.cheatsheet').slideUp "fast", () ->
-            opener.show()
+            opener.show('slow')
 
       help.on 'toggle', (e) ->
         if jQuery(@).find('.cheatsheet').is(':visible')
