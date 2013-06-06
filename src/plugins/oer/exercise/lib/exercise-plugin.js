@@ -33,7 +33,7 @@
             problem.text('');
           }
           element.children().remove();
-          jQuery("<div>").addClass('problem').html(problem.html()).appendTo(element);
+          jQuery("<div>").addClass('problem').html(jQuery('<p>').append(problem.html())).appendTo(element);
           return element.append(solutions);
         });
         semanticBlock.activateHandler('solution', function(element) {
@@ -48,9 +48,9 @@
         });
         semanticBlock.deactivateHandler('solution', function(element) {
           var content;
-          content = element.children('.body');
+          content = element.children('.body').html();
           element.children().remove();
-          return element.append(content.html());
+          return jQuery('<p>').append(content).appendTo(element);
         });
         UI.adopt('insertExercise', Button, {
           click: function() {
