@@ -6,7 +6,7 @@
   this.Aloha.settings = {
     jQuery: this.jQuery,
     logLevels: {
-      error: true,
+      error: false,
       warn: true,
       info: false,
       debug: false
@@ -18,14 +18,42 @@
     },
     errorhandling: true,
     plugins: {
-      load: ['common/ui', 'oer/toolbar', 'oer/popover', 'oer/format', 'common/contenthandler', 'common/paste', 'common/block', 'common/list', 'oer/table', 'oer/popover', 'oer/math', 'extra/draganddropfiles', 'common/image', 'oer/assorted', 'oer/title', 'common/undo', 'oer/undobutton', 'oer/genericbutton', 'oer/semanticblock', 'oer/exercise', 'oer/note'],
-      note: {
-        types: {
-          'note': true,
-          'noteish': true,
-          'noteish-notitle': false
+      load: ['common/ui', 'oer/toolbar', 'oer/popover', 'oer/format', 'common/contenthandler', 'common/paste', 'common/block', 'common/list', 'oer/table', 'oer/popover', 'oer/math', 'extra/draganddropfiles', 'common/image', 'oer/assorted', 'oer/title', 'common/undo', 'oer/undobutton', 'oer/genericbutton', 'oer/semanticblock', 'oer/exercise', 'oer/note', 'oer/cnxmlplus-handler'],
+      note: [
+        {
+          label: 'Note',
+          cls: 'note',
+          hasTitle: true
+        }, {
+          label: 'Aside',
+          cls: 'note',
+          hasTitle: true,
+          type: 'aside'
+        }, {
+          label: 'Warning',
+          cls: 'note',
+          hasTitle: true,
+          type: 'warning'
+        }, {
+          label: 'Tip',
+          cls: 'note',
+          hasTitle: true,
+          type: 'tip'
+        }, {
+          label: 'Important',
+          cls: 'note',
+          hasTitle: true,
+          type: 'important'
+        }, {
+          label: 'Noteish',
+          cls: 'noteish',
+          hasTitle: true
+        }, {
+          label: 'Noteish (no Title)',
+          cls: 'noteish-notitle',
+          hasTitle: false
         }
-      },
+      ],
       draganddropfiles: {
         upload: {
           config: {

@@ -2,26 +2,48 @@
 (function() {
 
   define(['aloha', 'aloha/plugin', 'jquery', 'aloha/ephemera', 'ui/ui', 'ui/button', 'semanticblock/semanticblock-plugin', 'css!note/css/note-plugin.css'], function(Aloha, Plugin, jQuery, Ephemera, UI, Button, semanticBlock) {
-    var TITLE_CONTAINER;
-    TITLE_CONTAINER = '<div class="type-container dropdown">\n    <a class="type" data-toggle="dropdown"></a>\n    <span class="title" placeholder="Add a title (optional)"></span>\n    <ul class="dropdown-menu">\n        <li><a href="">Note</a></li>\n        <li><a href="">Aside</a></li>\n        <li><a href="">Warning</a></li>\n        <li><a href="">Tip</a></li>\n        <li><a href="">Important</a></li>\n    </ul>\n</div>';
+    var TITLE_CONTAINER, notishClasses;
+    TITLE_CONTAINER = jQuery('<div class="type-container dropdown">\n    <a class="type" data-toggle="dropdown"></a>\n    <span class="title" placeholder="Add a title (optional)"></span>\n    <ul class="dropdown-menu">\n    </ul>\n</div>');
+    notishClasses = {};
     return Plugin.create('note', {
+      defaults: [
+        {
+          label: 'Note',
+          cls: 'note',
+          hasTitle: true
+        }
+      ],
       init: function() {
-        var types;
-        types = this.settings.types || {
-          note: true
-        };
-        return jQuery.map(types, function(hasTitle, className) {
-          var newTemplate, tagName, titleTagName;
-          tagName = 'div';
-          titleTagName = 'div';
+        var types,
+          _this = this;
+        types = this.settings;
+        return jQuery.each(types, function(i, type) {
+          var className, hasTitle, label, newTemplate, selector, tagName, titleTagName, typeName;
+          className = type.cls || (function() {
+            throw 'BUG Invalid configuration of not plugin. cls required!';
+          })();
+          typeName = type.type;
+          hasTitle = !!type.hasTitle;
+          label = type.label || (function() {
+            throw 'BUG Invalid configuration of not plugin. label required!';
+          })();
+          tagName = type.tagName || 'div';
+          titleTagName = type.titleTagName || 'div';
+          selector = "." + className + ":not([data-type])";
+          if (typeName) {
+            selector = "." + className + "[data-type='" + typeName + "']";
+          }
+          notishClasses[className] = true;
           newTemplate = jQuery("<" + tagName + "></" + tagName);
           newTemplate.addClass(className);
-          newTemplate.attr('data-type', className);
+          if (typeName) {
+            newTemplate.attr('data-type', typeName);
+          }
           if (hasTitle) {
             newTemplate.append("<" + titleTagName + " class='title'></" + titleTagName);
           }
-          semanticBlock.activateHandler(className, function(element) {
-            var body, title, titleContainer, titleElement, type;
+          semanticBlock.activateHandler(selector, function(element) {
+            var body, title, titleContainer, titleElement;
             if (hasTitle) {
               titleElement = element.children('.title');
               if (titleElement.length) {
@@ -35,15 +57,43 @@
             body = element.children();
             element.children().remove();
             if (hasTitle) {
-              titleContainer = jQuery(TITLE_CONTAINER);
+              titleContainer = TITLE_CONTAINER.clone();
+              jQuery.each(_this.settings, function(i, foo) {
+                var $option;
+                $option = jQuery('<li><a href=""></a></li>');
+                $option.appendTo(titleContainer.find('.dropdown-menu'));
+                $option = $option.children('a');
+                $option.text(foo.label);
+                return $option.on('click', function() {
+                  var $newTitle, key;
+                  if (foo.hasTitle) {
+                    if (!element.find('> .type-container > .title')[0]) {
+                      $newTitle = jQuery("<" + (foo.titleTagName || 'span') + " class='title'></" + (foo.titleTagName || 'span'));
+                      element.children('.type-container').append($newTitle);
+                      $newTitle.aloha();
+                    }
+                  } else {
+                    element.find('> .type-container > .title').remove();
+                  }
+                  if (foo.type) {
+                    element.attr('data-type', foo.type);
+                  } else {
+                    element.removeAttr('data-type');
+                  }
+                  for (key in notishClasses) {
+                    element.removeClass(key);
+                  }
+                  return element.addClass(foo.cls);
+                });
+              });
               titleContainer.find('.title').text(title);
-              titleContainer.find('.type').text(type.charAt(0).toUpperCase() + type.slice(1));
+              titleContainer.find('.type').text(label);
               titleContainer.prependTo(element);
               titleContainer.children('.title').aloha();
             }
             return $('<div>').addClass('body').attr('placeholder', "Type the text of your " + className + " here.").append(body).appendTo(element).aloha();
           });
-          semanticBlock.deactivateHandler(className, function(element) {
+          semanticBlock.deactivateHandler(selector, function(element) {
             var body, bodyElement, title, titleElement;
             bodyElement = element.children('.body');
             body = bodyElement.children();
@@ -62,12 +112,12 @@
             }
             return element.append(body);
           });
-          UI.adopt("insert-" + className, Button, {
+          UI.adopt("insert-" + className + typeName, Button, {
             click: function() {
               return semanticBlock.insertAtCursor(newTemplate.clone());
             }
           });
-          if ('note' === className) {
+          if ('note' === className && !typeName) {
             return UI.adopt("insertNote", Button, {
               click: function() {
                 return semanticBlock.insertAtCursor(newTemplate.clone());

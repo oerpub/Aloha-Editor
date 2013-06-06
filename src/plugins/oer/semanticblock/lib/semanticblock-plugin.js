@@ -75,15 +75,14 @@
     ];
     insertElement = function(element) {};
     activate = function(element) {
-      var type, _results;
+      var selector, _results;
       if (!(element.parent('.semantic-container').length || element.is('.semantic-container'))) {
         element.addClass('aloha-oer-block');
         element.wrap(blockTemplate).parent().append(blockControls.clone()).alohaBlock();
-        type = void 0;
         _results = [];
-        for (type in activateHandlers) {
-          if (element.hasClass(type)) {
-            activateHandlers[type](element);
+        for (selector in activateHandlers) {
+          if (element.is(selector)) {
+            activateHandlers[selector](element);
             break;
           } else {
             _results.push(void 0);
@@ -93,14 +92,13 @@
       }
     };
     deactivate = function(element) {
-      var type;
+      var selector;
       if (element.parent('.semantic-container').length || element.is('.semantic-container')) {
         element.removeClass('aloha-oer-block ui-draggable');
         element.removeAttr('style');
-        type = void 0;
-        for (type in deactivateHandlers) {
-          if (element.hasClass(type)) {
-            deactivateHandlers[type](element);
+        for (selector in deactivateHandlers) {
+          if (element.is(selector)) {
+            deactivateHandlers[selector](element);
             break;
           }
         }
@@ -130,10 +128,10 @@
     });
     return Plugin.create('semanticblock', {
       makeClean: function(content) {
-        var type, _results;
+        var selector, _results;
         _results = [];
-        for (type in deactivateHandlers) {
-          _results.push(content.find('.aloha-oer-block.' + type).each(function() {
+        for (selector in deactivateHandlers) {
+          _results.push(content.find(".aloha-oer-block" + selector).each(function() {
             return deactivate(jQuery(this));
           }));
         }
@@ -160,11 +158,11 @@
           }
         });
         return Aloha.bind('aloha-editable-created', function(e, params) {
-          var $root, classes, cls;
+          var $root, classes, selector;
           $root = params.obj;
           classes = [];
-          for (cls in activateHandlers) {
-            classes.push("." + cls);
+          for (selector in activateHandlers) {
+            classes.push(selector);
           }
           $root.find(classes.join()).each(function(i, el) {
             var $el;
@@ -217,11 +215,11 @@
         $element = Aloha.jQuery('.semantic-temp').removeClass('semantic-temp');
         return activate($element);
       },
-      activateHandler: function(type, handler) {
-        return activateHandlers[type] = handler;
+      activateHandler: function(selector, handler) {
+        return activateHandlers[selector] = handler;
       },
-      deactivateHandler: function(type, handler) {
-        return deactivateHandlers[type] = handler;
+      deactivateHandler: function(selector, handler) {
+        return deactivateHandlers[selector] = handler;
       },
       registerEvent: function(name, selector, callback) {
         return pluginEvents.push({
