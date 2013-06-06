@@ -13,6 +13,7 @@
 }
 
 .semantic-container {
+    cursor: auto !important; /* override default aloha cursor for blocks */
     position: relative;
     padding: 10px 0 10px;
     margin: 10px 0 10px 0;

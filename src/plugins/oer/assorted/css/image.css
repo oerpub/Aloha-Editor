@@ -34,3 +34,30 @@ form#linkModal:focus {
 .placeholder.preview h4 {
     margin: 0 0 1em 0;
 }
+
+.media.aloha-oer-block {
+    display: block;
+    border: 0;
+}
+.media.aloha-oer-block .image-wrapper {
+    position: relative;
+    display: block;
+    margin: 0 auto;
+}
+
+.media.aloha-oer-block .image-wrapper .image-edit {
+    position: absolute;
+    cursor: pointer;
+    left: 100%;
+    padding: 2px 10px 2px 5px;
+    white-space: nowrap;
+    border-radius: 0 4px 4px 0;
+}
+
+.media.aloha-oer-block .image-wrapper .image-edit.passive {
+    display: none;
+}
+
+.semantic-container.focused .media.aloha-oer-block .image-wrapper .image-edit {
+    display: block;
+}

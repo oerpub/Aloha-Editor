@@ -2,7 +2,7 @@
 # * -----------------
 # * This plugin handles when the insertImage button is clicked and provides a bubble next to an image when it is selected
 #
-define ['aloha', 'jquery', 'popover/popover-plugin', 'ui/ui', 'css!assorted/css/image.css'], (Aloha, jQuery, Popover, UI) ->
+define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'semanticblock/semanticblock-plugin', 'css!assorted/css/image.css'], (Aloha, jQuery, AlohaPlugin, Image, UI, semanticBlock) ->
 
   # This will be prefixed with Aloha.settings.baseUrl
   WARNING_IMAGE_PATH = '/../plugins/oer/image/img/warning.png'
@@ -15,7 +15,7 @@ define ['aloha', 'jquery', 'popover/popover-plugin', 'ui/ui', 'css!assorted/css/
       </div>
       <div class="modal-body">
         <div class="image-options">
-            <a class="upload-image-link">Choose a file</a> OR <a class="upload-url-link">get file from the Web</a>
+            <a class="upload-image-link">Choose an image to upload</a> OR <a class="upload-url-link">get image from the Web</a>
             <div class="placeholder preview hide">
               <h4>Preview</h4>
               <img class="preview-image"/>
@@ -25,7 +25,7 @@ define ['aloha', 'jquery', 'popover/popover-plugin', 'ui/ui', 'css!assorted/css/
         </div>
         <div class="image-alt">
           <div class="forminfo">
-            Please provide a description of this image for the visually impaired.
+            <i class="icon-warning-sign"></i><strong>Describe the image for someone who cannot see it.</strong> This description can be read aloud, making it possible for visually impaired learners to understand the content.
           </div>
           <div>
             <textarea name="alt" type="text" placeholder="Enter description ..."></textarea>
@@ -33,7 +33,7 @@ define ['aloha', 'jquery', 'popover/popover-plugin', 'ui/ui', 'css!assorted/css/
         </div>
       </div>
       <div class="modal-footer">
-        <button type="submit" class="btn btn-primary action insert">Save</button>
+        <button type="submit" disabled="true" class="btn btn-primary action insert">Save</button>
         <button class="btn action cancel">Cancel</button>
       </div>
     </form>'''
@@ -57,15 +57,15 @@ define ['aloha', 'jquery', 'popover/popover-plugin', 'ui/ui', 'css!assorted/css/
       # * enters a URL (TODO: Verify it's an image)
       # * drops an image into the drop div
 
-      # $el might not be an image, it might be a placeholder for a future image
-      if $el.is('img')
-        # On submit $el.attr('src') will point to what is set in this variable
-        # preserve the alt text if editing an image
-        imageSource = $el.attr('src')
-        imageAltText = $el.attr('alt')
-      else
-        imageSource = ''
-        imageAltText = ''
+      # On submit $el.attr('src') will point to what is set in this variable
+      # preserve the alt text if editing an image
+      imageSource = $el.attr('src')
+      imageAltText = $el.attr('alt')
+
+      if imageSource
+        dialog.find('.action.insert').removeAttr('disabled')
+
+      editing = Boolean(imageSource)
 
       dialog.find('[name=alt]').val(imageAltText)
 
@@ -82,15 +82,14 @@ define ['aloha', 'jquery', 'popover/popover-plugin', 'ui/ui', 'css!assorted/css/
 
       setImageSource = (href) ->
         imageSource = href
-        $submit.removeClass('disabled')
+        $submit.removeAttr('disabled')
 
       # Uses the File API to render a preview of the image
       # and updates the modal's imageSource
       loadLocalFile = (file, $img, callback) ->
         reader = new FileReader()
         reader.onloadend = () ->
-          if $img
-            $img.attr('src', reader.result)
+          $img.attr('src', reader.result) if $img
           # If we get an image then update the modal's imageSource
           setImageSource(reader.result)
           callback(reader.result) if callback
@@ -134,20 +133,23 @@ define ['aloha', 'jquery', 'popover/popover-plugin', 'ui/ui', 'css!assorted/css/
       deferred = $.Deferred()
       dialog.on 'submit', (evt) =>
         evt.preventDefault() # Don't submit the form
-        if $el.is('img')
-          $el.attr 'src', imageSource
-          $el.attr 'alt', dialog.find('[name=alt]').val()
+
+        altAdded = (not $el.attr 'alt') and dialog.find('[name=alt]').val()
+
+        $el.attr 'src', imageSource
+        $el.attr 'alt', dialog.find('[name=alt]').val()
+
+        if altAdded
+          setThankYou $el.parent()
         else
-          img = jQuery('<img/>')
-          img.attr 'src', imageSource
-          img.attr 'alt', dialog.find('[name=alt]').val()
-          $el.replaceWith(img)
-          $el = img
+          setEditText $el.parent()
+
         deferred.resolve(target: $el[0], files: $uploadImage[0].files)
         dialog.modal('hide')
 
       dialog.on 'click', '.btn.action.cancel', (evt) =>
         evt.preventDefault() # Don't submit the form
+        $el.parents('.semantic-container').remove() unless editing
         deferred.reject(target: $el[0])
         dialog.modal('hide')
 
@@ -164,45 +166,6 @@ define ['aloha', 'jquery', 'popover/popover-plugin', 'ui/ui', 'css!assorted/css/
             if title
               dialog.find('.modal-header h3').text(title)
             dialog.modal 'show'
-
-  selector = 'img'
-
-  populator = ($el, pover) ->
-      # When a click occurs, the activeEditable is cleared so squirrel it
-      editable = Aloha.activeEditable
-      $bubble = jQuery '''
-        <div class="link-popover-details">
-            <a class="change">
-              <img src="''' + Aloha.settings.baseUrl + '''/../plugins/oer/assorted/img/edit-link-03.png" />
-              <span title="Change the image's properties">Edit image...</span>
-            </a>
-            &nbsp; | &nbsp;
-            <a class="remove">
-              <img src="''' + Aloha.settings.baseUrl + '''/../plugins/oer/assorted/img/unlink-link-02.png" />
-              <span title="Delete the image">Delete</span>
-            </a>
-        </div>'''
-
-      href = $el.attr('src')
-      $bubble.find('.change').on 'click', ->
-        # unsquirrel the activeEditable
-        Aloha.activeEditable = editable
-        promise = showModalDialog($el)
- 
-        promise.done (data)->
-          # Uploading if a local file was chosen
-          if data.files.length
-            jQuery(data.target).addClass('aloha-image-uploading')
-            uploadImage data.files[0], (url) ->
-              jQuery(data.target).attr('src', url).removeClass(
-                'aloha-image-uploading')
-        promise.show('Edit image')
-
-      $bubble.find('.remove').on 'click', ->
-        pover.stopOne($el)
-        $el.remove()
-      $bubble.contents()
-
 
   uploadImage = (file, callback) ->
     plugin = @
@@ -225,22 +188,11 @@ define ['aloha', 'jquery', 'popover/popover-plugin', 'ui/ui', 'css!assorted/css/
       f.append(settings.image.uploadfield or 'upload', file, file.name)
       xhr.send(f)
 
-
-  Aloha.bind 'aloha-image-selected', (event, target) ->
-      # Hide other tooltips of the same type
-      $el = jQuery(target)
-      nodes = jQuery(Aloha.activeEditable.obj).find(selector)
-      nodes = nodes.not($el)
-      nodes.trigger 'hide'
-      $el.trigger 'show'
-      $el.data('aloha-bubble-selected', true)
-      $el.off('.bubble')
-
-
   UI.adopt 'insertImage-oer', null,
     click: () ->
-      newEl = jQuery('<span class="aloha-ephemera image-placeholder"> </span>')
-      GENTICS.Utils.Dom.insertIntoDOM newEl, Aloha.Selection.getRangeObject(), Aloha.activeEditable.obj
+      template = $('<span class="media"><img /></span>')
+      semanticBlock.insertAtCursor(template)
+      newEl = template.find('img')
       promise = showModalDialog(newEl)
 
       promise.done (data)->
@@ -251,15 +203,60 @@ define ['aloha', 'jquery', 'popover/popover-plugin', 'ui/ui', 'css!assorted/css/
             jQuery(data.target).attr('src', url)
             newEl.removeClass('aloha-image-uploading')
 
-      promise.fail (data) ->
-        # Clean up placeholder if needed
-        $target = jQuery(data.target)
-        if not $target.is('img')
-          $target.remove()
-
       # Finally show the dialog
       promise.show()
 
+  $('body').bind 'aloha-image-resize', ->
+    setWidth Image.imageObj
+
+  setWidth = (image) ->
+    wrapper = image.parents('.image-wrapper')
+    if wrapper.length
+      wrapper.css('width', image.css('width'))
+
+  setThankYou = (wrapper) ->
+    editDiv = wrapper.children('.image-edit')
+    editDiv.html('<i class="icon-edit"></i> Thank You!').removeClass('passive')
+    editDiv.css('background', 'lightgreen')
+    editDiv.animate({backgroundColor: 'white', opacity: 0}, 2000, 'swing', -> setEditText wrapper)
+
+  setEditText = (wrapper) ->
+    alt = wrapper.children('img').attr('alt')
+    editDiv = wrapper.children('.image-edit').css('opacity', 1)
+    if alt
+        editDiv.html('<i class="icon-edit"></i>').addClass('passive')
+    else
+        editDiv.html('<i class="icon-warning-sign"></i> Description missing').removeClass('passive')
+ 
+  activate = (element) ->
+    wrapper = $('<div class="image-wrapper">').css('width', element.css('width'))
+    edit = $('<div class="image-edit">')
+
+    img = element.find('img')
+    element.children().remove()
+
+    img.appendTo(element).wrap(wrapper)
+
+    setEditText element.children('.image-wrapper').prepend(edit)
+    element.find('img').load ->
+      setWidth $(this)
+
+  deactivate = (element) ->
+    img = element.find('img')
+    element.children().remove()
+    element.append(img)
+    element.attr('data-alt', img.attr('alt') || '')
+
+    # wrap the whole thing in a paragraph just so it passes the server's validation rules
+    element.parents('.semantic-container').wrap('<p>')
+
   # Return config
-  selector: selector
-  populator: populator
+  AlohaPlugin.create('oer-image', {
+    init: () ->
+      semanticBlock.activateHandler('media', activate)
+      semanticBlock.deactivateHandler('media', deactivate)
+      semanticBlock.registerEvent 'click', '.aloha-oer-block .image-edit', ->
+        img = $(this).siblings('img')
+        promise = showModalDialog(img)
+        promise.show('Edit image')
+  })

@@ -22,7 +22,7 @@
         plugins: {
             assorted: {
                 image: {
-                    preview: false,
+                    preview: true,
                     uploadurl: '/upload_dnd'
                 }
             },
