@@ -32,7 +32,7 @@ Get the code
 
 Clone the repo::
 
-    git clone  https://github.com/wysiwhat/Aloha-Editor.git aloha-editor
+    git clone  https://github.com/oerpub/Aloha-Editor.git aloha-editor
     
     NOTE: This will take a while.
 
@@ -65,7 +65,7 @@ Check if it works::
     chromium-browser http://localhost/Aloha-Editor
 
     You should see a page with a lot of text and the heading, 
-    'Welcome to WYSIWHAT: A semantic HTML5 editor for textbooks, books, and
+    'Welcome to OERPUB Editor: A semantic HTML5 editor for textbooks, books, and
     open education resources'
 
 Open the OERPub editor::
