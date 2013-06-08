@@ -3,9 +3,9 @@
   var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   define(['aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', 'css!../../../oer/math/css/math.css'], function(Aloha, Plugin, jQuery, Popover, UI) {
-    var EDITOR_HTML, LANGUAGES, MATHML_ANNOTATION_MIME_ENCODINGS, MATHML_ANNOTATION_NONMIME_ENCODINGS, SELECTOR, TOOLTIP_TEMPLATE, addAnnotation, buildEditor, cleanupFormula, findFormula, getEncoding, getMathFor, insertMath, makeCloseIcon, squirrelMath, triggerMathJax;
+    var EDITOR_HTML, LANGUAGES, MATHML_ANNOTATION_MIME_ENCODINGS, MATHML_ANNOTATION_NONMIME_ENCODINGS, SELECTOR, TOOLTIP_TEMPLATE, addAnnotation, buildEditor, cleanupFormula, err, findFormula, getEncoding, getMathFor, help, insertMath, makeCloseIcon, opener, squirrelMath, triggerMathJax;
 
-    EDITOR_HTML = '<div class="math-editor-dialog">\n    <div class="math-container">\n        <pre><span></span><br></pre>\n        <textarea type="text" class="formula" rows="1"\n                  placeholder="Insert your math notation here"></textarea>\n    </div>\n    <div class="footer">\n      <span>This is:</span>\n      <label class="radio inline">\n          <input type="radio" name="mime-type" value="math/asciimath"> ASCIIMath\n      </label>\n      <label class="radio inline">\n          <input type="radio" name="mime-type" value="math/tex"> LaTeX\n      </label>\n      <label class="radio inline mime-type-mathml">\n          <input type="radio" name="mime-type" value="math/mml"> MathML\n      </label>\n      <label class="radio inline">\n          <input type="radio" name="mime-type" value="text/plain"> Plain text\n      </label>\n      <button class="btn btn-primary done">Done</button>\n    </div>\n</div>';
+    EDITOR_HTML = '<div class="math-editor-dialog">\n    <div class="math-help-link">\n        <a title="Help using the math editor"\n           href="javascript:;">See help</a>\n    </div>\n    <div class="math-container">\n        <pre><span></span><br></pre>\n        <textarea type="text" class="formula" rows="1"\n                  placeholder="Insert your math notation here"></textarea>\n    </div>\n    <div class="footer">\n      <span>This is:</span>\n      <label class="radio inline">\n          <input type="radio" name="mime-type" value="math/asciimath"> ASCIIMath\n      </label>\n      <label class="radio inline">\n          <input type="radio" name="mime-type" value="math/tex"> LaTeX\n      </label>\n      <label class="radio inline mime-type-mathml">\n          <input type="radio" name="mime-type" value="math/mml"> MathML\n      </label>\n      <label class="cheatsheet-label checkbox inline">\n        <input id="cheatsheet-activator" type="checkbox" name="cheatsheet-activator"> Show cheat sheet\n      </label>\n      <label class="radio inline">\n          <input type="radio" name="mime-type" value="text/plain"> Plain text\n      </label>\n      <button class="btn btn-primary done">Done</button>\n    </div>\n</div>';
     LANGUAGES = {
       'math/asciimath': {
         open: '`',
@@ -191,10 +191,40 @@
       }
     };
     buildEditor = function($span) {
-      var $editor, $formula, formula, keyDelay, keyTimeout, mimeType, radios,
+      var $editor, $formula, err, formula, keyDelay, keyTimeout, mimeType, radios,
         _this = this;
 
       $editor = jQuery(EDITOR_HTML);
+      $editor.find('.math-help-link a').on('click', function(e) {
+        var $h, HELP_TEMPLATE;
+
+        HELP_TEMPLATE = '<div class="popover math-editor-help-text"><div class="arrow"></div><div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content"></div></div></div>';
+        $h = jQuery(this);
+        $h.unbind('click');
+        return jQuery.get(Aloha.settings.baseUrl + '/../plugins/oer/math/lib/help.html', function(d) {
+          return $h.popover({
+            content: d,
+            placement: 'right',
+            html: true,
+            template: HELP_TEMPLATE
+          }).on('shown-popover', function(e) {
+            jQuery(e.target).data('popover').$tip.find('.math-editor-help-text-close').on('click', function() {
+              return jQuery(e.target).popover('hide');
+            });
+            return jQuery(e.target).data('popover').$tip.find('.cheatsheet-activator').on('click', function(e) {
+              return jQuery('#math-cheatsheet').trigger("toggle");
+            });
+          }).popover('show');
+        });
+      });
+      try {
+        if (!Aloha.settings.plugins.math.cheatsheet) {
+          $editor.find('.cheatsheet-label').remove();
+        }
+      } catch (_error) {
+        err = _error;
+        $editor.find('.cheatsheet-label').remove();
+      }
       $editor.find('.done').on('click', function() {
         if (!$span.next().is('.aloha-ephemera-wrapper')) {
           jQuery('<span class="aloha-ephemera-wrapper">&#160;</span>').insertAfter($span);
@@ -272,6 +302,7 @@
         var $el, tt;
 
         $span.css('background-color', '#E5EEF5');
+        jQuery('#math-cheatsheet .cheatsheet-open').show();
         $el = jQuery(this);
         tt = $el.data('tooltip');
         if (tt) {
@@ -289,6 +320,9 @@
       $span.off('hidden-popover').on('hidden-popover', function() {
         var tt;
 
+        $editor.find('.math-help-link a').popover('destroy');
+        jQuery('#math-cheatsheet').trigger('hide');
+        jQuery('#math-cheatsheet .cheatsheet-open').hide();
         $span.css('background-color', '');
         tt = jQuery(this).data('tooltip');
         if (tt) {
@@ -297,6 +331,13 @@
         cleanupFormula($editor, jQuery(this));
         if ($span.find('script[type="text/plain"]').length) {
           return $span.replaceWith($span.find('.mathjax-wrapper').html());
+        }
+      });
+      $editor.find('#cheatsheet-activator').on('change', function(e) {
+        if (jQuery(e.target).is(':checked')) {
+          return jQuery('#math-cheatsheet').trigger("show");
+        } else {
+          return jQuery('#math-cheatsheet').trigger("hide");
         }
       });
       return $editor;
@@ -385,12 +426,56 @@
       };
     };
     SELECTOR = '.math-element';
-    return Popover.register({
+    Popover.register({
       selector: SELECTOR,
       populator: buildEditor,
       placement: 'top',
       markerclass: 'math-popover'
     });
+    try {
+      if (Aloha.settings.plugins.math.cheatsheet) {
+        help = jQuery('<div id="math-cheatsheet">\n  <div class="cheatsheet-open">\n    <img src="' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/open-cheat-sheet-01.png' + '" alt="open" />\n</div>\n<div class="cheatsheet">\n  <div class="cheatsheet-close">\n    <img src="' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/close-cheat-sheet-01.png' + '" alt="open" />\n</div>\n<div class="cheatsheet-title"><strong>Math Cheat Sheet</strong>: Copy the "code" that matches the display you want. Paste it into the math entry box above. Adjust as needed.</div>\n<div class="cheatsheet-type">\n  <div><input type="radio" name="cs-math-type" id="cs_radio_ascii" value="ascii" checked="checked"> <label for="cs_radio_ascii">ASCIIMath</label></div>\n  <div><input type="radio" name="cs-math-type" id="cs_radio_latex" value="latex"> <label for="cs_radio_latex">LaTeX</label></div>\n</div>\n<div class="cheatsheet-values cheatsheet-ascii">\n  <table>\n    <tr>\n      <td><strong>Display:</strong></td>\n      <td><img src="' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/root2over2.gif' + '" /></td>\n<td><img src="' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/pirsq.gif' + '" /></td>\n<td><img src="' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/xltoet0.gif' + '" /></td>\n<td><img src="' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/infinity.gif' + '" /></td>\n<td><img src="' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/aplusxover2.gif' + '" /></td>\n<td><img src="' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/choose.gif' + '" /></td>\n<td><img src="' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/integral.gif' + '" /></td>\n<td><img src="' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/function-01.gif' + '" /></td>\n<td><img src="' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/matrix-01.gif' + '" /></td>\n<td><img src="' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/sin-01.gif' + '" /></td>\n<td><img src="' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/piecewise-01.gif' + '" /></td>\n<td><img src="' + Aloha.settings.baseUrl + '/../plugins/oer/math/img/standard-product-01.gif' + '" /></td>\n        </tr>\n        <tr>\n          <td><strong>ASCIIMath code:</strong></td>\n          <td>sqrt(2)/2</td>\n          <td>pir^2  or  pi r^2</td>\n          <td>x &lt;= 0</td>\n          <td>x -&gt; oo</td>\n          <td>((A+X)/2 , (B+Y)/2)</td>\n          <td>sum_{k=0}^{s-1} ((n),(k))</td>\n          <td>int_-2^2 4-x^2dx</td>\n          <td>d/dxf(x)=lim_(h-&gt;0)(f(x+h)-f(x))/h</td>\n          <td>[[a,b],[c,d]]((n),(k))</td>\n          <td>sin^-1(x)</td>\n          <td>x/x={(1,if x!=0),(text{undefined},if x=0):}</td>\n          <td>((a*b))/c</td>\n        </tr>\n      </table>\n    </div>\n    <div class="cheatsheet-values cheatsheet-latex">TODO<br /><br /><br /><br /><br /><br /></div>\n    <div style="clear: both"></div>\n  </div>\n</div>');
+        jQuery('body').append(help);
+        opener = help.find('.cheatsheet-open');
+        help.on('show', function(e) {
+          opener.hide();
+          return jQuery(this).find('.cheatsheet').slideDown("fast");
+        });
+        help.on('hide', function(e) {
+          return jQuery(this).find('.cheatsheet').slideUp("fast", function() {
+            return opener.show('slow');
+          });
+        });
+        help.on('toggle', function(e) {
+          if (jQuery(this).find('.cheatsheet').is(':visible')) {
+            return jQuery(this).trigger('hide');
+          } else {
+            return jQuery(this).trigger('show');
+          }
+        });
+        opener.on('click', function(e) {
+          help.trigger('show');
+          return jQuery('body > .popover .math-editor-dialog #cheatsheet-activator').prop('checked', true);
+        });
+        help.find('.cheatsheet-close').on("click", function(e) {
+          help.trigger("hide");
+          return jQuery('body > .popover .math-editor-dialog #cheatsheet-activator').prop('checked', false);
+        });
+        help.find('.cheatsheet-type input').on("change", function(e) {
+          var sh;
+
+          sh = jQuery(e.target).val();
+          help.find('.cheatsheet-ascii').hide();
+          help.find('.cheatsheet-latex').hide();
+          return help.find(".cheatsheet-" + sh).show();
+        });
+        return help.on('mousedown', function(e) {
+          return e.stopPropagation();
+        });
+      }
+    } catch (_error) {
+      err = _error;
+    }
   });
 
 }).call(this);
