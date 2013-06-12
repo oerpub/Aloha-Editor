@@ -123,7 +123,7 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, CreateLayer) {
             this.initButtons();
 
             // Mark some classes as ephemeral
-            Ephemera.classes('aloha-current-cell', 'aloha-current-row');
+            Ephemera.classes('aloha-current-cell', 'aloha-current-row', 'add-column-before', 'add-column-after');
 
             Aloha.bind('aloha-editable-created', function(event, editable){
                 editable.obj.find('table').each(function(){

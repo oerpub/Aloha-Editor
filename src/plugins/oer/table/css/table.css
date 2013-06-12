@@ -10,6 +10,7 @@
 .aloha-editable table td, .aloha-editable table th {
     border-bottom: 1px solid #666666;
     border-right: 1px solid #666666;
+    height: 2em;
 }
 
 .aloha-editable table caption {
