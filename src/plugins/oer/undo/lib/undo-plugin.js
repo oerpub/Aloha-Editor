@@ -11,6 +11,7 @@ define([
     var undoStack = [],
         redoStack = [],
         targetEditable,
+        contentChanged = false;
         inProgress = false,
         addToHistory = function(record) {
             undoStack.push(record);
@@ -18,7 +19,7 @@ define([
            
             console.log('adding history'); 
             for (var record in undoStack) {
-                console.log(record, jQuery(undoStack[record]).find('p').length);
+                console.log(record, jQuery(undoStack[record].rawcontents).find('p').length);
             }
 
             if (undoStack.length > 10) {
@@ -27,6 +28,7 @@ define([
         },
         saveSnapshot = function(snapshot) {
             if (!inProgress && (!undoStack.length || (undoStack[undoStack.length-1] != snapshot))) {
+                contentChanged = false; 
                 addToHistory(snapshot);
             }
         }
@@ -43,34 +45,37 @@ define([
                 }
 
                 jQuery(cursorContainer).attr('cursorposition', selection.endOffset);
-                record = Aloha.getEditableById('canvas').getContents();
+                contents = Aloha.getEditableById('canvas').getContents();
                 jQuery(cursorContainer).removeAttr('cursorposition');
             } else {
-                record = targetEditable.clone();
+                contents = Aloha.getEditableById('canvas').getContents();
             }
 
-            return record;
+            return {
+                contents: contents,
+                rawcontents: targetEditable.html()
+            };
         },
         handleUndo = function(e) {
-            e.preventDefault();
+            if (e && e.preventDefault) {
+                e.preventDefault();
+            }
 
-            var snapshot = getSnapshot();
+            console.log(contentChanged);
             // add current state to redo stack 
-            if (undoStack[undoStack.length-1] != snapshot) {
-                console.log('here');
-                var currentState = snapshot;
+            if (contentChanged) {
+                console.log('changed');
+                redoStack.push(getSnapshot());
             } else {
-                var currentState = undoStack.pop();
+                redoStack.push(undoStack.pop());
             }
             
             console.log('undo begin'); 
             for (var record in undoStack) {
-                console.log(record, jQuery(undoStack[record]).find('p').length);
+                console.log(record, jQuery(undoStack[record].rawcontents).find('p').length);
             }
 
             if (undoStack.length) {
-
-                redoStack.push(currentState);
 
                 inProgress = true;
 
@@ -79,7 +84,7 @@ define([
 
                 // revert the document
                 console.log('setting to index', undoStack.length - 1);
-                targetEditable.html(undoStack[undoStack.length-1]);
+                targetEditable.html(undoStack[undoStack.length-1].contents);
 
                 // turn aloha back on
                 targetEditable.aloha();
@@ -101,10 +106,11 @@ define([
                 }
                 
                 inProgress = false;
+                contentChanged = false;
             } 
             console.log('undo end'); 
             for (var record in undoStack) {
-                console.log(record, undoStack[record].find('p').length);
+                console.log(record, jQuery(undoStack[record].rawcontents).find('p').length);
             }
         }
 
@@ -113,7 +119,12 @@ define([
         if (editable.obj.is('#canvas')) {
             targetEditable = editable.obj; 
 
+            targetEditable.bind('input', function() {
+                contentChanged = true;
+            });
+
             Aloha.bind('aloha-smart-content-changed', function() {
+                console.log('smart-content-changed');
                 saveSnapshot(getSnapshot());
             });
 
@@ -126,8 +137,16 @@ define([
     return Plugin.create('undo', {
 
         init: function() {
-
-            console.log('undo');
+            UI.adopt('undo', Button, {
+                click: function() {
+                    handleUndo();
+                }
+            });
+            UI.adopt('redo', Button, {
+                click: function() {
+                    console.log('redo');
+                }
+            });
         }
     });
 
