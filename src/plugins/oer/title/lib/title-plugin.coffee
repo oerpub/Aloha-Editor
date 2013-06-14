@@ -46,12 +46,6 @@ define [
             $p = $('<p><br /></p>')
             # our parent is the title div
             editable.obj.parent().after($p)
-
-            # Focus new paragraph
-            range = new GENTICS.Utils.RangeObject()
-            range.startContainer = range.endContainer = $p[0]
-            range.startOffset = range.endOffset = 0
-            range.select()
             false
 
     toString: ->
