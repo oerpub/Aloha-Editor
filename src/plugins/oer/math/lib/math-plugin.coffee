@@ -102,20 +102,19 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', '
     $mml.wrap '<span class="mathml-wrapper aloha-ephemera-wrapper"></span>'
     $el.append $mml.parent()
 
-  Aloha.bind 'aloha-editable-created', (evt, editable) ->
-    # Bind ctrl+m to math insert/mathify
-    editable.obj.bind 'keydown', 'ctrl+m', (evt) ->
-      insertMath()
-      evt.preventDefault()
 
-    # STEP1
-    $maths = editable.obj.find('math')
-    $maths.wrap '<span class="math-element aloha-ephemera-wrapper"><span class="mathjax-wrapper aloha-ephemera"></span></span>'
-
+  parseMathsInMathElement = ($maths) ->
     # TODO: Explicitly call Mathjax Typeset
     jQuery.each $maths, (i, mml) ->
       $mml = jQuery(mml)
       $mathElement = $mml.parent().parent()
+
+      # Squirrel the mathml into an attribute so one can copy/paste the math
+      # (browsers strip non--HTML elements like `<mml:math />`)
+      serializer = new XMLSerializer()
+      xml = serializer.serializeToString($mml[0])
+      $mathElement.attr('data-mathml-src', xml)
+
       # replace the MathML with ASCII/LaTeX formula if possible
       mathParts = findFormula $mml
       if mathParts.mimeType in MATHML_ANNOTATION_MIME_ENCODINGS
@@ -129,6 +128,56 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', '
         if not $mathElement.next().is '.aloha-ephemera-wrapper'
           # a math meta-element needs to followed by a non-breaking space in a span
           jQuery('<span class="aloha-ephemera-wrapper">&#160;</span>').insertAfter($mathElement)
+
+  # New math can enter in 2 ways:
+  #
+  # 2. somehow a MathML element shows up in the DOM
+  # 1. the user copies and pastes text with MathML in it
+  #
+  # In the 1st case the MathML is (most likely) stripped when put in the clipboard
+  # because it is not valid HTML.
+  #
+  # To handle that case this plugin squirrels the MathML in an attribute
+  # on the main math element (".math-element[data-mathml-src]")
+  # so it can be recreated when pasted.
+
+  Aloha.bind 'aloha-smart-content-changed', (evt, obj) ->
+    $editable = obj.editable.obj
+
+    # Case 1
+    # -------
+    # If math was pasted from the clipboard then recreate the mathml element
+    $pastedMath = $editable.find('.math-element[data-mathml-src]')
+    $pastedMath = $pastedMath.not $editable.find('.math-element math')
+
+    jQuery.each $pastedMath, (i, el) ->
+      $el = jQuery(el)
+      mml = $el.attr 'data-mathml-src'
+      $el.replaceWith mml
+
+    # Case 2
+    # -------
+    # (and continuation of Case 1 now that the MathML element is in the DOM)
+
+    $maths = $editable.find('math')
+    # Remove MathML elements that have already been wrapped by the editor
+    $maths = $maths.not $editable.find('.math-element math')
+    $maths.wrap '<span class="math-element aloha-ephemera-wrapper"><span class="mathjax-wrapper aloha-ephemera"></span></span>'
+
+    parseMathsInMathElement $maths
+
+
+  Aloha.bind 'aloha-editable-created', (evt, editable) ->
+    # Bind ctrl+m to math insert/mathify
+    editable.obj.bind 'keydown', 'ctrl+m', (evt) ->
+      insertMath()
+      evt.preventDefault()
+
+    # STEP1
+    $maths = editable.obj.find('math')
+    $maths.wrap '<span class="math-element aloha-ephemera-wrapper"><span class="mathjax-wrapper aloha-ephemera"></span></span>'
+
+    parseMathsInMathElement $maths
 
     # What to when user clicks on math
     jQuery(editable.obj).on 'click.matheditor', '.math-element, .math-element *', (evt) ->
@@ -227,6 +276,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', '
 
   # STEP2
   triggerMathJax = ($mathElement, cb) ->
+    throw 'BUG: MathElement not found!' if not $mathElement[0]
     if MathJax?
       # keep the `.math-element` parent
       # Be sure to squirrel away the MathML because the DOM only contains the HTML+CSS output
@@ -392,6 +442,12 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', '
         $annotation = jQuery('<annotation></annotation>').appendTo($semantics)
       $annotation.attr('encoding', mimeType)
       $annotation.text(formula)
+
+      # Squirrel the mathml into an attribute so one can copy/paste the math
+      # (browsers strip non--HTML elements like `<mml:math />`)
+      serializer = new XMLSerializer()
+      xml = serializer.serializeToString($mml[0])
+      $span.attr('data-mathml-src', xml)
 
   getEncoding = ($annotation) ->
     encoding = $annotation.attr 'encoding'
