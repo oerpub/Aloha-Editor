@@ -132,7 +132,7 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, CreateLayer) {
                    enabled for this editable, disable it. In the absence of
                    a specific configuration, default to enabling table
                    events. */
-                if(config && !config.enabled){
+                if(!config || !config.enabled){
                     return
                 }
                 editable.obj.find('table').each(function(){
