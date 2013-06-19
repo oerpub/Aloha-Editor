@@ -20,6 +20,13 @@ define([
                 undoStack.shift();
             } 
         },
+        addToFuture = function(record) {
+            redoStack.push(record);
+
+            if (redoStack.length > 10) {
+                redoStack.shift();
+            } 
+        },
         saveSnapshot = function(snapshot) {
             if (!inProgress && (!undoStack.length || (undoStack[undoStack.length-1] != snapshot))) {
                 addToHistory(snapshot);
@@ -45,6 +52,48 @@ define([
             }
 
             return contents;
+        },
+        handleRedo = function(e) {
+            if (e && e.preventDefault) {
+                e.preventDefault();
+            }
+
+            console.log('redolength:', redoStack.length);
+
+            if (redoStack.length) {
+
+                inProgress = true;
+
+                // turn off aloha
+                targetEditable.mahalo();
+
+                // revert the document
+                targetEditable.html(redoStack[redoStack.length-1]);
+
+                // shuffle snapshots
+                undoStack.push(redoStack.pop());
+
+                // turn aloha back on
+                targetEditable.aloha();
+
+                // set cursor position
+                var cursorElement = targetEditable.find('[cursorposition]');
+                if (cursorElement.length) {
+                    var cursorOffset = cursorElement.attr('cursorposition'),
+                        range = new GENTICS.Utils.RangeObject({
+                            startContainer: cursorElement.get(0).childNodes[0],
+                            endContainer: cursorElement.get(0).childNodes[0],
+                            startOffset: cursorOffset,
+                            endOffset: cursorOffset 
+                        });
+
+                    targetEditable.focus();
+                    range.select();
+                    cursorElement.removeAttr('cursorposition');
+                }
+                
+                inProgress = false;
+            } 
         },
         handleUndo = function(e) {
             if (e && e.preventDefault) {
@@ -111,6 +160,9 @@ define([
 
             targetEditable.bind('keydown.aloha.oer-undo', 'ctrl+z', handleUndo);
             targetEditable.bind('keydown.aloha.oer-undo', 'meta+z', handleUndo);
+
+            targetEditable.bind('keydown.aloha.oer-redo', 'ctrl+shift+z', handleRedo);
+            targetEditable.bind('keydown.aloha.oer-redo', 'meta+shift+z', handleRedo);
         }
          
     });
@@ -125,7 +177,7 @@ define([
             });
             UI.adopt('redo', Button, {
                 click: function() {
-                    console.log('redo');
+                    handleRedo()
                 }
             });
         }
