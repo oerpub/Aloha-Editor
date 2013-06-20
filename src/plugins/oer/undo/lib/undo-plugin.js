@@ -1,5 +1,3 @@
-
-
 define([
     'aloha',
     'aloha/plugin',
@@ -53,6 +51,20 @@ define([
 
             return contents;
         },
+        snapshotsAreSimilar = function(snap1, snap2) {
+
+            var $snap1 = jQuery(snap1),
+                $snap2 = jQuery(snap2);
+
+            $snap1.find('[cursorposition]').each(function() {
+                jQuery(this).removeAttr('cursorposition');
+            });
+            $snap2.find('[cursorposition]').each(function() {
+                jQuery(this).removeAttr('cursorposition');
+            });
+
+            return $snap1.html() == $snap2.html();
+        },
         handleRedo = function(e) {
             if (e && e.preventDefault) {
                 e.preventDefault();
@@ -99,18 +111,29 @@ define([
             if (e && e.preventDefault) {
                 e.preventDefault();
             }
-
-            // add current state to redo stack
-            var currentState = getSnapshot(); 
-            if (currentState != undoStack[undoStack.length-1]) {
-                console.log('changed');
-                redoStack.push(currentState);
-            } else {
-                redoStack.push(undoStack.pop());
-            }
-
-            console.log('undostack:',undoStack.length);
+        
+            // need a minimum of one thing in the undo stack to take action here
             if (undoStack.length) {
+
+                // get current state of the editor
+                var currentState = getSnapshot();
+
+                // if the current state and the last snapshot are different then
+                // we just want to revert back to the last snapshot.
+                if (snapshotsAreSimilar(currentState, undoStack[undoStack.length-1])) {
+                    console.log('changed');
+                    redoStack.push(currentState);
+
+                // if the snapshots are the same we move the most recent one over to the 
+                // redo stack and revert to the one before, this requires at least two
+                // things in the undo stack.
+                } else if (undoStack.length > 1) {
+                    redoStack.push(undoStack.pop());
+                // if the above case fails then we don't have enough information to 
+                // preform an undo
+                } else {
+                    return false;
+                }
 
                 inProgress = true;
 
@@ -182,5 +205,4 @@ define([
             });
         }
     });
-
 });
