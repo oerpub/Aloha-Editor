@@ -91,6 +91,13 @@
                     var save_url = null;</script>
             <script type="text/javascript">
 
+                $(document).ready(function() {
+                    if (window.location.search === "?showblocks") {
+                        $('[oer-blocks]').show();
+                        $('#canvas').css('margin-left', '200px');
+                    }
+                });
+
                 // HTML elements which are the options in the heading drop down
                 var headingChoices = null;
                 // Element tags which are generated as headings 
@@ -369,6 +376,34 @@
                         </ul>
                         <button class="btn action insertMath" rel="tooltip" title="Insert Math"><i class="icon-math-insert"></i></button>
                       </div>
+
+
+                      <span class="separator" style="display: none;" oer-blocks></span>
+                      <div class="btn-group" style="display: none;" oer-blocks>
+                        <button class="btn btn-text dropdown-toggle" data-toggle="dropdown" rel="tooltip" title="Add a new...">
+                          Add a new...
+                          <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                          <li><a href="#" class="action insertNote">Note to Reader</a></li>
+                          <li><a href="#" class="action insertExercise">Exercise</a></li>
+                        </ul>
+                      </div>
+                    </div>
+
+                    <div style="margin-top: 20px; width: 200px; display: none;" oer-blocks>
+                        <h4>Drag to add a new ...</h4>
+
+                        <div class="semantic-drag-source">
+                            <div class="note">
+                                <div class="title"></div>
+                            </div>
+
+                            <div class="exercise">
+                                <div class="problem"></div>
+                            </div>
+                        </div>
+
                     </div>
                 </div><!-- / ".toolbar" -->
                 </metal:toolbar>

@@ -9,7 +9,7 @@ define [
     'css!exercise/css/exercise-plugin.css'], (Aloha, Plugin, jQuery, Ephemera, UI, Button, semanticBlock) ->
 
     TEMPLATE = '''
-        <div class="exercise" data-type="exercise">
+        <div class="exercise">
             <div class="problem"></div>
         </div>
 	'''

@@ -3,7 +3,7 @@
 
   define(['aloha', 'aloha/plugin', 'jquery', 'aloha/ephemera', 'ui/ui', 'ui/button', 'semanticblock/semanticblock-plugin', 'css!exercise/css/exercise-plugin.css'], function(Aloha, Plugin, jQuery, Ephemera, UI, Button, semanticBlock) {
     var SOLUTION_TEMPLATE, SOLUTION_TYPE_CONTAINER, TEMPLATE, TYPE_CONTAINER;
-    TEMPLATE = '<div class="exercise" data-type="exercise">\n    <div class="problem"></div>\n</div>';
+    TEMPLATE = '<div class="exercise">\n    <div class="problem"></div>\n</div>';
     SOLUTION_TEMPLATE = '<div class="solution">\n</div> ';
     TYPE_CONTAINER = '<div class="type-container dropdown">\n    <a class="type" data-toggle="dropdown"></a>\n    <ul class="dropdown-menu">\n        <li><a href="">Exercise</a></li>\n        <li><a href="">Homework</a></li>\n        <li><a href="">Problem</a></li>\n        <li><a href="">Question</a></li>\n        <li><a href="">Task</a></li>\n    </ul>\n</div>';
     SOLUTION_TYPE_CONTAINER = '<div class="type-container dropdown">\n    <a class="type" data-toggle="dropdown"></a>\n    <ul class="dropdown-menu">\n        <li><a href="">Answer</a></li>\n        <li><a href="">Solution</a></li>\n    </ul>\n</div>';
