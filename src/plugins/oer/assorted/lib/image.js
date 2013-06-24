@@ -96,11 +96,9 @@
         altAdded = (!$el.attr('alt')) && dialog.find('[name=alt]').val();
         $el.attr('src', imageSource);
         $el.attr('alt', dialog.find('[name=alt]').val());
-        console.log('submit');
         if (altAdded) {
           setThankYou($el.parent());
         } else {
-          console.log('here');
           setEditText($el.parent());
         }
         deferred.resolve({
@@ -204,7 +202,6 @@
     };
     setEditText = function(wrapper) {
       var alt, editDiv;
-      console.log('asdf');
       alt = wrapper.children('img').attr('alt');
       editDiv = wrapper.children('.image-edit').css('opacity', 1);
       if (alt) {
@@ -215,7 +212,6 @@
     };
     activate = function(element) {
       var edit, img, wrapper;
-      console.log('activate');
       wrapper = $('<div class="image-wrapper">').css('width', element.css('width'));
       edit = $('<div class="image-edit">');
       img = element.find('img');
@@ -236,8 +232,8 @@
     };
     return AlohaPlugin.create('oer-image', {
       init: function() {
-        semanticBlock.activateHandler('media', activate);
-        semanticBlock.deactivateHandler('media', deactivate);
+        semanticBlock.activateHandler('.media', activate);
+        semanticBlock.deactivateHandler('.media', deactivate);
         return semanticBlock.registerEvent('click', '.aloha-oer-block .image-edit', function() {
           var img, promise;
           img = $(this).siblings('img');

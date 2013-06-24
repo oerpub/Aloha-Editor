@@ -253,8 +253,8 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
   # Return config
   AlohaPlugin.create('oer-image', {
     init: () ->
-      semanticBlock.activateHandler('media', activate)
-      semanticBlock.deactivateHandler('media', deactivate)
+      semanticBlock.activateHandler('.media', activate)
+      semanticBlock.deactivateHandler('.media', deactivate)
       semanticBlock.registerEvent 'click', '.aloha-oer-block .image-edit', ->
         img = $(this).siblings('img')
         promise = showModalDialog(img)

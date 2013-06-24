@@ -64,36 +64,15 @@
           return jQuery(this).removeClass('focused');
         }
       }, {
-        name: 'click',
-        selector: '.aloha-oer-block .type-container li a',
-        callback: function(e) {
-          e.preventDefault();
-          jQuery(this).parents('.type-container').first().children('.type').text(jQuery(this).text());
-          return jQuery(this).parents('.aloha-oer-block').first().attr('data-type', jQuery(this).text().toLowerCase());
-        }
-      }, {
-        name: 'click',
+        name: 'blur',
         selector: '[placeholder]',
         callback: function() {
-          var element;
-          element = jQuery(this);
-          if (element.attr('placeholder')) {
-            element.removeClass('placeholder');
-            if (element.attr('placeholder') === element.text()) {
-              return element.text('');
-            }
+          var $el;
+          $el = jQuery(this);
+          if (!$el.text().trim()) {
+            $el.empty();
           }
-        }
-      }, {
-        name: 'focusout',
-        selector: '[placeholder]',
-        callback: function() {
-          var element;
-          element = jQuery(this);
-          if (element.attr('placeholder') && element.text() === '') {
-            element.text(element.attr('placeholder'));
-            return element.addClass('placeholder');
-          }
+          return $el.toggleClass('aloha-empty', $el.is(':empty'));
         }
       }
     ];
@@ -170,7 +149,7 @@
       makeClean: function(content) {
         var selector;
         for (selector in deactivateHandlers) {
-          content.find(".aloha-oer-block" + selector).each(function() {
+          content.find(".aloha-oer-block." + selector).each(function() {
             return deactivate(jQuery(this));
           });
         }
@@ -178,6 +157,11 @@
       },
       init: function() {
         var _this = this;
+        Aloha.bind('aloha-editable-activated', function(e, params) {
+          var $root;
+          $root = jQuery(params.editable.obj);
+          return $root.find('[placeholder]:empty').addClass('aloha-empty');
+        });
         return Aloha.bind('aloha-editable-created', function(e, params) {
           var $root, classes, selector;
           $root = params.obj;
