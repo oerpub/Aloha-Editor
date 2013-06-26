@@ -126,6 +126,15 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, CreateLayer) {
             Ephemera.classes('aloha-current-cell', 'aloha-current-row', 'add-column-before', 'add-column-after');
 
             Aloha.bind('aloha-editable-created', function(event, editable){
+                var config = plugin.getEditableConfig(editable.obj);
+
+                /* If a config is available and this plugin is not explicitly
+                   enabled for this editable, disable it. In the absence of
+                   a specific configuration, default to enabling table
+                   events. */
+                if(config && config.enabled != undefined && !config.enabled){
+                    return
+                }
                 editable.obj.find('table').each(function(){
                     prepareTable(plugin, $(this));
                 });

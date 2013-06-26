@@ -32,6 +32,12 @@
             format: {
                 config : ['b', 'i', 'u', 'p', 'sub', 'sup', 'h1', 'h2', 'h3']
             },
+            table: {
+                editables: {
+                    '#canvas': { enabled: true },
+                    '.title-editor': {enabled: false},
+                }
+            },
             block: {
                 defaults : {
                     '.default-block': {
