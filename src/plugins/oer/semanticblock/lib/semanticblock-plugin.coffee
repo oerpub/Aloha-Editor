@@ -113,8 +113,9 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
 
     makeClean: (content) ->
       for selector of deactivateHandlers
-        content.find(".aloha-oer-block.#{selector}").each ->
+        content.find(".aloha-oer-block#{selector}").each ->
           deactivate jQuery(this)
+
       cleanIds(content)
 
     init: ->
@@ -186,4 +187,3 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
         name: name
         selector: selector
         callback: callback
-
