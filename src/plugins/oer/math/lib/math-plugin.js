@@ -95,7 +95,7 @@
         range.startContainer = range.endContainer = $el[0];
         range.startOffset = range.endOffset = 0;
         Aloha.Selection.rangeObject = range;
-        Aloha.trigger('aloha-selection-changed', range);
+        Aloha.trigger('aloha-selection-changed', [range, evt]);
         return evt.stopPropagation();
       });
       editable.obj.on('click.matheditor', '.math-element-destroy', function(e) {

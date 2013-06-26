@@ -148,7 +148,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', '
       Aloha.Selection.rangeObject = range
 
       #evt.target = evt.currentTarget = $el[0]
-      Aloha.trigger('aloha-selection-changed', range)
+      Aloha.trigger('aloha-selection-changed', [range, evt])
 
       # Since the click is on the math-element or its children
       # (the math element is just a little horizontal bar but its children
