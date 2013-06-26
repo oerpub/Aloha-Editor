@@ -57,7 +57,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', '
           <label class="radio inline mime-type-mathml">
               <input type="radio" name="mime-type" value="math/mml"> MathML
           </label>
-          <label class="radio inline">
+          <label class="plaintext-label radio inline">
               <input type="radio" name="mime-type" value="text/plain"> Plain text
           </label>
           <button class="btn btn-primary done">Done</button>
@@ -246,6 +246,11 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', '
   # $span contains the span with LaTeX/ASCIIMath
   buildEditor = ($span) ->
     $editor = jQuery(EDITOR_HTML)
+
+    # If this is new math, drop the plain text option.
+    if $span.find('.mathjax-wrapper > *').length == 0
+      $editor.find('.plaintext-label').remove()
+
     # Bind some actions for the buttons
     $editor.find('.done').on 'click', =>
       if not $span.next().is '.aloha-ephemera-wrapper'
