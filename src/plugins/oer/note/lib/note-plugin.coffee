@@ -10,7 +10,7 @@ define [
 
   TYPE_CONTAINER = jQuery '''
       <span class="type-container dropdown aloha-ephemera">
-          <a class="type" data-toggle="dropdown"></a>
+          <a class="type" href="#" data-toggle="dropdown"></a>
           <ul class="dropdown-menu">
           </ul>
       </span>
@@ -81,34 +81,51 @@ define [
 
           typeContainer = TYPE_CONTAINER.clone()
           # Add dropdown elements for each possible type
-          jQuery.each @settings, (i, dropType) =>
-            $option = jQuery('<li><a href=""></a></li>')
-            $option.appendTo(typeContainer.find('.dropdown-menu'))
-            $option = $option.children('a')
-            $option.text(dropType.label)
-            $option.on 'click', (e) =>
-              e.preventDefault()
-              # Remove the title if this type does not have one
-              if dropType.hasTitle
-                # If there is no `.title` element then add one in and enable it as an Aloha block
-                if not $element.children('.title')[0]
-                  $newTitle = jQuery("<#{dropType.titleTagName or 'span'} class='title'></#{dropType.titleTagName or 'span'}")
-                  $element.append($newTitle)
-                  $newTitle.aloha()
-
-              else
-                $element.children('.title').remove()
-
-              # Remove the `data-type` if this type does not have one
-              if dropType.type
-                $element.attr('data-type', dropType.type)
-              else
-                $element.removeAttr('data-type')
-
-              # Remove all notish class names and then add this one in
-              for key of notishClasses
-                $element.removeClass key
-              $element.addClass(dropType.cls)
+          if @settings.length > 1
+            jQuery.each @settings, (i, dropType) =>
+              $option = jQuery('<li><a href="#"></a></li>')
+              $option.appendTo(typeContainer.find('.dropdown-menu'))
+              $option = $option.children('a')
+              $option.text(dropType.label)
+              typeContainer.find('.type').on 'click', =>
+                jQuery.each @settings, (i, dropType) =>
+                  if $element.attr('data-type') == dropType.type
+                    typeContainer.find('.dropdown-menu li').each (i, li) =>
+                      jQuery(li).removeClass('checked')
+                      if jQuery(li).children('a').text() == dropType.label
+                        jQuery(li).addClass('checked')
+                      
+                  
+                       
+                  
+              $option.on 'click', (e) =>
+                e.preventDefault()
+                # Remove the title if this type does not have one
+                if dropType.hasTitle
+                  # If there is no `.title` element then add one in and enable it as an Aloha block
+                  if not $element.children('.title')[0]
+                    $newTitle = jQuery("<#{dropType.titleTagName or 'span'} class='title'></#{dropType.titleTagName or 'span'}")
+                    $element.append($newTitle)
+                    $newTitle.aloha()
+          
+                else
+                  $element.children('.title').remove()
+          
+                # Remove the `data-type` if this type does not have one
+                if dropType.type
+                  $element.attr('data-type', dropType.type)
+                else
+                  $element.removeAttr('data-type')
+              
+                typeContainer.find('.type').text(dropType.label)
+          
+                # Remove all notish class names and then add this one in
+                for key of notishClasses
+                  $element.removeClass key
+                $element.addClass(dropType.cls)
+          else
+            typeContainer.find('.dropdown-menu').remove()
+            typeContainer.find('.type').removeAttr('data-toggle')
 
 
           typeContainer.find('.type').text(label)

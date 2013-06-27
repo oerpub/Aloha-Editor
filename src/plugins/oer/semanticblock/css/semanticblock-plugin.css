@@ -124,8 +124,16 @@
     text-decoration: none;
 }
 
+.aloha-oer-block .type-container ul.dropdown-menu {
+    margin: -1.5em 0 0 0 !important;
+}
+
 .aloha-oer-block .type-container li {
     list-style-type: none !important;
+}
+.aloha-oer-block .type-container li.checked a:before {
+    content: "\2713";
+    margin: 0 3px 0 -14px;
 }
 
 .aloha-oer-block .title {

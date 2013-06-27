@@ -3,7 +3,7 @@
 
   define(['aloha', 'aloha/plugin', 'jquery', 'aloha/ephemera', 'ui/ui', 'ui/button', 'semanticblock/semanticblock-plugin', 'css!note/css/note-plugin.css'], function(Aloha, Plugin, jQuery, Ephemera, UI, Button, semanticBlock) {
     var TYPE_CONTAINER, notishClasses;
-    TYPE_CONTAINER = jQuery('<span class="type-container dropdown aloha-ephemera">\n    <a class="type" data-toggle="dropdown"></a>\n    <ul class="dropdown-menu">\n    </ul>\n</span>');
+    TYPE_CONTAINER = jQuery('<span class="type-container dropdown aloha-ephemera">\n    <a class="type" href="#" data-toggle="dropdown"></a>\n    <ul class="dropdown-menu">\n    </ul>\n</span>');
     notishClasses = {};
     return Plugin.create('note', {
       defaults: [
@@ -44,41 +44,58 @@
           }
           semanticBlock.activateHandler(selector, function($element) {
             var $body, $title, typeContainer;
-            type = $element.attr('data-type') || className;
             $title = $element.children('.title');
             $title.attr('placeholder', 'Add a title (optional)');
             $title.aloha();
             $body = $element.contents().not($title);
             typeContainer = TYPE_CONTAINER.clone();
-            jQuery.each(_this.settings, function(i, dropType) {
-              var $option;
-              $option = jQuery('<li><a href=""></a></li>');
-              $option.appendTo(typeContainer.find('.dropdown-menu'));
-              $option = $option.children('a');
-              $option.text(dropType.label);
-              return $option.on('click', function(e) {
-                var $newTitle, key;
-                e.preventDefault();
-                if (dropType.hasTitle) {
-                  if (!$element.children('.title')[0]) {
-                    $newTitle = jQuery("<" + (dropType.titleTagName || 'span') + " class='title'></" + (dropType.titleTagName || 'span'));
-                    $element.append($newTitle);
-                    $newTitle.aloha();
+            if (_this.settings.length > 1) {
+              jQuery.each(_this.settings, function(i, dropType) {
+                var $option;
+                $option = jQuery('<li><a href="#"></a></li>');
+                $option.appendTo(typeContainer.find('.dropdown-menu'));
+                $option = $option.children('a');
+                $option.text(dropType.label);
+                typeContainer.find('.type').on('click', function() {
+                  return jQuery.each(_this.settings, function(i, dropType) {
+                    if ($element.attr('data-type') === dropType.type) {
+                      return typeContainer.find('.dropdown-menu li').each(function(i, li) {
+                        jQuery(li).removeClass('checked');
+                        if (jQuery(li).children('a').text() === dropType.label) {
+                          return jQuery(li).addClass('checked');
+                        }
+                      });
+                    }
+                  });
+                });
+                return $option.on('click', function(e) {
+                  var $newTitle, key;
+                  e.preventDefault();
+                  if (dropType.hasTitle) {
+                    if (!$element.children('.title')[0]) {
+                      $newTitle = jQuery("<" + (dropType.titleTagName || 'span') + " class='title'></" + (dropType.titleTagName || 'span'));
+                      $element.append($newTitle);
+                      $newTitle.aloha();
+                    }
+                  } else {
+                    $element.children('.title').remove();
                   }
-                } else {
-                  $element.children('.title').remove();
-                }
-                if (dropType.type) {
-                  $element.attr('data-type', dropType.type);
-                } else {
-                  $element.removeAttr('data-type');
-                }
-                for (key in notishClasses) {
-                  $element.removeClass(key);
-                }
-                return $element.addClass(dropType.cls);
+                  if (dropType.type) {
+                    $element.attr('data-type', dropType.type);
+                  } else {
+                    $element.removeAttr('data-type');
+                  }
+                  typeContainer.find('.type').text(dropType.label);
+                  for (key in notishClasses) {
+                    $element.removeClass(key);
+                  }
+                  return $element.addClass(dropType.cls);
+                });
               });
-            });
+            } else {
+              typeContainer.find('.dropdown-menu').remove();
+              typeContainer.find('.type').removeAttr('data-toggle');
+            }
             typeContainer.find('.type').text(label);
             typeContainer.prependTo($element);
             return $('<div>').addClass('body').attr('placeholder', "Type the text of your " + className + " here.").append($body).appendTo($element).aloha();
