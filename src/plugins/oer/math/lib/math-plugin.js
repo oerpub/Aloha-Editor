@@ -78,7 +78,7 @@
       var $editable, $maths, $pastedMath;
       $editable = obj.editable.obj;
       $pastedMath = $editable.find('.math-element[data-mathml-src]');
-      $pastedMath = $pastedMath.not($editable.find('.math-element math'));
+      $pastedMath = $pastedMath.not($editable.find('.math-element > .mathml-wrapper > math').parent().parent());
       jQuery.each($pastedMath, function(i, el) {
         var $el, mml;
         $el = jQuery(el);

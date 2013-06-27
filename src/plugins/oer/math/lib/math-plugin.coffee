@@ -148,7 +148,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', '
     # -------
     # If math was pasted from the clipboard then recreate the mathml element
     $pastedMath = $editable.find('.math-element[data-mathml-src]')
-    $pastedMath = $pastedMath.not $editable.find('.math-element math')
+    $pastedMath = $pastedMath.not $editable.find('.math-element > .mathml-wrapper > math').parent().parent()
 
     jQuery.each $pastedMath, (i, el) ->
       $el = jQuery(el)
