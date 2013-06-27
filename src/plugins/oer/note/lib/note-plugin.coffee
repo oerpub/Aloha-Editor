@@ -8,14 +8,13 @@ define [
   'semanticblock/semanticblock-plugin'
   'css!note/css/note-plugin.css'], (Aloha, Plugin, jQuery, Ephemera, UI, Button, semanticBlock) ->
 
-  TITLE_CONTAINER = jQuery('''
-        <div class="type-container dropdown">
-            <a class="type" data-toggle="dropdown"></a>
-            <span class="title" placeholder="Add a title (optional)"></span>
-            <ul class="dropdown-menu">
-            </ul>
-        </div>
-  ''')
+  TYPE_CONTAINER = jQuery '''
+      <span class="type-container dropdown aloha-ephemera">
+          <a class="type" data-toggle="dropdown"></a>
+          <ul class="dropdown-menu">
+          </ul>
+      </span>
+  '''
 
   # Find all classes that could mean something is "notish"
   # so they can be removed when the type is changed from the dropdown.
@@ -72,87 +71,77 @@ define [
         if hasTitle
           newTemplate.append("<#{titleTagName} class='title'></#{titleTagName}")
 
-        semanticBlock.activateHandler(selector, (element) =>
-          if hasTitle
-            titleElement = element.children('.title')
+        semanticBlock.activateHandler(selector, ($element) =>
 
-            if titleElement.length
-              title = titleElement.html()
-              titleElement.remove()
-            else
-              title = ''
+          $title = $element.children('.title')
+          $title.attr('placeholder', 'Add a title (optional)')
+          $title.aloha()
 
-          type = element.attr('data-type') or className
+          $body = $element.contents().not($title)
 
-          body = element.children()
-          element.children().remove()
+          typeContainer = TYPE_CONTAINER.clone()
+          # Add dropdown elements for each possible type
+          jQuery.each @settings, (i, dropType) =>
+            $option = jQuery('<li><a href=""></a></li>')
+            $option.appendTo(typeContainer.find('.dropdown-menu'))
+            $option = $option.children('a')
+            $option.text(dropType.label)
+            $option.on 'click', (e) =>
+              e.preventDefault()
+              # Remove the title if this type does not have one
+              if dropType.hasTitle
+                # If there is no `.title` element then add one in and enable it as an Aloha block
+                if not $element.children('.title')[0]
+                  $newTitle = jQuery("<#{dropType.titleTagName or 'span'} class='title'></#{dropType.titleTagName or 'span'}")
+                  $element.append($newTitle)
+                  $newTitle.aloha()
 
-          if hasTitle
-            titleContainer = TITLE_CONTAINER.clone()
-            # Add dropdown elements for each possible type
-            jQuery.each @settings, (i, foo) =>
-              $option = jQuery('<li><a href=""></a></li>')
-              $option.appendTo(titleContainer.find('.dropdown-menu'))
-              $option = $option.children('a')
-              $option.text(foo.label)
-              $option.on 'click', =>
-                # Remove the title if this type does not have one
-                # The title was moved into `.type-container` for some reason
-                if foo.hasTitle
-                  # If there is no `.title` element then add one in and enable it as an Aloha block
-                  if not element.find('> .type-container > .title')[0]
-                    $newTitle = jQuery("<#{foo.titleTagName or 'span'} class='title'></#{foo.titleTagName or 'span'}")
-                    element.children('.type-container').append($newTitle)
-                    $newTitle.aloha()
+              else
+                $element.children('.title').remove()
 
-                else
-                  element.find('> .type-container > .title').remove()
+              # Remove the `data-type` if this type does not have one
+              if dropType.type
+                $element.attr('data-type', dropType.type)
+              else
+                $element.removeAttr('data-type')
 
-                # Remove the `data-type` if this type does not have one
-                if foo.type
-                  element.attr('data-type', foo.type)
-                else
-                  element.removeAttr('data-type')
-
-                # Remove all notish class names and then add this one in
-                for key of notishClasses
-                  element.removeClass key
-                element.addClass(foo.cls)
+              # Remove all notish class names and then add this one in
+              for key of notishClasses
+                $element.removeClass key
+              $element.addClass(dropType.cls)
 
 
-            titleContainer.find('.title').text(title)
-            titleContainer.find('.type').text(label)
-            titleContainer.prependTo(element)
-            titleContainer.children('.title').aloha()
+          typeContainer.find('.type').text(label)
+          typeContainer.prependTo($element)
 
           # Create the body and add some placeholder text
           $('<div>').addClass('body')
           .attr('placeholder', "Type the text of your #{className} here.")
-          .append(body)
-          .appendTo(element)
+          .append($body)
+          .appendTo($element)
           .aloha()
         )
-        semanticBlock.deactivateHandler(selector, (element) ->
-          bodyElement = element.children('.body')
-          body = bodyElement.html()
+        semanticBlock.deactivateHandler(selector, ($element) ->
+          $body = $element.children('.body')
+          # The body div could just contain text children.
+          # If so, we need to wrap them in a `p` element
+          hasTextChildren = $body.children().length != $body.contents().length
+          $body = $body.contents()
+          $body = $body.wrap('<p></p>').parent() if hasTextChildren
 
-          if body == bodyElement.attr('placeholder')
-            body = ''
-
-          element.children('.body').remove()
+          $element.children('.body').remove()
 
           if hasTitle
-            titleElement = element.children('.type-container').children('.title')
-            title = titleElement.text()
+            $titleElement = $element.children('.title')
+            $title = jQuery("<#{titleTagName} class=\"title\"></#{titleTagName}>")
 
-            if title == titleElement.attr('placeholder')
-              title = ''
+            if $titleElement.length
+              $title.append($titleElement.contents())
+              $titleElement.remove()
 
-            jQuery("<div>").addClass('title').text(title).prependTo(element) if title
+            $title.prependTo($element)
 
-          element.children('.type-container').remove()
-
-          jQuery('<p>').append(body).appendTo(element)
+          $element.append($body)
         )
         # Add a listener
         UI.adopt "insert-#{className}#{typeName}", Button,

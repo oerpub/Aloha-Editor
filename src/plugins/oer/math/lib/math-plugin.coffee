@@ -57,7 +57,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', '
           <label class="radio inline mime-type-mathml">
               <input type="radio" name="mime-type" value="math/mml"> MathML
           </label>
-          <label class="radio inline">
+          <label class="plaintext-label radio inline">
               <input type="radio" name="mime-type" value="text/plain"> Plain text
           </label>
           <button class="btn btn-primary done">Done</button>
@@ -85,6 +85,32 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', '
   # add `aloha-ephemera-wrapper` so this span is unwrapped
   Aloha.ready ->
     MathJax.Hub.Configured() if MathJax?
+
+  placeCursorAfter = (el) ->
+    # The selection-changed stuff in aloha incorrectly thinks we are
+    # still inside the math if we attempt to place the cursor JUST after it,
+    # so the best thing to do is add a wrapper element which we can focus. By
+    # marking this as aloha-ephemera-wrapper, the text inside it is unwrapped
+    # when the document is serialised.
+    n = el.next()
+    if n.is('span.math-element-spaceafter')
+      $tail = n
+    else
+      $tail = jQuery('<span class="math-element-spaceafter aloha-ephemera-wrapper"></span>')
+      el.after($tail)
+
+    # This will likely break in IE
+    range = document.createRange()
+    range.setStart($tail[0], 0)
+    range.collapse(true)
+
+    sel = window.getSelection()
+    sel.removeAllRanges()
+    sel.addRange(range)
+
+    # Focus the editable in which el lives
+    el.parents('.aloha-editable').first().focus()
+
 
   getMathFor = (id) ->
     jax = MathJax?.Hub.getJaxFor id
@@ -125,9 +151,6 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', '
         if mathParts.mimeType in MATHML_ANNOTATION_MIME_ENCODINGS
           addAnnotation $mathElement, mathParts.formula, mathParts.mimeType
         makeCloseIcon $mathElement
-        if not $mathElement.next().is '.aloha-ephemera-wrapper'
-          # a math meta-element needs to followed by a non-breaking space in a span
-          jQuery('<span class="aloha-ephemera-wrapper">&#160;</span>').insertAfter($mathElement)
 
   # New math can enter in 2 ways:
   #
@@ -197,7 +220,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', '
       Aloha.Selection.rangeObject = range
 
       #evt.target = evt.currentTarget = $el[0]
-      Aloha.trigger('aloha-selection-changed', range)
+      Aloha.trigger('aloha-selection-changed', [range, evt])
 
       # Since the click is on the math-element or its children
       # (the math element is just a little horizontal bar but its children
@@ -242,32 +265,18 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', '
       $el.trigger 'show'
       makeCloseIcon($el)
     else
-      # a math meta-element needs to followed by a non-breaking space in a span
-      $tail = jQuery('<span class="aloha-ephemera-wrapper">&#160;</span>')
       # Assume the user highlighted ASCIIMath (by putting the text in backticks)
       formula = range.getText()
       $el.find('.mathjax-wrapper').text(LANGUAGES['math/asciimath'].open +
                                         formula +
                                         LANGUAGES['math/asciimath'].close)
       GENTICS.Utils.Dom.removeRange range
-      GENTICS.Utils.Dom.insertIntoDOM $el.add($tail), range, Aloha.activeEditable.obj
+      GENTICS.Utils.Dom.insertIntoDOM $el, range, Aloha.activeEditable.obj
       triggerMathJax $el, ->
         addAnnotation $el, formula, 'math/asciimath'
         makeCloseIcon($el)
-
-        # This will likely break in IE
-        sel = window.getSelection()
-        r = sel.getRangeAt(0)
-        r.selectNodeContents($tail.parent().get(0))
-        r.setEndAfter($tail.get(0))
-        r.setStartAfter($tail.get(0))
-        sel.removeAllRanges()
-        sel.addRange(r)
-
-        # Let aloha know what we've done
-        r = new GENTICS.Utils.RangeObject()
-        r.update()
-        Aloha.Selection.rangeObject = r
+        Aloha.Selection.preventSelectionChanged()
+        placeCursorAfter($el)
         Aloha.activeEditable.smartContentChange {type: 'block-change'}
 
   # Register the button with an action
@@ -285,7 +294,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', '
         cb?()
       MathJax.Hub.Queue ["Typeset", MathJax.Hub, $mathElement.find('.mathjax-wrapper')[0], callback]
     else
-      console.log 'MathJax was not loaded properly'
+      console and console.log 'MathJax was not loaded properly'
 
   cleanupFormula = ($editor, $span, destroy=false) ->
     # If math is empty, remove the box
@@ -296,12 +305,15 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', '
   # $span contains the span with LaTeX/ASCIIMath
   buildEditor = ($span) ->
     $editor = jQuery(EDITOR_HTML)
+
+    # If this is new math, drop the plain text option.
+    if $span.find('.mathjax-wrapper > *').length == 0
+      $editor.find('.plaintext-label').remove()
+
     # Bind some actions for the buttons
     $editor.find('.done').on 'click', =>
-      if not $span.next().is '.aloha-ephemera-wrapper'
-        # a math meta-element needs to followed by a non-breaking space in a span
-        jQuery('<span class="aloha-ephemera-wrapper">&#160;</span>').insertAfter($span)
       $span.trigger 'hide'
+      placeCursorAfter($span)
     $editor.find('.remove').on 'click', =>
       $span.trigger 'hide'
       cleanupFormula($editor, $span, true)
