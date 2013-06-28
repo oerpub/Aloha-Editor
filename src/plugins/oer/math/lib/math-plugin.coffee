@@ -64,6 +64,8 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', '
         </div>
     </div>
   '''
+  # This will be cloned to create a new editor for each popover.
+  $_editor = jQuery(EDITOR_HTML)
 
   LANGUAGES =
     'math/asciimath': {open: '`', close: '`', raw:false}
@@ -230,10 +232,6 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', '
         placeCursorAfter($el)
         Aloha.activeEditable.smartContentChange {type: 'block-change'}
 
-  # Register the button with an action
-  UI.adopt 'insertMath', null,
-    click: () -> insertMath()
-
   # STEP2
   triggerMathJax = ($mathElement, cb) ->
     if MathJax?
@@ -254,7 +252,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', '
 
   # $span contains the span with LaTeX/ASCIIMath
   buildEditor = ($span) ->
-    $editor = jQuery(EDITOR_HTML)
+    $editor = $_editor.clone(true)
 
     # If this is new math, drop the plain text option.
     if $span.find('.mathjax-wrapper > *').length == 0
@@ -345,7 +343,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', '
         clearTimeout(keyTimeout)
         setTimeout(keyDelay.bind($formula), 500)
 
-    $span.off('shown-popover').on 'shown-popover', () ->
+    $span.off('shown-popover.math').on 'shown-popover.math', () ->
       $span.css 'background-color', '#E5EEF5'
       $el = jQuery(@)
       tt = $el.data('tooltip')
@@ -355,7 +353,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', '
         $popover.$tip.find('.formula').trigger('focus') if $popover
       , 10)
 
-    $span.off('hidden-popover').on 'hidden-popover', () ->
+    $span.off('hidden-popover.math').on 'hidden-popover.math', () ->
       $span.css 'background-color', ''
       tt = jQuery(@).data('tooltip')
       tt.enable() if tt
@@ -442,9 +440,16 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', '
               return { 'mimeType': encoding, 'formula': formula }
     return { 'mimeType': mimeType, 'formula': formula }
 
-  SELECTOR = '.math-element' # ,.MathJax[role="textbox"][aria-readonly="true"],.MathJax_Display[role="textbox"][aria-readonly="true"]'
-  Popover.register
-    selector: SELECTOR
+  # Register the button with an action
+  UI.adopt 'insertMath', null,
+    click: () -> insertMath()
+
+  ob =
+    selector: '.math-element'
     populator: buildEditor
     placement: 'top'
     markerclass: 'math-popover'
+    # Expose editor, so the cheatsheet plugin can modify it.
+    editor: $_editor
+
+  Popover.register ob
