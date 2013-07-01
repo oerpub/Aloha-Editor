@@ -26,11 +26,3 @@
 .note .body {
   margin: 10px;
 }
-
-.note .title.placeholder {
-    display: none;
-}
-
-.semantic-container.focused > .note > .type-container .title.placeholder {
-    display: inline;
-}

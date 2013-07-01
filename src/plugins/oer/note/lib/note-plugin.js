@@ -45,7 +45,7 @@
           semanticBlock.activateHandler(selector, function($element) {
             var $body, $title, typeContainer;
             $title = $element.children('.title');
-            $title.attr('placeholder', 'Add a title (optional)');
+            $title.attr('hover-placeholder', 'Add a title (optional)');
             $title.aloha();
             $body = $element.contents().not($title);
             typeContainer = TYPE_CONTAINER.clone();

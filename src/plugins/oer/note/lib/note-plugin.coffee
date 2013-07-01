@@ -74,7 +74,7 @@ define [
         semanticBlock.activateHandler(selector, ($element) =>
 
           $title = $element.children('.title')
-          $title.attr('placeholder', 'Add a title (optional)')
+          $title.attr('hover-placeholder', 'Add a title (optional)')
           $title.aloha()
 
           $body = $element.contents().not($title)
