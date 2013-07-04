@@ -105,7 +105,6 @@ define [ 'jquery', 'aloha', 'aloha/plugin', 'ui/ui', 'PubSub' ], (
         $oldEl = Aloha.jQuery(rangeObject.getCommonAncestorContainer())
         $newEl = Aloha.jQuery(Aloha.Selection.getRangeObject().getCommonAncestorContainer())
         $newEl.addClass($oldEl.attr('class'))
-        $newEl.bind 'click', headingFunc
         # $newEl.attr('id', $oldEl.attr('id))
         # Setting the id is commented because otherwise collaboration wouldn't register a change in the document
 
@@ -119,27 +118,31 @@ define [ 'jquery', 'aloha', 'aloha/plugin', 'ui/ui', 'PubSub' ], (
       Aloha.bind 'aloha-editable-activated', (event, data) ->
         squirreledEditable = data.editable
 
-      # Keep track of the range because Aloha.Selection.obj seems to go {} sometimes
-      Aloha.bind "aloha-selection-changed", (event, rangeObject) ->
-        # Squirrel away the range because clicking the button changes focus and removed the range
-        $el = Aloha.jQuery(rangeObject.startContainer)
-
+      PubSub.sub 'aloha.selection.context-change', (data) ->
+        el = data.range.commonAncestorContainer
+        # Use the first button in the headings area
+        button = $ROOT.find('.headings button').first()
+        currentHeading = $ROOT.find('.headings .currentHeading')
         headings = $ROOT.find('.action.changeHeading')
-
-        # Set the default text (changeit if we're in a heading later in the loop)
-        currentHeading = $ROOT.find('.action.currentHeading')
-        currentHeading.text(headings.first().text())
-        currentHeading.on('click', (evt) -> evt.preventDefault())
-
+        tagnames = []
         headings.each () ->
-          heading = jQuery(@)
-          selector = heading.attr('data-tagname')
-          #heading.removeClass('active')
-          if selector and $el.parents(selector)[0]
-            #heading.addClass('active')
-            # Update the toolbar to show the current heading level
-            currentHeading.text(heading.text())
+          tagnames.push($(this).attr('data-tagname').toUpperCase())
 
+        # Figure out if we are in any particular heading
+        h = $(el).parentsUntil('.aloha-editable').andSelf()
+        h = h.filter(tagnames.join(',')).first()
+
+        if not h.length
+          button.prop('disabled', true)
+          currentHeading.html(headings.first().text())
+        else
+          button.prop('disabled', false)
+          active = $.grep headings, (elem, i) ->
+            $(elem).attr('data-tagname').toUpperCase()==h[0].tagName
+          if active.length
+            currentHeading.html($(active[0]).html())
+          else
+            currentHeading.html(headings.first().text())
 
     # Components of which we are the parent (not buttons) will call
     # these when they are activated. Change it into an event so it can
