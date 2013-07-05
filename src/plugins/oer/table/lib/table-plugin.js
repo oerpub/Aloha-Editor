@@ -153,7 +153,10 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, CreateLayer) {
                 // Aloha has its own 'keydown' event handler which will fire before the above handler
                 // and which will cause havoc ... havoc I tell you. Tables will be split!!!
                 // Change the order of the event handlers to suit our own purposes.
-                editable.obj.data('events')['keydown'].unshift(editable.obj.data('events')['keydown'].pop());
+                // XXX: Modifying internal structures like this is evil
+                // and unsupported. This will break again in future.
+                var handlers = $._data(editable.obj[0], 'events')['keydown'];
+                handlers.unshift(handlers.pop());
 
                 editable.obj.bind('keydown', 'tab shift+tab', function(e){
                     var $cell = $(
