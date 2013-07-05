@@ -16,7 +16,8 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
     name: 'mouseleave'
     selector: '.aloha-block-draghandle'
     callback: ->
-      jQuery(this).parents('.semantic-container').removeClass 'drag-active'  unless jQuery(this).parents('.semantic-container').data('dragging')
+      jQuery(this).parents('.semantic-container')
+        .removeClass 'drag-active'  unless jQuery(this).parents('.semantic-container').is('.aloha-oer-dragging')
   ,
     name: 'mouseenter'
     selector: '.semantic-delete'
@@ -32,12 +33,12 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
     selector: '.aloha-block-draghandle'
     callback: (e) ->
       e.preventDefault()
-      jQuery(this).parents('.semantic-container').data 'dragging', true
+      jQuery(this).parents('.semantic-container').addClass 'aloha-oer-dragging', true
   ,
     name: 'mouseup'
     selector: '.aloha-block-draghandle'
     callback: ->
-      jQuery(this).parents('.semantic-container').data 'dragging', false
+      jQuery(this).parents('.semantic-container').removeClass 'aloha-oer-dragging'
   ,
     name: 'click'
     selector: '.semantic-container .semantic-delete'

@@ -22,7 +22,7 @@
         name: 'mouseleave',
         selector: '.aloha-block-draghandle',
         callback: function() {
-          if (!jQuery(this).parents('.semantic-container').data('dragging')) {
+          if (!jQuery(this).parents('.semantic-container').is('.aloha-oer-dragging')) {
             return jQuery(this).parents('.semantic-container').removeClass('drag-active');
           }
         }
@@ -43,13 +43,13 @@
         selector: '.aloha-block-draghandle',
         callback: function(e) {
           e.preventDefault();
-          return jQuery(this).parents('.semantic-container').data('dragging', true);
+          return jQuery(this).parents('.semantic-container').addClass('aloha-oer-dragging', true);
         }
       }, {
         name: 'mouseup',
         selector: '.aloha-block-draghandle',
         callback: function() {
-          return jQuery(this).parents('.semantic-container').data('dragging', false);
+          return jQuery(this).parents('.semantic-container').removeClass('aloha-oer-dragging');
         }
       }, {
         name: 'click',

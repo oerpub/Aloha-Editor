@@ -1,23 +1,6 @@
-.semantic-drag-source .exercise > * {
-    display: none;
-}
-.semantic-drag-source .exercise:hover {
-    background: #DDD;
-}
-.semantic-drag-source .exercise {
-    margin: 5px;
-    padding: 5px 0 5px 10px;
-    border: 1px solid black;
-    min-height: 0;
-    height: 20px;
-    width: 155px;
-    border-radius: 5px;
-    background: #EEE;
-}
 .semantic-drag-source .exercise:before {
     content: "Exercise";
 }
-
 .exercise {
     min-height: 50px;
 }

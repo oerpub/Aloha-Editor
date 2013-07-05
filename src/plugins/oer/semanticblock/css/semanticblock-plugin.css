@@ -67,6 +67,10 @@
     position: absolute;
     left: 50%;
     display: none !important; /* override the default aloha display logic for handles */
+    cursor: url('openhand.cur'), default;
+}
+.semantic-container.aloha-oer-dragging .aloha-block-handle {
+    cursor: url('closedhand.cur'), default;
 }
 .semantic-container.drag-active .aloha-block-handle {
     background-color: #F0F0F0;
@@ -157,6 +161,23 @@
 }
 
 /* ========== note ========== */
+.semantic-drag-source > * > * {
+    display: none;
+}
+.semantic-drag-source > *:hover {
+    background: #DDD;
+}
+.semantic-drag-source > * {
+    margin: 5px;
+    padding: 5px 0 5px 10px;
+    border: 1px solid black;
+    min-height: 0 !important;
+    height: 20px;
+    width: 155px;
+    border-radius: 5px;
+    background: #EEE;
+    cursor: url('openhand.cur'), default;
+}
 
 .semantic-drag-helper {
     border-radius: 5px;
@@ -168,6 +189,7 @@
     height: 50px;
     max-width: 300px;
     max-height: 50px;
+    cursor: url('closedhand.cur'), default;
 }
 
 .semantic-drag-helper .title,
@@ -185,4 +207,5 @@
 .semantic-drag-helper .title {
     color: #369;
 }
+
 
