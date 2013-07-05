@@ -112,6 +112,11 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
   Plugin.create 'semanticblock',
 
     makeClean: (content) ->
+
+      content.find('.semantic-container').each ->
+        if jQuery(this).children().not('.semantic-controls').length == 0
+          jQuery(this).remove()
+
       for selector of deactivateHandlers
         content.find(".aloha-oer-block#{selector}").each ->
           deactivate jQuery(this)

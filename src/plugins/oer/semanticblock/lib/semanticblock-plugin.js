@@ -148,6 +148,11 @@
     return Plugin.create('semanticblock', {
       makeClean: function(content) {
         var selector;
+        content.find('.semantic-container').each(function() {
+          if (jQuery(this).children().not('.semantic-controls').length === 0) {
+            return jQuery(this).remove();
+          }
+        });
         for (selector in deactivateHandlers) {
           content.find(".aloha-oer-block" + selector).each(function() {
             return deactivate(jQuery(this));

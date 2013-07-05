@@ -105,6 +105,7 @@
           target: $el[0],
           files: $uploadImage[0].files
         });
+        $el.parents('.media').removeClass('aloha-ephemera');
         return dialog.modal('hide');
       });
       dialog.on('click', '.btn.action.cancel', function(evt) {
@@ -162,7 +163,7 @@
     UI.adopt('insertImage-oer', null, {
       click: function() {
         var newEl, promise, template;
-        template = $('<span class="media"><img /></span>');
+        template = $('<span class="media aloha-ephemera"><img /></span>');
         semanticBlock.insertAtCursor(template);
         newEl = template.find('img');
         promise = showModalDialog(newEl);
