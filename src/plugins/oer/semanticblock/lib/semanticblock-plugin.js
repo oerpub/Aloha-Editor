@@ -7,7 +7,7 @@
       return pluginManager.plugins.semanticblock;
     }
     blockTemplate = jQuery('<div class="semantic-container"></div>');
-    blockControls = jQuery('<div class="semantic-controls"><button class="semantic-delete"><i class="icon-remove"></i></button></div>');
+    blockControls = jQuery('<div class="semantic-controls"><button class="semantic-delete" title="Remove this element."><i class="icon-remove"></i></button></div>');
     blockDragHelper = jQuery('<div class="semantic-drag-helper"><div class="title"></div><div class="body">Drag me to the desired location in the document</div></div>');
     activateHandlers = {};
     deactivateHandlers = {};
@@ -25,6 +25,18 @@
           if (!jQuery(this).parents('.semantic-container').data('dragging')) {
             return jQuery(this).parents('.semantic-container').removeClass('drag-active');
           }
+        }
+      }, {
+        name: 'mouseenter',
+        selector: '.semantic-delete',
+        callback: function() {
+          return jQuery(this).parents('.semantic-container').addClass('delete-hover');
+        }
+      }, {
+        name: 'mouseleave',
+        selector: '.semantic-delete',
+        callback: function() {
+          return jQuery(this).parents('.semantic-container').removeClass('delete-hover');
         }
       }, {
         name: 'mousedown',
@@ -54,8 +66,9 @@
         callback: function() {
           jQuery(this).parents('.semantic-container').removeClass('focused');
           if (!jQuery(this).find('.focused').length) {
-            return jQuery(this).addClass('focused');
+            jQuery(this).addClass('focused');
           }
+          return jQuery(this).find('.aloha-block-handle').attr('title', 'Drag this element to another location.');
         }
       }, {
         name: 'mouseout',

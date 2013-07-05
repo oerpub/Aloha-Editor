@@ -3,7 +3,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
   # hack to accomodate multiple executions
   return pluginManager.plugins.semanticblock  if pluginManager.plugins.semanticblock
   blockTemplate = jQuery('<div class="semantic-container"></div>')
-  blockControls = jQuery('<div class="semantic-controls"><button class="semantic-delete"><i class="icon-remove"></i></button></div>')
+  blockControls = jQuery('<div class="semantic-controls"><button class="semantic-delete" title="Remove this element."><i class="icon-remove"></i></button></div>')
   blockDragHelper = jQuery('<div class="semantic-drag-helper"><div class="title"></div><div class="body">Drag me to the desired location in the document</div></div>')
   activateHandlers = {}
   deactivateHandlers = {}
@@ -17,6 +17,16 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
     selector: '.aloha-block-draghandle'
     callback: ->
       jQuery(this).parents('.semantic-container').removeClass 'drag-active'  unless jQuery(this).parents('.semantic-container').data('dragging')
+  ,
+    name: 'mouseenter'
+    selector: '.semantic-delete'
+    callback: ->
+      jQuery(this).parents('.semantic-container').addClass 'delete-hover'
+  ,
+    name: 'mouseleave'
+    selector: '.semantic-delete'
+    callback: ->
+      jQuery(this).parents('.semantic-container').removeClass 'delete-hover'
   ,
     name: 'mousedown'
     selector: '.aloha-block-draghandle'
@@ -41,6 +51,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
     callback: ->
       jQuery(this).parents('.semantic-container').removeClass('focused')
       jQuery(this).addClass('focused') unless jQuery(this).find('.focused').length
+      jQuery(this).find('.aloha-block-handle').attr('title', 'Drag this element to another location.')
   ,
     name: 'mouseout'
     selector: '.semantic-container'
@@ -66,6 +77,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
     unless element.parent('.semantic-container').length or element.is('.semantic-container')
       element.addClass 'aloha-oer-block'
       element.wrap(blockTemplate).parent().append(blockControls.clone()).alohaBlock()
+      
       for selector of activateHandlers
         if element.is(selector)
           activateHandlers[selector] element

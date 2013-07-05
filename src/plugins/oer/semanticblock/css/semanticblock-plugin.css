@@ -32,7 +32,14 @@
 }
 
 .semantic-container.drag-active {
-    background: #FAFAFA;
+    background: #F0F0F0;
+}
+
+.semantic-container.delete-hover {
+    background: #F0F0F0;
+}
+.semantic-container.delete-hover > .aloha-oer-block {
+    opacity: 0.3; 
 }
 
 .semantic-container {
