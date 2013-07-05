@@ -61,3 +61,16 @@ form#linkModal:focus {
 .semantic-container.focused .media.aloha-oer-block .image-wrapper .image-edit {
     display: block;
 }
+
+i.icon-warning {
+  background-image: url(../img/warning-01.png);
+  background-position: 0 0;
+  margin-right: 4px;
+  width: 16px;
+}
+
+.warning-text {
+    background-color: #FFFFFF;
+    color: #555555;
+    font-style: italic;
+}
