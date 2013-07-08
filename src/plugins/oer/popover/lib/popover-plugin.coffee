@@ -270,8 +270,8 @@ define [ 'aloha', 'jquery' ], (Aloha, jQuery) ->
         $node.removeData('aloha-bubble-timer')
         $node.data('aloha-bubble-selected', false)
         if $node.data('aloha-bubble-visible')
-          $node.popover 'hide'
           $node.removeData('aloha-bubble-visible')
+          $node.popover 'hide'
 
       # The only reason I map mouseenter is so I can catch new elements that are added to the DOM
       $el.on 'mouseenter.bubble', @selector, (evt) =>
