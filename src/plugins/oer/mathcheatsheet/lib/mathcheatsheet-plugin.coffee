@@ -133,7 +133,9 @@ define ['aloha', 'aloha/plugin', 'jquery', 'css!../../../oer/mathcheatsheet/css/
       jQuery('body').on 'shown', '.math-element', () ->
         jQuery('#math-cheatsheet .cheatsheet-open').show()
       jQuery('body').on 'hide', '.math-element', (e) ->
-        jQuery(e.target).data('popover').$tip.find('.math-help-link a').popover('destroy')
+        p = jQuery(e.target).data('popover')
+        if p and p.$tip
+          p.$tip.find('.math-help-link a').popover('destroy')
         jQuery('#math-cheatsheet .cheatsheet-open').hide()
 
     toString: ->

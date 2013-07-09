@@ -79,7 +79,11 @@
           return jQuery('#math-cheatsheet .cheatsheet-open').show();
         });
         return jQuery('body').on('hide', '.math-element', function(e) {
-          jQuery(e.target).data('popover').$tip.find('.math-help-link a').popover('destroy');
+          var p;
+          p = jQuery(e.target).data('popover');
+          if (p && p.$tip) {
+            p.$tip.find('.math-help-link a').popover('destroy');
+          }
           return jQuery('#math-cheatsheet .cheatsheet-open').hide();
         });
       },
