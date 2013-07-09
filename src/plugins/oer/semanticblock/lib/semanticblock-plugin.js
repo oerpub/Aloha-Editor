@@ -195,15 +195,17 @@
           });
           if ($root.is('.aloha-block-blocklevel-sortable') && !$root.parents('.aloha-editable').length) {
             jQuery('.semantic-drag-source').children().each(function() {
-              var element;
+              var element, elementLabel, elementType;
               element = jQuery(this);
+              elementType = element.attr('class').split(' ')[0];
+              elementLabel = elementType.charAt(0).toUpperCase() + elementType.substring(1);
               return element.draggable({
                 connectToSortable: $root,
                 revert: 'invalid',
                 helper: function() {
                   var helper;
                   helper = jQuery(blockDragHelper).clone();
-                  helper.find('.title').text('im a helper');
+                  helper.find('.title').text(elementLabel);
                   return helper;
                 },
                 start: function(e, ui) {
@@ -213,13 +215,14 @@
                 refreshPositions: true
               });
             });
-            return $root.sortable('option', 'stop', function(e, ui) {
+            $root.sortable('option', 'stop', function(e, ui) {
               var $el;
               $el = jQuery(ui.item);
               if ($el.is(classes.join())) {
                 return activate($el);
               }
             });
+            return $root.sortable('option', 'placeholder', 'aloha-oer-block-placeholder');
           }
         });
       },

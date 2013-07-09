@@ -23,6 +23,12 @@
     font-style: italic;
 }
 
+.aloha-oer-block-placeholder {
+    background: #C5DAE9;
+    border: 1px dashed #1b86d2;
+    min-height: 100px;
+}
+
 /* Make titles inline so they show up next to the type dropdown if there is one */
 .aloha-oer-block > .title { display: inline; }
 
@@ -213,6 +219,7 @@
     margin-right: 10px;
 }
 .semantic-drag-helper .title {
+    font-weight: bold;
     color: #369;
 }
 
