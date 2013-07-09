@@ -202,7 +202,14 @@ define [ 'aloha', 'jquery' ], (Aloha, jQuery) ->
     proto = jQuery.fn.popover.Constructor.prototype
     proto.show = Bootstrap_Popover_show
     proto.hide = Bootstrap_Popover_hide(proto.hide)
-  monkeyPatch()
+
+  # We only want to apply the patches for old versions of bootstrap. With
+  # no way to obtain the version of bootstrap, we need to look for some other
+  # defining feature that is bound to be available. I use here the fact that
+  # in 2.3 bootstrap added the 'container' option to tooltips/popovers, so
+  # not having that is a sign that patching is needed.
+  if typeof($.fn.tooltip.defaults.container) == 'undefined'
+    monkeyPatch()
 
   # Stop mousedown events inside a popover from propagating up to
   # aloha, causing the editor to deactivate and the popover to close.

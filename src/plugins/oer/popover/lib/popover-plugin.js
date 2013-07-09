@@ -187,7 +187,9 @@ There are 3 variables that are stored on each element;
       proto.show = Bootstrap_Popover_show;
       return proto.hide = Bootstrap_Popover_hide(proto.hide);
     };
-    monkeyPatch();
+    if (typeof $.fn.tooltip.defaults.container === 'undefined') {
+      monkeyPatch();
+    }
     jQuery('body').on('mousedown', '.popover', function(evt) {
       return evt.stopPropagation();
     });
