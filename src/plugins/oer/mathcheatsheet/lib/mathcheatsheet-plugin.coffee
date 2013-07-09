@@ -31,7 +31,7 @@ define ['aloha', 'aloha/plugin', 'jquery', 'css!../../../oer/mathcheatsheet/css/
               placement: 'right'
               html: true
               template: HELP_TEMPLATE
-            ).on('shown-popover', (e)->
+            ).on('shown', (e)->
               jQuery(e.target).data('popover').$tip.find('.math-editor-help-text-close').on 'click', () ->
                 jQuery(e.target).popover('hide')
               jQuery(e.target).data('popover').$tip.find('.cheatsheet-activator').on 'click', (e) ->
@@ -130,9 +130,9 @@ define ['aloha', 'aloha/plugin', 'jquery', 'css!../../../oer/mathcheatsheet/css/
         e.stopPropagation()
 
       # Delegated events to hide and show the opener element
-      jQuery('body').on 'shown-popover', '.math-element', () ->
+      jQuery('body').on 'shown', '.math-element', () ->
         jQuery('#math-cheatsheet .cheatsheet-open').show()
-      jQuery('body').on 'hide-popover', '.math-element', (e) ->
+      jQuery('body').on 'hide', '.math-element', (e) ->
         jQuery(e.target).data('popover').$tip.find('.math-help-link a').popover('destroy')
         jQuery('#math-cheatsheet .cheatsheet-open').hide()
 

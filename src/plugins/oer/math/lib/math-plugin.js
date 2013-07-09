@@ -143,7 +143,7 @@
 
         jQuery(e.target).tooltip('destroy');
         $el = jQuery(e.target).closest('.math-element');
-        $el.trigger('hide').tooltip('destroy').remove();
+        $el.trigger('hide-popover').tooltip('destroy').remove();
         Aloha.activeEditable.smartContentChange({
           type: 'block-change'
         });
@@ -174,7 +174,7 @@
       range = Aloha.Selection.getRangeObject();
       if (range.isCollapsed()) {
         GENTICS.Utils.Dom.insertIntoDOM($el, range, Aloha.activeEditable.obj);
-        $el.trigger('show');
+        $el.trigger('show-popover');
         return makeCloseIcon($el);
       } else {
         formula = range.getText();
@@ -226,11 +226,11 @@
         $editor.find('.plaintext-label').remove();
       }
       $editor.find('.done').on('click', function() {
-        $span.trigger('hide');
+        $span.trigger('hide-popover');
         return placeCursorAfter($span);
       });
       $editor.find('.remove').on('click', function() {
-        $span.trigger('hide');
+        $span.trigger('hide-popover');
         return cleanupFormula($editor, $span, true);
       });
       $formula = $editor.find('.formula');
@@ -296,7 +296,7 @@
         clearTimeout(keyTimeout);
         return setTimeout(keyDelay.bind($formula), 500);
       });
-      $span.off('shown-popover.math').on('shown-popover.math', function() {
+      $span.off('shown.math').on('shown.math', function() {
         var $el, tt;
 
         $span.css('background-color', '#E5EEF5');
@@ -314,7 +314,7 @@
           }
         }, 10);
       });
-      $span.off('hidden-popover.math').on('hidden-popover.math', function() {
+      $span.off('hidden.math').on('hidden.math', function() {
         var tt;
 
         $span.css('background-color', '');

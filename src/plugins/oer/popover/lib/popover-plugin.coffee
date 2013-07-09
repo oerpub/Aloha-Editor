@@ -183,12 +183,12 @@ define [ 'aloha', 'jquery' ], (Aloha, jQuery) ->
       $tip.addClass "in"
 
       ### Trigger the shown event ###
-      @$element.trigger('shown-popover')
+      @$element.trigger('shown')
 
   Bootstrap_Popover_hide = (originalHide) -> () ->
-      @$element.trigger('hide-popover')
+      @$element.trigger('hide')
       originalHide.bind(@)()
-      @$element.trigger('hidden-popover')
+      @$element.trigger('hidden')
       # return this
       @
 
@@ -218,7 +218,7 @@ define [ 'aloha', 'jquery' ], (Aloha, jQuery) ->
       @hover = false
       jQuery.extend(@, cfg)
       if @focus or @blur
-        console and console.warn 'Popover.focus and Popover.blur are deprecated in favor of listening to the "shown-popover" or "hide-popover" events on the original DOM element'
+        console and console.warn 'Popover.focus and Popover.blur are deprecated in favor of listening to the "shown" or "hidden" events on the original DOM element'
 
     startAll: (editable) ->
       $el = jQuery(editable.obj)
@@ -235,10 +235,10 @@ define [ 'aloha', 'jquery' ], (Aloha, jQuery) ->
           # Make sure we don't create more than one popover for an element.
           if not $node.data('popover')
             if @focus
-              $node.on 'shown-popover', =>
+              $node.on 'shown.bubble', =>
                 @focus.bind($node[0])($node.data('popover').$tip)
             if @blur
-              $node.on 'hide-popover', =>
+              $node.on 'hide.bubble', =>
                 @blur.bind($node[0])($node.data('popover').$tip)
 
             $node.popover
@@ -248,7 +248,7 @@ define [ 'aloha', 'jquery' ], (Aloha, jQuery) ->
               content: =>
                 @populator.bind($node)($node, @) # Can't quite decide whether the populator code should use @ or the 1st arg.
 
-      $el.on 'show.bubble', @selector, (evt, hint) =>
+      $el.on 'show-popover.bubble', @selector, (evt, hint) =>
         $node = jQuery(evt.target)
 
         clearTimeout($node.data('aloha-bubble-timer'))
@@ -264,7 +264,7 @@ define [ 'aloha', 'jquery' ], (Aloha, jQuery) ->
         that = $node.data('popover')
         if that and that.$tip
           Bootstrap_Popover__position.bind(that)(that.$tip, hint)
-      $el.on 'hide.bubble', @selector, (evt) =>
+      $el.on 'hide-popover.bubble', @selector, (evt) =>
         $node = jQuery(evt.target)
         clearTimeout($node.data('aloha-bubble-timer'))
         $node.removeData('aloha-bubble-timer')
@@ -307,7 +307,7 @@ define [ 'aloha', 'jquery' ], (Aloha, jQuery) ->
       jQuery(editable.obj).off('.bubble', @selector)
 
     stopOne: ($nodes) ->
-      $nodes.trigger 'hide'
+      $nodes.trigger 'hide-popover'
       $nodes.removeData('aloha-bubble-selected')
       $nodes.popover('destroy')
 
@@ -351,7 +351,7 @@ define [ 'aloha', 'jquery' ], (Aloha, jQuery) ->
     Aloha.bind 'aloha-editable-created', (evt, editable) ->
       # When a popover is hidden, the next selection change should
       # do the right thing.
-      editable.obj.on 'hidden-popover', helper.selector, () ->
+      editable.obj.on 'hidden', helper.selector, () ->
         insideScope = false
 
     Aloha.bind 'aloha-selection-changed', (event, rangeObject, originalEvent) ->
@@ -368,7 +368,7 @@ define [ 'aloha', 'jquery' ], (Aloha, jQuery) ->
         # Hide other tooltips of the same type
         nodes = jQuery(Aloha.activeEditable.obj).find(helper.selector)
         nodes = nodes.not($el)
-        nodes.trigger 'hide'
+        nodes.trigger 'hide-popover'
 
         enteredLinkScope = selectionChangeHandler(rangeObject, helper.selector)
         if insideScope isnt enteredLinkScope
@@ -377,10 +377,10 @@ define [ 'aloha', 'jquery' ], (Aloha, jQuery) ->
             $el = $el.parents(helper.selector).eq(0)
           if enteredLinkScope
             if originalEvent and originalEvent.pageX
-              $el.trigger 'show',
+              $el.trigger 'show-popover',
                 top: originalEvent.pageY, left: originalEvent.pageX
             else
-              $el.trigger 'show'
+              $el.trigger 'show-popover'
             $el.data('aloha-bubble-selected', true)
             $el.off('.bubble')
             event.stopPropagation()
