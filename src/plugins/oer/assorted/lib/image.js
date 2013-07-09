@@ -224,12 +224,19 @@
       });
     };
     deactivate = function(element) {
-      var img;
+      var $media, $mediaset, img, legalparents;
       img = element.find('img');
       element.children().remove();
       element.append(img);
       element.attr('data-alt', img.attr('alt') || '');
-      return element.parents('.semantic-container').wrap('<p>');
+      $mediaset = element.closest('.media');
+      if ($mediaset.length > 0) {
+        $media = jQuery($mediaset[0]);
+        legalparents = $media.parents("figure, .para, .equation, .note, .quote");
+        if (legalparents.length === 0) {
+          element.parents('.semantic-container').wrap('<p class="para">');
+        }
+      }
     };
     return AlohaPlugin.create('oer-image', {
       init: function() {
