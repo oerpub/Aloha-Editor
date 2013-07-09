@@ -167,6 +167,11 @@ define [ 'aloha', 'jquery' ], (Aloha, jQuery) ->
   # Monkeypatch the bootstrap Popover so we can inject clickable buttons
   Bootstrap_Popover_show = () ->
     if @hasContent() and @enabled
+      e = $.Event('show')
+      @$element.trigger e
+      if e.isDefaultPrevented()
+        return
+
       $tip = @tip()
       @setContent()
       $tip.addClass "fade"  if @options.animation
@@ -178,7 +183,6 @@ define [ 'aloha', 'jquery' ], (Aloha, jQuery) ->
       )
 
       Bootstrap_Popover__position.bind(@)($tip)
-      # TODO move the arrow if placement='top/bottom'
 
       $tip.addClass "in"
 

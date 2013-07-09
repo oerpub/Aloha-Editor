@@ -148,8 +148,13 @@ There are 3 variables that are stored on each element;
       return $tip.css(tp).removeClass("top bottom left right").addClass(actualPlacement);
     };
     Bootstrap_Popover_show = function() {
-      var $tip;
+      var $tip, e;
       if (this.hasContent() && this.enabled) {
+        e = $.Event('show');
+        this.$element.trigger(e);
+        if (e.isDefaultPrevented()) {
+          return;
+        }
         $tip = this.tip();
         this.setContent();
         if (this.options.animation) {
