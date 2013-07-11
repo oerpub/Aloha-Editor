@@ -166,7 +166,7 @@
 .aloha-oer-block .title {
     font-size: 1em;
 }
-.aloha-oer-block .title:not(.aloha-empty) {
+.aloha-oer-block .title:not(.aloha-empty),:focus {
     font-weight: bold;
 }
 
