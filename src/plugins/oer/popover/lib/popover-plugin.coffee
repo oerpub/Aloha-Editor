@@ -88,8 +88,11 @@ There are 3 variables that are stored on each element;
 
 ###
 
-define [ 'aloha', 'jquery' ], (Aloha, jQuery) ->
+define [ 'aloha', 'jquery', 'css!../../../oer/popover/css/popover.css' ], (Aloha, jQuery) ->
 
+  popover_template = '''<div class="aloha popover"><div class="arrow"></div>
+    <h3 class="popover-title"></h3>
+    <div class="popover-content"></div></div>'''
 
   # This position code was refactored out because it is also used to move the
   # Popover when the document changes
@@ -211,11 +214,6 @@ define [ 'aloha', 'jquery' ], (Aloha, jQuery) ->
   if typeof($.fn.tooltip.defaults.container) == 'undefined'
     monkeyPatch()
 
-  # Stop mousedown events inside a popover from propagating up to
-  # aloha, causing the editor to deactivate and the popover to close.
-  jQuery('body').on 'mousedown', '.popover', (evt) ->
-    evt.stopPropagation()
-
   Popover =
     MILLISECS: 2000
     register: (cfg) -> bindHelper(new Helper(cfg))
@@ -256,6 +254,7 @@ define [ 'aloha', 'jquery' ], (Aloha, jQuery) ->
               html: true # bootstrap changed the default for this config option so set it to HTML
               placement: @placement or 'bottom'
               trigger: 'manual'
+              template: popover_template
               content: =>
                 @populator.bind($node)($node, @) # Can't quite decide whether the populator code should use @ or the 1st arg.
 

@@ -70,8 +70,9 @@ There are 3 variables that are stored on each element;
 (function() {
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-  define(['aloha', 'jquery'], function(Aloha, jQuery) {
-    var Bootstrap_Popover__position, Bootstrap_Popover_hide, Bootstrap_Popover_show, Helper, Popover, bindHelper, findMarkup, monkeyPatch, selectionChangeHandler;
+  define(['aloha', 'jquery', 'css!../../../oer/popover/css/popover.css'], function(Aloha, jQuery) {
+    var Bootstrap_Popover__position, Bootstrap_Popover_hide, Bootstrap_Popover_show, Helper, Popover, bindHelper, findMarkup, monkeyPatch, popover_template, selectionChangeHandler;
+    popover_template = '<div class="aloha popover"><div class="arrow"></div>\n<h3 class="popover-title"></h3>\n<div class="popover-content"></div></div>';
     Bootstrap_Popover__position = function($tip, hint) {
       var actualHeight, actualPlacement, actualWidth, inside, placement, pos, tp;
       placement = (typeof this.options.placement === "function" ? this.options.placement.call(this, $tip[0], this.$element[0]) : this.options.placement);
@@ -190,9 +191,6 @@ There are 3 variables that are stored on each element;
     if (typeof $.fn.tooltip.defaults.container === 'undefined') {
       monkeyPatch();
     }
-    jQuery('body').on('mousedown', '.popover', function(evt) {
-      return evt.stopPropagation();
-    });
     Popover = {
       MILLISECS: 2000,
       register: function(cfg) {
@@ -237,6 +235,7 @@ There are 3 variables that are stored on each element;
                 html: true,
                 placement: _this.placement || 'bottom',
                 trigger: 'manual',
+                template: popover_template,
                 content: function() {
                   return _this.populator.bind($node)($node, _this);
                 }
