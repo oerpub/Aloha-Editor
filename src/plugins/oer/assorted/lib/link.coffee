@@ -352,6 +352,12 @@ define [
           newLink.removeClass 'aloha-new-link'
 
 
+  # Prevent default on links as the bubble out of the editor. This signals
+  # any other machinery (or the browser) that we handled the event already.
+  Aloha.bind 'aloha-editable-created', (event, editable) ->
+    editable.obj.on 'click', 'a', (e)->
+      e.preventDefault()
+
   # Return config
   selector: selector
   populator: populator
