@@ -13,6 +13,7 @@ define [
   Plugin.create 'quotation',
     init: () ->
       semanticBlock.activateHandler '.quote', ($element) =>
+        $element.attr('placeholder', 'Type the text of you quotation here.')
         $element.aloha()
       semanticBlock.deactivateHandler '.quote', ($element) ->
         $element.mahalo()

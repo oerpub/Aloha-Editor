@@ -6,3 +6,6 @@
 .quote {
     text-align: center;
 }
+.semantic-drag-source .quote {
+    text-align: left;
+}
