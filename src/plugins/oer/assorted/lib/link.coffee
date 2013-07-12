@@ -78,17 +78,6 @@ define [
   # have ephemera remove the attribute that bootstrap inserts for tooltips
   Ephemera.attributes('data-original-title')
 
-  # Don't match links that are marked as ephemera. These are generally UI
-  # elements added by other plugins that are removed when the document is
-  # serialized and should never constitute a real link.
-  selector = 'a:not(.aloha-ephemera)'
-
-  # We need to explicitly catch these and return false, otherwise Chrome
-  # opens them.
-  jQuery('body').on 'click', '.aloha-editable ' + selector, (e)->
-    e.preventDefault()
-    false
-
   showModalDialog = ($el) ->
       root = Aloha.activeEditable.obj
       dialog = jQuery(DIALOG_HTML)
@@ -216,6 +205,11 @@ define [
       newRange.startOffset = newRange.endOffset
       newRange.select()
       newRange
+
+  # Don't match links that are marked as ephemera. These are generally UI
+  # elements added by other plugins that are removed when the document is
+  # serialized and should never constitute a real link.
+  selector = 'a:not(.aloha-ephemera)'
 
   # see http://stackoverflow.com/questions/10903002/shorten-url-for-display-with-beginning-and-end-preserved-firebug-net-panel-st
   shortUrl = (linkurl, l) ->
@@ -357,6 +351,12 @@ define [
           newLink = Aloha.activeEditable.obj.find '.aloha-new-link'
           newLink.removeClass 'aloha-new-link'
 
+
+  # Prevent default on links as the bubble out of the editor. This signals
+  # any other machinery (or the browser) that we handled the event already.
+  Aloha.bind 'aloha-editable-created', (event, editable) ->
+    editable.obj.on 'click', 'a', (e)->
+      e.preventDefault()
 
   # Return config
   selector: selector
