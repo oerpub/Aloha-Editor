@@ -236,6 +236,7 @@ There are 3 variables that are stored on each element;
                 placement: _this.placement || 'bottom',
                 trigger: 'manual',
                 template: popover_template,
+                container: 'body',
                 content: function() {
                   return _this.populator.bind($node)($node, _this);
                 }

@@ -250,11 +250,16 @@ define [ 'aloha', 'jquery', 'css!../../../oer/popover/css/popover.css' ], (Aloha
               $node.on 'hide.bubble', =>
                 @blur.bind($node[0])($node.data('popover').$tip)
 
+            # Specifying 'container: body' has no effect on bootstrap<2.3,
+            # but on the newer versions it places the popover outside
+            # the editor area, which avoids selecttion-changed events
+            # firing while you type inside a popover.
             $node.popover
               html: true # bootstrap changed the default for this config option so set it to HTML
               placement: @placement or 'bottom'
               trigger: 'manual'
               template: popover_template
+              container: 'body'
               content: =>
                 @populator.bind($node)($node, @) # Can't quite decide whether the populator code should use @ or the 1st arg.
 
