@@ -52,6 +52,11 @@ define [
 
           typeContainer = jQuery(TYPE_CONTAINER)
           typeContainer.find('.type').text(type.charAt(0).toUpperCase() + type.slice(1) )
+
+          typeContainer.find('.dropdown-menu li').each (i, li) =>
+            if jQuery(li).children('span').text().toLowerCase() == type
+              jQuery(li).addClass('checked')
+
           typeContainer.prependTo(element)
 
           problem
@@ -95,6 +100,11 @@ define [
 
           typeContainer = jQuery(SOLUTION_TYPE_CONTAINER)
           typeContainer.find('.type').text(type.charAt(0).toUpperCase() + type.slice(1) )
+
+          typeContainer.find('.dropdown-menu li').each (i, li) =>
+            if jQuery(li).children('span').text().toLowerCase() == type
+              jQuery(li).addClass('checked')
+
           typeContainer.prependTo(element)
 
           jQuery('<div>')
@@ -140,9 +150,15 @@ define [
           controls.children('.add-solution').show()
           controls.children('.solution-toggle').hide() if exercise.children('.solutions').children().length == 1
         )
-        semanticBlock.registerEvent('click', '.aloha-oer-block.exercise,.aloha-oer-block.solution .type-container li *', () ->
-          $el = jQuery(@)
-          $el.parents('.type-container').first().children('.type').text $el.text()
-          $el.parents('.aloha-oer-block').first().attr 'data-type', $el.text().toLowerCase()
+        semanticBlock.registerEvent('click', '.aloha-oer-block.solution > .type-container > ul > li > span,
+                                              .aloha-oer-block.exercise > .type-container > ul > li > span', (e) ->
+          e.preventDefault()
+          jQuery(this).parents('.type-container').first().children('.type').text jQuery(this).text()
+          jQuery(this).parents('.aloha-oer-block').first().attr 'data-type', jQuery(this).text().toLowerCase()
+
+          jQuery(this).parents('.type-container').find('.dropdown-menu li').each (i, li) =>
+            jQuery(li).removeClass('checked')
+            if jQuery(li).children('span').text() == jQuery(this).text()
+              jQuery(li).addClass('checked')
         )
     })
