@@ -42,8 +42,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
   ,
     name: 'click'
     selector: '.semantic-container .semantic-delete'
-    callback: (e) ->
-      e.preventDefault()
+    callback: () ->
       jQuery(this).parents('.semantic-container').first().slideUp 'slow', ->
         jQuery(this).remove()
   ,
@@ -78,7 +77,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
     unless element.parent('.semantic-container').length or element.is('.semantic-container')
       element.addClass 'aloha-oer-block'
       element.wrap(blockTemplate).parent().append(blockControls.clone()).alohaBlock()
-      
+
       for selector of activateHandlers
         if element.is(selector)
           activateHandlers[selector] element

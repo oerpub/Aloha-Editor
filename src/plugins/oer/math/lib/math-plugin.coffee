@@ -230,14 +230,13 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', '
       # child.
       evt.stopPropagation()
 
-    editable.obj.on('click.matheditor', '.math-element-destroy', (e) ->
+    editable.obj.on('click.matheditor', '.math-element-destroy', () ->
       jQuery(e.target).tooltip('destroy')
       $el = jQuery(e.target).closest('.math-element')
       # Though the tooltip was bound to the editor and delegates
       # to these items, you still have to clean it up youself
       $el.trigger('hide-popover').tooltip('destroy').remove()
       Aloha.activeEditable.smartContentChange {type: 'block-change'}
-      e.preventDefault()
     )
 
     # Add hlpful tooltips
@@ -420,7 +419,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'popover/popover-plugin', 'ui/ui', '
     # $el is <span class="math-element">
     $closer = $el.find '.math-element-destroy'
     if not $closer[0]?
-      $closer = jQuery('<a class="math-element-destroy aloha-ephemera" title="Delete\u00A0math">&nbsp;</a>')
+      $closer = jQuery('<span class="math-element-destroy aloha-ephemera" title="Delete\u00A0math">&nbsp;</span>')
       if jQuery.ui and jQuery.ui.tooltip
         $closer.tooltip()
       else

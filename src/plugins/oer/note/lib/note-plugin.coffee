@@ -10,7 +10,7 @@ define [
 
   TYPE_CONTAINER = jQuery '''
       <span class="type-container dropdown aloha-ephemera">
-          <a class="type" href="#" data-toggle="dropdown"></a>
+          <span class="type btn-link" data-toggle="dropdown"></span>
           <ul class="dropdown-menu">
           </ul>
       </span>
@@ -94,12 +94,11 @@ define [
                       jQuery(li).removeClass('checked')
                       if jQuery(li).children('a').text() == dropType.label
                         jQuery(li).addClass('checked')
-                      
-                  
-                       
-                  
-              $option.on 'click', (e) =>
-                e.preventDefault()
+
+
+
+
+              $option.on 'click', () =>
                 # Remove the title if this type does not have one
                 if dropType.hasTitle
                   # If there is no `.title` element then add one in and enable it as an Aloha block
@@ -107,18 +106,18 @@ define [
                     $newTitle = jQuery("<#{dropType.titleTagName or 'span'} class='title'></#{dropType.titleTagName or 'span'}")
                     $element.append($newTitle)
                     $newTitle.aloha()
-          
+
                 else
                   $element.children('.title').remove()
-          
+
                 # Remove the `data-type` if this type does not have one
                 if dropType.type
                   $element.attr('data-type', dropType.type)
                 else
                   $element.removeAttr('data-type')
-              
+
                 typeContainer.find('.type').text(dropType.label)
-          
+
                 # Remove all notish class names and then add this one in
                 for key of notishClasses
                   $element.removeClass key
