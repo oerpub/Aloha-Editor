@@ -103,9 +103,7 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
       loadLocalFile = (file, $img, callback) ->
         reader = new FileReader()
         reader.onloadend = () ->
-          if $img
-            $img.attr('src', reader.result)
-            $img.removeAttr('width')
+          $img.attr('src', reader.result) if $img
           # If we get an image then update the modal's imageSource
           setImageSource(reader.result)
           callback(reader.result) if callback
@@ -125,28 +123,6 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
         $uploadImage.hide()
         $uploadUrl.show().focus()
 
-      dialog.find('.placeholder.preview img').on 'load', (evt) ->
-        $img = $(this)
-        $imgcontainer = dialog.find('.image-options')
-        imagewidth  = $img.width()
-        imageheight = $img.height()
-        toppadding  = parseInt($imgcontainer.css('padding-top'), 10)
-        leftpadding = parseInt($imgcontainer.css('padding-left'), 10)
-        imgcontainerheight = $imgcontainer.height() - (2*toppadding)
-        imgcontainerwidth  = $imgcontainer.width()  - (2*leftpadding)
-        # set the width and the image will proportionally resized
-        if imageheight > imgcontainerheight and imagewidth > imgcontainerwidth
-          if (imgcontainerheight/imageheight) < (imgcontainerwidth/imagewidth)
-            newwidth = Math.floor((imgcontainerheight/imageheight)*imagewidth)
-            $img.attr('width', newwidth)
-          else
-            $img.attr('width', imgcontainerwidth)
-        else if imageheight > imgcontainerheight
-          newwidth = Math.floor((imgcontainerheight/imageheight)*imagewidth)
-          $img.attr('width', newwidth)
-        else if imagewidth > imgcontainerwidth
-          $img.attr('width', imgcontainerwidth)
-
       $uploadImage.on 'change', () ->
         files = $uploadImage[0].files
         # Parse the file and if it's an image set the imageSource
@@ -165,7 +141,6 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
         setImageSource(url)
         if settings.image.preview
           $previewImg.attr 'src', url
-          $previewImg.removeAttr 'width'
           $placeholder.show()
           $imageselect.hide()
 

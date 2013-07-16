@@ -49,7 +49,6 @@
         reader.onloadend = function() {
           if ($img) {
             $img.attr('src', reader.result);
-            $img.removeAttr('width');
           }
           setImageSource(reader.result);
           if (callback) {
@@ -70,30 +69,6 @@
         $placeholder.hide();
         $uploadImage.hide();
         return $uploadUrl.show().focus();
-      });
-      dialog.find('.placeholder.preview img').on('load', function(evt) {
-        var $img, $imgcontainer, imageheight, imagewidth, imgcontainerheight, imgcontainerwidth, leftpadding, newwidth, toppadding;
-        $img = $(this);
-        $imgcontainer = dialog.find('.image-options');
-        imagewidth = $img.width();
-        imageheight = $img.height();
-        toppadding = parseInt($imgcontainer.css('padding-top'), 10);
-        leftpadding = parseInt($imgcontainer.css('padding-left'), 10);
-        imgcontainerheight = $imgcontainer.height() - (2 * toppadding);
-        imgcontainerwidth = $imgcontainer.width() - (2 * leftpadding);
-        if (imageheight > imgcontainerheight && imagewidth > imgcontainerwidth) {
-          if ((imgcontainerheight / imageheight) < (imgcontainerwidth / imagewidth)) {
-            newwidth = Math.floor((imgcontainerheight / imageheight) * imagewidth);
-            return $img.attr('width', newwidth);
-          } else {
-            return $img.attr('width', imgcontainerwidth);
-          }
-        } else if (imageheight > imgcontainerheight) {
-          newwidth = Math.floor((imgcontainerheight / imageheight) * imagewidth);
-          return $img.attr('width', newwidth);
-        } else if (imagewidth > imgcontainerwidth) {
-          return $img.attr('width', imgcontainerwidth);
-        }
       });
       $uploadImage.on('change', function() {
         var $previewImg, files;
@@ -116,7 +91,6 @@
         setImageSource(url);
         if (settings.image.preview) {
           $previewImg.attr('src', url);
-          $previewImg.removeAttr('width');
           $placeholder.show();
           return $imageselect.hide();
         }
