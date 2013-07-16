@@ -32,8 +32,6 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
         </div>
         <input type="file" class="upload-image-input" />
         <input type="url" class="upload-url-input" placeholder="Enter URL of image ..."/>
-            <input type="file" class="upload-image-input" />
-            <input type="url" class="upload-url-input" placeholder="Enter URL of image ..."/>
         </div>
         <div class="image-alt">
           <div class="forminfo">
