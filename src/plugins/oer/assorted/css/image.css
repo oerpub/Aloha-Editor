@@ -51,9 +51,12 @@ form#linkModal:focus {
 }
 
 .media.aloha-oer-block .image-wrapper .image-edit:hover{
+  cursor: pointer;
+}
+
+.media.aloha-oer-block .image-wrapper .image-edit:not(.passive):hover{
   border: 1px dotted #1B86D2;
   background-color: #D9E7F1;
-  cursor: pointer;
   z-index: 400;
   width: 100px;
   word-wrap: break-word;
@@ -63,7 +66,7 @@ form#linkModal:focus {
    http://stackoverflow.com/questions/9450733/css-triangle-custom-border-color 
    adds clever sidewise triangle to the warning rectangle
 */
-.media.aloha-oer-block .image-wrapper .image-edit:hover:before{
+.media.aloha-oer-block .image-wrapper .image-edit:not(.passive):hover:before{
   content: '';
   display: block;
   position: absolute;
