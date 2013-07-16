@@ -70,7 +70,7 @@ There are 3 variables that are stored on each element;
 (function() {
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-  define(['aloha', 'jquery', 'css!../../../oer/popover/css/popover.css'], function(Aloha, jQuery) {
+  define(['aloha', 'jquery', 'css!../../../oer/overlay/css/popover.css'], function(Aloha, jQuery) {
     var Bootstrap_Popover__position, Bootstrap_Popover_hide, Bootstrap_Popover_show, Helper, Popover, bindHelper, findMarkup, monkeyPatch, popover_template, selectionChangeHandler;
     popover_template = '<div class="aloha popover"><div class="arrow"></div>\n<h3 class="popover-title"></h3>\n<div class="popover-content"></div></div>';
     Bootstrap_Popover__position = function($tip, hint) {
