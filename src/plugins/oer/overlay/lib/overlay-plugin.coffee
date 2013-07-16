@@ -88,7 +88,7 @@ There are 3 variables that are stored on each element;
 
 ###
 
-define [ 'aloha', 'jquery', 'css!../../../oer/popover/css/popover.css' ], (Aloha, jQuery) ->
+define [ 'aloha', 'jquery', 'css!../../../oer/overlay/css/popover.css' ], (Aloha, jQuery) ->
 
   popover_template = '''<div class="aloha popover"><div class="arrow"></div>
     <h3 class="popover-title"></h3>
