@@ -15,11 +15,23 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
       </div>
       <div class="modal-body">
         <div class="image-options">
-            <span class="upload-image-link btn-link">Choose an image to upload</span> OR <span class="upload-url-link btn-link">get image from the Web</span>
+            <div class="image-selection">
+              <div class="dia-alternative">
+                <a class="upload-image-link">Choose an image to upload</a>
+              </div>
+              <div class="dia-alternative">
+                OR
+              </div>
+              <div class="dia-alternative">
+                <a class="upload-url-link">get image from the Web</a>
+              </div>
+            </div>
             <div class="placeholder preview hide">
-              <h4>Preview</h4>
               <img class="preview-image"/>
             </div>
+        </div>
+        <input type="file" class="upload-image-input" />
+        <input type="url" class="upload-url-input" placeholder="Enter URL of image ..."/>
             <input type="file" class="upload-image-input" />
             <input type="url" class="upload-url-input" placeholder="Enter URL of image ..."/>
         </div>
@@ -44,6 +56,7 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
       dialog = jQuery(DIALOG_HTML)
 
       # Find the dynamic modal elements and bind events to the buttons
+      $imageselect = dialog.find('.image-selection')
       $placeholder = dialog.find('.placeholder.preview')
       $uploadImage = dialog.find('.upload-image-input').hide()
       $uploadUrl =   dialog.find('.upload-url-input').hide()
@@ -72,6 +85,9 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
       if /^https?:\/\//.test(imageSource)
         $uploadUrl.val(imageSource)
         $uploadUrl.show()
+        
+      if editing
+        dialog.find('.image-options').hide()
 
       # Set onerror of preview image
       ((img, baseurl) ->
@@ -89,23 +105,49 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
       loadLocalFile = (file, $img, callback) ->
         reader = new FileReader()
         reader.onloadend = () ->
-          $img.attr('src', reader.result) if $img
+          if $img
+            $img.attr('src', reader.result)
+            $img.removeAttr('width')
           # If we get an image then update the modal's imageSource
           setImageSource(reader.result)
           callback(reader.result) if callback
         reader.readAsDataURL(file)
 
       # Add click handlers
-      dialog.find('.upload-image-link').on 'click', () ->
+      dialog.find('.upload-image-link').on 'click', (evt) ->
+        evt.preventDefault()
         $placeholder.hide()
         $uploadUrl.hide()
         $uploadImage.click()
         $uploadImage.show()
 
-      dialog.find('.upload-url-link').on 'click', () ->
+      dialog.find('.upload-url-link').on 'click', (evt) ->
+        evt.preventDefault()
         $placeholder.hide()
         $uploadImage.hide()
-        $uploadUrl.show()
+        $uploadUrl.show().focus()
+
+      dialog.find('.placeholder.preview img').on 'load', (evt) ->
+        $img = $(this)
+        $imgcontainer = dialog.find('.image-options')
+        imagewidth  = $img.width()
+        imageheight = $img.height()
+        toppadding  = parseInt($imgcontainer.css('padding-top'), 10)
+        leftpadding = parseInt($imgcontainer.css('padding-left'), 10)
+        imgcontainerheight = $imgcontainer.height() - (2*toppadding)
+        imgcontainerwidth  = $imgcontainer.width()  - (2*leftpadding)
+        # set the width and the image will proportionally resized
+        if imageheight > imgcontainerheight and imagewidth > imgcontainerwidth
+          if (imgcontainerheight/imageheight) < (imgcontainerwidth/imagewidth)
+            newwidth = Math.floor((imgcontainerheight/imageheight)*imagewidth)
+            $img.attr('width', newwidth)
+          else
+            $img.attr('width', imgcontainerwidth)
+        else if imageheight > imgcontainerheight
+          newwidth = Math.floor((imgcontainerheight/imageheight)*imagewidth)
+          $img.attr('width', newwidth)
+        else if imagewidth > imgcontainerwidth
+          $img.attr('width', imgcontainerwidth)
 
       $uploadImage.on 'change', () ->
         files = $uploadImage[0].files
@@ -115,6 +157,7 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
             $previewImg = $placeholder.find('img')
             loadLocalFile files[0], $previewImg
             $placeholder.show()
+            $imageselect.hide()
           else
             loadLocalFile files[0]
 
@@ -124,7 +167,9 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
         setImageSource(url)
         if settings.image.preview
           $previewImg.attr 'src', url
+          $previewImg.removeAttr 'width'
           $placeholder.show()
+          $imageselect.hide()
 
       # On save update the actual img tag. Use the submit event because this
       # allows the use of html5 validation.
@@ -226,6 +271,10 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
         editDiv.html('<i class="icon-edit"></i>').addClass('passive')
     else
         editDiv.html('<i class="icon-warning"></i><span class="warning-text">Description missing</span>').removeClass('passive')
+        editDiv.off('mouseenter').on 'mouseenter', (e) ->
+          editDiv.find('.warning-text').text('Image is missing a description for the visually impaired. Click to provide one.')
+        editDiv.off('mouseleave').on 'mouseleave', (e) ->
+          editDiv.find('.warning-text').text('Description missing')
 
   activate = (element) ->
     wrapper = $('<div class="image-wrapper">').css('width', element.css('width'))

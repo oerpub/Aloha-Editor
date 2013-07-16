@@ -4,13 +4,14 @@
   define(['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'semanticblock/semanticblock-plugin', 'css!assorted/css/image.css'], function(Aloha, jQuery, AlohaPlugin, Image, UI, semanticBlock) {
     var DIALOG_HTML, WARNING_IMAGE_PATH, activate, deactivate, setEditText, setThankYou, setWidth, showModalDialog, uploadImage;
     WARNING_IMAGE_PATH = '/../plugins/oer/image/img/warning.png';
-    DIALOG_HTML = '<form class="plugin image modal hide fade" id="linkModal" tabindex="-1" role="dialog" aria-labelledby="linkModalLabel" aria-hidden="true" data-backdrop="false">\n  <div class="modal-header">\n    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>\n    <h3>Insert image</h3>\n  </div>\n  <div class="modal-body">\n    <div class="image-options">\n        <span class="upload-image-link btn-link">Choose an image to upload</span> OR <span class="upload-url-link btn-link">get image from the Web</span>\n        <div class="placeholder preview hide">\n          <h4>Preview</h4>\n          <img class="preview-image"/>\n        </div>\n        <input type="file" class="upload-image-input" />\n        <input type="url" class="upload-url-input" placeholder="Enter URL of image ..."/>\n    </div>\n    <div class="image-alt">\n      <div class="forminfo">\n        <i class="icon-warning"></i><strong>Describe the image for someone who cannot see it.</strong> This description can be read aloud, making it possible for visually impaired learners to understand the content.\n      </div>\n      <div>\n        <textarea name="alt" type="text" placeholder="Enter description ..."></textarea>\n      </div>\n    </div>\n  </div>\n  <div class="modal-footer">\n    <button type="submit" disabled="true" class="btn btn-primary action insert">Save</button>\n    <button class="btn action cancel">Cancel</button>\n  </div>\n</form>';
+    DIALOG_HTML = '<form class="plugin image modal hide fade" id="linkModal" tabindex="-1" role="dialog" aria-labelledby="linkModalLabel" aria-hidden="true" data-backdrop="false">\n  <div class="modal-header">\n    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>\n    <h3>Insert image</h3>\n  </div>\n  <div class="modal-body">\n    <div class="image-options">\n        <div class="image-selection">\n          <div class="dia-alternative">\n            <a class="upload-image-link">Choose an image to upload</a>\n          </div>\n          <div class="dia-alternative">\n            OR\n          </div>\n          <div class="dia-alternative">\n            <a class="upload-url-link">get image from the Web</a>\n          </div>\n        </div>\n        <div class="placeholder preview hide">\n          <img class="preview-image"/>\n        </div>\n    </div>\n    <input type="file" class="upload-image-input" />\n    <input type="url" class="upload-url-input" placeholder="Enter URL of image ..."/>\n    <div class="image-alt">\n      <div class="forminfo">\n        <i class="icon-warning"></i><strong>Describe the image for someone who cannot see it.</strong> This description can be read aloud, making it possible for visually impaired learners to understand the content.\n      </div>\n      <div>\n        <textarea name="alt" type="text" placeholder="Enter description ..."></textarea>\n      </div>\n    </div>\n  </div>\n  <div class="modal-footer">\n    <button type="submit" disabled="true" class="btn btn-primary action insert">Save</button>\n    <button class="btn action cancel">Cancel</button>\n  </div>\n</form>';
     showModalDialog = function($el) {
-      var $placeholder, $submit, $uploadImage, $uploadUrl, deferred, dialog, editing, imageAltText, imageSource, loadLocalFile, root, setImageSource, settings,
+      var $imageselect, $placeholder, $submit, $uploadImage, $uploadUrl, deferred, dialog, editing, imageAltText, imageSource, loadLocalFile, root, setImageSource, settings,
         _this = this;
       settings = Aloha.require('assorted/assorted-plugin').settings;
       root = Aloha.activeEditable.obj;
       dialog = jQuery(DIALOG_HTML);
+      $imageselect = dialog.find('.image-selection');
       $placeholder = dialog.find('.placeholder.preview');
       $uploadImage = dialog.find('.upload-image-input').hide();
       $uploadUrl = dialog.find('.upload-url-input').hide();
@@ -25,6 +26,9 @@
       if (/^https?:\/\//.test(imageSource)) {
         $uploadUrl.val(imageSource);
         $uploadUrl.show();
+      }
+      if (editing) {
+        dialog.find('.image-options').hide();
       }
       (function(img, baseurl) {
         return img.onerror = function() {
@@ -45,6 +49,7 @@
         reader.onloadend = function() {
           if ($img) {
             $img.attr('src', reader.result);
+            $img.removeAttr('width');
           }
           setImageSource(reader.result);
           if (callback) {
@@ -53,16 +58,42 @@
         };
         return reader.readAsDataURL(file);
       };
-      dialog.find('.upload-image-link').on('click', function() {
+      dialog.find('.upload-image-link').on('click', function(evt) {
+        evt.preventDefault();
         $placeholder.hide();
         $uploadUrl.hide();
         $uploadImage.click();
         return $uploadImage.show();
       });
-      dialog.find('.upload-url-link').on('click', function() {
+      dialog.find('.upload-url-link').on('click', function(evt) {
+        evt.preventDefault();
         $placeholder.hide();
         $uploadImage.hide();
-        return $uploadUrl.show();
+        return $uploadUrl.show().focus();
+      });
+      dialog.find('.placeholder.preview img').on('load', function(evt) {
+        var $img, $imgcontainer, imageheight, imagewidth, imgcontainerheight, imgcontainerwidth, leftpadding, newwidth, toppadding;
+        $img = $(this);
+        $imgcontainer = dialog.find('.image-options');
+        imagewidth = $img.width();
+        imageheight = $img.height();
+        toppadding = parseInt($imgcontainer.css('padding-top'), 10);
+        leftpadding = parseInt($imgcontainer.css('padding-left'), 10);
+        imgcontainerheight = $imgcontainer.height() - (2 * toppadding);
+        imgcontainerwidth = $imgcontainer.width() - (2 * leftpadding);
+        if (imageheight > imgcontainerheight && imagewidth > imgcontainerwidth) {
+          if ((imgcontainerheight / imageheight) < (imgcontainerwidth / imagewidth)) {
+            newwidth = Math.floor((imgcontainerheight / imageheight) * imagewidth);
+            return $img.attr('width', newwidth);
+          } else {
+            return $img.attr('width', imgcontainerwidth);
+          }
+        } else if (imageheight > imgcontainerheight) {
+          newwidth = Math.floor((imgcontainerheight / imageheight) * imagewidth);
+          return $img.attr('width', newwidth);
+        } else if (imagewidth > imgcontainerwidth) {
+          return $img.attr('width', imgcontainerwidth);
+        }
       });
       $uploadImage.on('change', function() {
         var $previewImg, files;
@@ -71,7 +102,8 @@
           if (settings.image.preview) {
             $previewImg = $placeholder.find('img');
             loadLocalFile(files[0], $previewImg);
-            return $placeholder.show();
+            $placeholder.show();
+            return $imageselect.hide();
           } else {
             return loadLocalFile(files[0]);
           }
@@ -84,7 +116,9 @@
         setImageSource(url);
         if (settings.image.preview) {
           $previewImg.attr('src', url);
-          return $placeholder.show();
+          $previewImg.removeAttr('width');
+          $placeholder.show();
+          return $imageselect.hide();
         }
       });
       deferred = $.Deferred();
@@ -206,7 +240,13 @@
       if (alt) {
         return editDiv.html('<i class="icon-edit"></i>').addClass('passive');
       } else {
-        return editDiv.html('<i class="icon-warning"></i><span class="warning-text">Description missing</span>').removeClass('passive');
+        editDiv.html('<i class="icon-warning"></i><span class="warning-text">Description missing</span>').removeClass('passive');
+        editDiv.off('mouseenter').on('mouseenter', function(e) {
+          return editDiv.find('.warning-text').text('Image is missing a description for the visually impaired. Click to provide one.');
+        });
+        return editDiv.off('mouseleave').on('mouseleave', function(e) {
+          return editDiv.find('.warning-text').text('Description missing');
+        });
       }
     };
     activate = function(element) {
