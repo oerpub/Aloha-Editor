@@ -4,7 +4,7 @@ require ['testutils'], (TestUtils) ->
 
   # Once Aloha is configured load the Popover (Popover) plugin
   Aloha.ready ->
-    Aloha.require ['popover'], (Popover) ->
+    Aloha.require ['overlay'], (Popover) ->
       Popover.MILLISECS = 500
 
       # setTimeout has the millisecs argument come after the function (which is annoying)

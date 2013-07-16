@@ -3,7 +3,7 @@
 
   require(['testutils'], function(TestUtils) {
     return Aloha.ready(function() {
-      return Aloha.require(['popover'], function(Popover) {
+      return Aloha.require(['overlay'], function(Popover) {
         var MILLISECS, MS_LONG, MS_SHORT, POPOVER_VISIBLE, POPULATED, timeout;
         Popover.MILLISECS = 500;
         timeout = function(ms, func) {
