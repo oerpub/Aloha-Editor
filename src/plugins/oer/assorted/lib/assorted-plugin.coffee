@@ -1,7 +1,7 @@
 ###
 Register a couple of assorted oer plugins
 ###
-define [ 'aloha/plugin', 'jquery', 'popover/popover-plugin', './link', './image', './figure', './title-figcaption', './list' ], (Plugin, $, Popover, linkConfig, imageConfig, figureConfig, figcaptionConfig) ->
+define [ 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', './link', './image', './figure', './title-figcaption', './list' ], (Plugin, $, Popover, linkConfig, imageConfig, figureConfig, figcaptionConfig) ->
   Plugin.create 'assorted',
     defaultSettings:
         image:
