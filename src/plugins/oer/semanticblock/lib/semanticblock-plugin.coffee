@@ -2,8 +2,24 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
 
   # hack to accomodate multiple executions
   return pluginManager.plugins.semanticblock  if pluginManager.plugins.semanticblock
+
+  DIALOG_HTML = '''
+    <div class="semantic-settings modal hide fade" id="linkModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="false">
+      <div class="modal-header">
+        <h3>Advanced Options</h3>
+      </div>
+      <div class="modal-body">
+        <p>Give this element a new "type". Nothing obvious will change in your document. This is for advanced book styling and requires support from the publishing system.</p> 
+        <input type="text" placeholder="custom-element-type" name="custom_class">
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary action submit">Save</button>
+        <button class="btn action cancel">Cancel</button>
+      </div>
+    </div>'''
+
   blockTemplate = jQuery('<div class="semantic-container"></div>')
-  blockControls = jQuery('<div class="semantic-controls"><button class="semantic-delete" title="Remove this element."><i class="icon-remove"></i></button></div>')
+  blockControls = jQuery('<div class="semantic-controls"><button class="semantic-delete" title="Remove this element."><i class="icon-remove"></i></button><button class="semantic-settings" title="advanced options."><i class="icon-cog"></i></button></div>')
   blockDragHelper = jQuery('<div class="semantic-drag-helper"><div class="title"></div><div class="body">Drag me to the desired location in the document</div></div>')
   activateHandlers = {}
   deactivateHandlers = {}
@@ -45,6 +61,30 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
     callback: () ->
       jQuery(this).parents('.semantic-container').first().slideUp 'slow', ->
         jQuery(this).remove()
+  ,
+    name: 'click'
+    selector: '.semantic-container .semantic-settings'
+    callback: (e) ->
+      dialog = jQuery(DIALOG_HTML)
+      dialog.modal 'show'
+      $element = jQuery(this).parents('.semantic-controls').siblings('.aloha-oer-block')
+      dialog.find('[name=custom_class]').val $element.attr('data-class')
+      dialog.data 'element', $element
+  ,
+    name: 'click'
+    selector: '.modal.semantic-settings .action.cancel'
+    callback: (e) ->
+      $dialog = jQuery(this).parents('.modal')
+      $dialog.modal 'hide'
+  ,
+    name: 'click'
+    selector: '.modal.semantic-settings .action.submit'
+    callback: (e) ->
+      $dialog = jQuery(this).parents('.modal')
+      $dialog.modal 'hide'
+      $element = $dialog.data('element')
+      $element.attr 'data-class', $dialog.find('[name=custom_class]').val()
+      $element.removeAttr('data-class') if $element.attr('data-class') is ''
   ,
     name: 'mouseover'
     selector: '.semantic-container'
