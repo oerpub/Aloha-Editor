@@ -8,7 +8,7 @@ define [
   'semanticblock/semanticblock-plugin'
   'css!quotation/css/quotation-plugin.css'], (Aloha, Plugin, jQuery, Ephemera, UI, Button, semanticBlock) ->
 
-  TEMPLATE = "<blockquote class=\"quote\"></blockquote>"
+  TEMPLATE = '<blockquote class="quote"></blockquote>'
 
   Plugin.create 'quotation',
     init: () ->

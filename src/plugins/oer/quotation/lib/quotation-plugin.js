@@ -2,7 +2,7 @@
 (function() {
   define(['aloha', 'aloha/plugin', 'jquery', 'aloha/ephemera', 'ui/ui', 'ui/button', 'semanticblock/semanticblock-plugin', 'css!quotation/css/quotation-plugin.css'], function(Aloha, Plugin, jQuery, Ephemera, UI, Button, semanticBlock) {
     var TEMPLATE;
-    TEMPLATE = "<blockquote class=\"quote\"></blockquote>";
+    TEMPLATE = '<blockquote class="quote"></blockquote>';
     return Plugin.create('quotation', {
       init: function() {
         var _this = this;
