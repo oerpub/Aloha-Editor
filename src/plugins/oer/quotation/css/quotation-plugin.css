@@ -1,0 +1,4 @@
+.semantic-drag-source .quote:before {
+    font-style: normal;
+    content: "Quotation";
+}
