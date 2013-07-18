@@ -292,6 +292,7 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
     deactivate: deactivate
     selector: '.media'
     init: () ->
+      semanticBlock.register(this)
       semanticBlock.registerEvent 'click', '.aloha-oer-block .image-edit', ->
         img = $(this).siblings('img')
         promise = showModalDialog(img)

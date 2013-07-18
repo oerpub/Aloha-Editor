@@ -257,6 +257,7 @@
       deactivate: deactivate,
       selector: '.media',
       init: function() {
+        semanticBlock.register(this);
         return semanticBlock.registerEvent('click', '.aloha-oer-block .image-edit', function() {
           var img, promise;
           img = $(this).siblings('img');
