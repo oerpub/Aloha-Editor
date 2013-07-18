@@ -8,16 +8,19 @@ define [
   'semanticblock/semanticblock-plugin'
   'css!quotation/css/quotation-plugin.css'], (Aloha, Plugin, jQuery, Ephemera, UI, Button, semanticBlock) ->
 
-  TEMPLATE = "<blockquote class=\"quote\"></blockquote>"
+  TEMPLATE = '<blockquote class="quote"></blockquote>'
 
   Plugin.create 'quotation',
+    selector: '.quote'
+    getLabel: -> 'Quotation'
+    activate: ($element) ->
+      $element.attr('placeholder', 'Type the text of you quotation here.')
+      $element.aloha()
+    deactivate: ($element) ->
+      $element.mahalo()
+      $element.attr('class', 'quote')
     init: () ->
-      semanticBlock.activateHandler '.quote', ($element) =>
-        $element.attr('placeholder', 'Type the text of you quotation here.')
-        $element.aloha()
-      semanticBlock.deactivateHandler '.quote', ($element) ->
-        $element.mahalo()
-        $element.attr('class', 'quote')
+      semanticBlock.register this
 
       # Add a listener
       UI.adopt "insert-quotation", Button,

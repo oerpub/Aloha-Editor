@@ -220,6 +220,7 @@
     margin-right: 10px;
 }
 .semantic-drag-helper .title {
+    text-transform: capitalize;
     font-weight: bold;
     color: #369;
 }
