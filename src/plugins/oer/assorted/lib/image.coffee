@@ -79,10 +79,6 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
 
       dialog.find('[name=alt]').val(imageAltText)
 
-      if /^https?:\/\//.test(imageSource)
-        $uploadUrl.val(imageSource)
-        $uploadUrl.show()
-        
       if editing
         dialog.find('.image-options').hide()
 
