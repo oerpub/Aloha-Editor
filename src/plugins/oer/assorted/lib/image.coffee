@@ -32,7 +32,6 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
         </div>
         <input type="file" class="upload-image-input" />
         <input type="url" class="upload-url-input" placeholder="Enter URL of image ..."/>
-        </div>
         <div class="image-alt">
           <div class="forminfo">
             <i class="icon-warning"></i><strong>Describe the image for someone who cannot see it.</strong> This description can be read aloud, making it possible for visually impaired learners to understand the content.
