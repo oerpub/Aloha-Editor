@@ -14,7 +14,13 @@
         }
       ],
       getLabel: function($element) {
-        return 'Note';
+        var type, _i, _len;
+        for (_i = 0, _len = types.length; _i < _len; _i++) {
+          type = types[_i];
+          if ($element.is(type.selector)) {
+            return type.label;
+          }
+        }
       },
       activate: function($element) {
         var _this = this;

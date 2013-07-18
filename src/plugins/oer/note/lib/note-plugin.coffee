@@ -42,7 +42,11 @@ define [
     defaults: [
       { label: 'Note', cls: 'note', hasTitle: true }
     ]
-    getLabel: ($element) -> 'Note'
+    getLabel: ($element) ->
+      for type in types
+        if $element.is(type.selector)
+          return type.label
+      
     activate: ($element) ->
       jQuery.each types, (i, type) =>
         if $element.is(type.selector)
