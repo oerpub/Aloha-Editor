@@ -18,7 +18,7 @@
     },
     errorhandling: true,
     plugins: {
-      load: ['common/ui', 'oer/toolbar', 'oer/popover', 'oer/format', 'common/contenthandler', 'common/paste', 'common/block', 'common/list', 'oer/table', 'oer/popover', 'oer/math', 'extra/draganddropfiles', 'common/image', 'oer/assorted', 'oer/title', 'common/undo', 'oer/undobutton', 'oer/genericbutton', 'oer/semanticblock', 'oer/exercise', 'oer/note'],
+      load: ['common/ui', 'oer/toolbar', 'oer/format', 'common/contenthandler', 'common/paste', 'common/block', 'common/list', 'oer/table', 'oer/overlay', 'oer/math', 'extra/draganddropfiles', 'common/image', 'oer/assorted', 'oer/title', 'common/undo', 'oer/undobutton', 'oer/genericbutton', 'oer/semanticblock', 'oer/exercise', 'oer/note'],
       note: [
         {
           label: 'Note',
