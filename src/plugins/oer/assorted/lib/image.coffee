@@ -145,7 +145,7 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
           setEditText $el.parent()
 
         deferred.resolve(target: $el[0], files: $uploadImage[0].files)
-        $el.parents('.media').removeClass('aloha-ephemera')
+        $el.parents('.media').removeClass('aloha-ephemera').removeClass('media-placeholder')
         dialog.modal('hide')
 
       dialog.on 'click', '.btn.action.cancel', (evt) =>
@@ -191,7 +191,7 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
 
   UI.adopt 'insertImage-oer', null,
     click: () ->
-      template = $('<span class="media aloha-ephemera"><img /></span>')
+      template = $('<span class="media aloha-ephemera media-placeholder"><img /></span>')
       semanticBlock.insertAtCursor(template)
       newEl = template.find('img')
       promise = showModalDialog(newEl)
