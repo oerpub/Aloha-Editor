@@ -105,7 +105,7 @@ define [
        
           # Create the body and add some placeholder text
           $('<div>').addClass('body')
-          .attr('placeholder', "Type the text of your #{type.className} here.")
+          .attr('placeholder', "Type the text of your #{type.label.toLowerCase()} here.")
           .append($body)
           .appendTo($element)
           .aloha()

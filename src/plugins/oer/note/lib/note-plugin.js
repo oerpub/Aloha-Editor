@@ -80,7 +80,7 @@
             }
             typeContainer.find('.type').text(type.label);
             typeContainer.prependTo($element);
-            return $('<div>').addClass('body').attr('placeholder', "Type the text of your " + type.className + " here.").append($body).appendTo($element).aloha();
+            return $('<div>').addClass('body').attr('placeholder', "Type the text of your " + (type.label.toLowerCase()) + " here.").append($body).appendTo($element).aloha();
           }
         });
       },
