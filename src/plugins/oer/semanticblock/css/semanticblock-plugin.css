@@ -12,7 +12,8 @@
     This way, the browser does most of the heavy lifting AND the actual text
     is never part of the DOM for serializing.
  */
-.semantic-container       *[placeholder].aloha-empty:not(:focus):before {
+.semantic-container       *[placeholder].aloha-empty:not(:focus):before,
+.semantic-container       *[placeholder]:empty:not(:focus):before {
     content: attr(placeholder);
     color: #AAA;
     font-style: italic;

@@ -235,6 +235,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
       $el = jQuery(e.target).closest('.math-element')
       # Though the tooltip was bound to the editor and delegates
       # to these items, you still have to clean it up youself
+      $el.siblings('.math-element-spaceafter').remove()
       $el.trigger('hide-popover').tooltip('destroy').remove()
       Aloha.activeEditable.smartContentChange {type: 'block-change'}
     )
@@ -257,6 +258,11 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
         trigger: 'hover',
         template: TOOLTIP_TEMPLATE)
 
+  insertMathInto = ($container) ->
+    $math = jQuery('<span class="math-element aloha-ephemera-wrapper"><span class="mathjax-wrapper aloha-ephemera"></span></span>')
+    $container.html($math)
+    $math.trigger 'show'
+    
   insertMath = () ->
     $el = jQuery('<span class="math-element aloha-ephemera-wrapper"><span class="mathjax-wrapper aloha-ephemera">&#160;</span></span>') # nbsp
     range = Aloha.Selection.getRangeObject()
@@ -297,6 +303,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
     # If math is empty, remove the box
     if destroy or jQuery.trim($editor.find('.formula').val()).length == 0
       $span.find('.math-element-destroy').tooltip('destroy')
+      $span.siblings('.math-element-spaceafter').remove()
       $span.remove()
 
   # $span contains the span with LaTeX/ASCIIMath
@@ -502,9 +509,12 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
   ob =
     selector: '.math-element'
     populator: buildEditor
+    insertMathInto: insertMathInto
+    insertMath: insertMath
     placement: 'top'
     markerclass: 'math-popover'
     # Expose editor, so the cheatsheet plugin can modify it.
     editor: $_editor
 
   Popover.register ob
+  return ob
