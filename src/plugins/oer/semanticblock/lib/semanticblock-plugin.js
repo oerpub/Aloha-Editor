@@ -273,7 +273,7 @@
                 return activate($el);
               }
             });
-            return $root.sortable('option', 'placeholder', 'aloha-oer-block-placeholder');
+            return $root.sortable('option', 'placeholder', 'aloha-oer-block-placeholder aloha-ephemera');
           }
         });
       },

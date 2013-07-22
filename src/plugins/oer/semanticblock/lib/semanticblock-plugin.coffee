@@ -238,7 +238,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
           $root.sortable 'option', 'stop', (e, ui) ->
             $el = jQuery(ui.item)
             activate $el if $el.is(classes.join())
-          $root.sortable 'option', 'placeholder', 'aloha-oer-block-placeholder'
+          $root.sortable 'option', 'placeholder', 'aloha-oer-block-placeholder aloha-ephemera'
 
     insertAtCursor: (template) ->
       $element = jQuery(template)
