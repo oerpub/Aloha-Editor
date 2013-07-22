@@ -160,7 +160,7 @@
       var $math;
       $math = jQuery('<span class="math-element aloha-ephemera-wrapper"><span class="mathjax-wrapper aloha-ephemera"></span></span>');
       $container.html($math);
-      return $math.trigger('show');
+      return $math.trigger('show-popover');
     };
     insertMath = function() {
       var $el, formula, range;

@@ -4,29 +4,34 @@
     var TEMPLATE;
     TEMPLATE = '<div class="equation"></div>';
     return Plugin.create('equation', {
-      init: function() {
-        semanticBlock.activateHandler('.equation', function($element) {
-          var $body, $contents;
-          $contents = $element.contents();
-          if ($contents.text().trim().length === 0) {
-            $contents = '';
+      getLabel: function() {
+        return 'Equation';
+      },
+      selector: '.equation',
+      activate: function($element) {
+        var $body, $contents;
+        $contents = $element.contents();
+        if ($contents.text().trim().length === 0) {
+          $contents = '';
+        }
+        $body = jQuery('<p></p>').attr('placeholder', 'Enter your math notation here');
+        $element.empty().append($body.append($contents));
+        return $element.click(function() {
+          $body.removeClass('aloha-empty');
+          if ($body.html().trim().length === 0) {
+            return Aloha.require(['math/math-plugin'], function(MathPlugin) {
+              return MathPlugin.insertMathInto($body);
+            });
           }
-          $body = jQuery('<p></p>').attr('placeholder', 'Enter your math notation here');
-          $element.empty().append($body.append($contents));
-          return $element.click(function() {
-            $body.removeClass('aloha-empty');
-            if ($body.html().trim().length === 0) {
-              return Aloha.require(['math/math-plugin'], function(MathPlugin) {
-                return MathPlugin.insertMathInto($body);
-              });
-            }
-          });
         });
-        semanticBlock.deactivateHandler('.equation', function($element) {
-          var $contents;
-          $contents = $element.find('math');
-          return $element.html($contents);
-        });
+      },
+      deactivate: function($element) {
+        var $contents;
+        $contents = $element.find('math');
+        return $element.html($contents);
+      },
+      init: function() {
+        semanticBlock.register(this);
         UI.adopt("insert-equation", Button, {
           click: function(e) {
             e.preventDefault();
