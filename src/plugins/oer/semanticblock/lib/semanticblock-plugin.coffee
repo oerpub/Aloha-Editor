@@ -2,11 +2,32 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
 
   # hack to accomodate multiple executions
   return pluginManager.plugins.semanticblock  if pluginManager.plugins.semanticblock
+
+  DIALOG_HTML = '''
+    <div class="semantic-settings modal hide" id="linkModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="false">
+      <div class="modal-header">
+        <h3></h3>
+      </div>
+      <div class="modal-body">
+        <div style="margin: 20px 10px 20px 10px; padding: 10px; border: 1px solid grey;">
+            <strong>Custom class</strong>
+            <p>
+                Give this element a custom "class". Nothing obvious will change in your document.
+                This is for advanced book styling and requires support from the publishing system.
+            </p> 
+            <input type="text" placeholder="custom element class" name="custom_class">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary action submit">Save changes</button>
+        <button class="btn action cancel">Cancel</button>
+      </div>
+    </div>'''
+
   blockTemplate = jQuery('<div class="semantic-container"></div>')
-  blockControls = jQuery('<div class="semantic-controls"><button class="semantic-delete" title="Remove this element."><i class="icon-remove"></i></button></div>')
+  blockControls = jQuery('<div class="semantic-controls"><button class="semantic-delete" title="Remove this element."><i class="icon-remove"></i></button><button class="semantic-settings" title="advanced options."><i class="icon-cog"></i></button></div>')
   blockDragHelper = jQuery('<div class="semantic-drag-helper"><div class="title"></div><div class="body">Drag me to the desired location in the document</div></div>')
-  activateHandlers = {}
-  deactivateHandlers = {}
+  registeredTypes = []
   pluginEvents = [
     name: 'mouseenter'
     selector: '.aloha-block-draghandle'
@@ -43,9 +64,42 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
     name: 'click'
     selector: '.semantic-container .semantic-delete'
     callback: (e) ->
-      e.preventDefault()
       jQuery(this).parents('.semantic-container').first().slideUp 'slow', ->
         jQuery(this).remove()
+  ,
+    name: 'click'
+    selector: '.semantic-container .semantic-settings'
+    callback: (e) ->
+
+      if jQuery('.semantic-settings.modal:visible').length
+        return
+
+      dialog = jQuery(DIALOG_HTML)
+      dialog.modal 'show'
+
+      # put the dialog in the middle of the window
+      dialog.css({'margin-top':(jQuery(window).height()-dialog.height())/2,'top':'0'})
+
+      $element = jQuery(this).parents('.semantic-controls').siblings('.aloha-oer-block')
+      elementName = getLabel($element)
+      dialog.find('h3').text('Edit options for this ' + elementName)
+      dialog.find('[name=custom_class]').val $element.attr('data-class')
+      dialog.data 'element', $element
+  ,
+    name: 'click'
+    selector: '.modal.semantic-settings .action.cancel'
+    callback: (e) ->
+      $dialog = jQuery(this).parents('.modal')
+      $dialog.modal 'hide'
+  ,
+    name: 'click'
+    selector: '.modal.semantic-settings .action.submit'
+    callback: (e) ->
+      $dialog = jQuery(this).parents('.modal')
+      $dialog.modal 'hide'
+      $element = $dialog.data('element')
+      $element.attr 'data-class', $dialog.find('[name=custom_class]').val()
+      $element.removeAttr('data-class') if $element.attr('data-class') is ''
   ,
     name: 'mouseover'
     selector: '.semantic-container'
@@ -73,15 +127,20 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       $el.toggleClass 'aloha-empty', $el.is(':empty')
   ]
   insertElement = (element) ->
+  
+  getLabel = ($element) ->
+    for type in registeredTypes
+      if $element.is(type.selector)
+        return type.getLabel $element
 
   activate = (element) ->
     unless element.parent('.semantic-container').length or element.is('.semantic-container')
       element.addClass 'aloha-oer-block'
       element.wrap(blockTemplate).parent().append(blockControls.clone()).alohaBlock()
       
-      for selector of activateHandlers
-        if element.is(selector)
-          activateHandlers[selector] element
+      for type in registeredTypes
+        if element.is(type.selector)
+          type.activate element
           break
 
   deactivate = (element) ->
@@ -89,9 +148,9 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       element.removeClass 'aloha-oer-block ui-draggable'
       element.removeAttr 'style'
 
-      for selector of deactivateHandlers
-        if element.is(selector)
-          deactivateHandlers[selector] element
+      for type in registeredTypes
+        if element.is(type.selector)
+          type.deactivate element
           break
       element.siblings('.semantic-controls').remove()
       element.unwrap()
@@ -130,8 +189,8 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
         if jQuery(this).children().not('.semantic-controls').length == 0
           jQuery(this).remove()
 
-      for selector of deactivateHandlers
-        content.find(".aloha-oer-block#{selector}").each ->
+      for type in registeredTypes
+        content.find(".aloha-oer-block#{type.selector}").each ->
           deactivate jQuery(this)
 
       cleanIds(content)
@@ -150,7 +209,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
 
         # Add a `.aloha-oer-block` to all registered classes
         classes = []
-        classes.push selector for selector of activateHandlers
+        classes.push type.selector for type in registeredTypes
         $root.find(classes.join()).each (i, el) ->
           $el = jQuery(el)
           $el.addClass 'aloha-oer-block' if not $el.parents('.semantic-drag-source')[0]
@@ -195,11 +254,8 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       $element = Aloha.jQuery('.semantic-temp').removeClass('semantic-temp')
       activate $element
 
-    activateHandler: (selector, handler) ->
-      activateHandlers[selector] = handler
-
-    deactivateHandler: (selector, handler) ->
-      deactivateHandlers[selector] = handler
+    register: (plugin) ->
+      registeredTypes.push(plugin)
 
     registerEvent: (name, selector, callback) ->
       pluginEvents.push

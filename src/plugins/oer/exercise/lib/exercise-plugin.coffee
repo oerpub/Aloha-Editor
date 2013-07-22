@@ -39,88 +39,107 @@ define [
         </div>
     '''
 
+    activateExercise = ($element) ->
+      type = $element.attr('data-type') or 'exercise'
+
+      $problem = $element.children('.problem')
+      $solutions = $element.children('.solution')
+
+      $element.children().remove()
+
+      $typeContainer = jQuery(TYPE_CONTAINER)
+      $typeContainer.find('.type').text(type.charAt(0).toUpperCase() + type.slice(1) )
+
+      $typeContainer.find('.dropdown-menu li').each (i, li) =>
+        if jQuery(li).children('a').text().toLowerCase() == type
+          jQuery(li).addClass('checked')
+
+      $typeContainer.prependTo($element)
+
+      $problem
+        .attr('placeholder', "Type the text of your problem here.")
+        .appendTo($element)
+        .aloha()
+
+      jQuery('<div>')
+        .addClass('solutions')
+        .appendTo($element)
+
+      jQuery('<div>')
+        .addClass('solution-controls')
+        .append('<a class="add-solution">Click here to add an answer/solution</a>')
+        .append('<a class="solution-toggle"></a>')
+        .appendTo($element)
+
+      if not $solutions.length
+        $element.children('.solution-controls').children('.solution-toggle').hide()
+
+    deactivateExercise = ($element) ->
+      $problem = $element.children('.problem')
+      $solutions = $element.children('.solutions').children()
+      
+      if $problem.html() == '' or $problem.html() == '<p></p>'
+        $problem.html('&nbsp;')
+
+      $element.children().remove()
+
+      jQuery("<div>").addClass('problem').html(
+        jQuery('<p>').append($problem.html())
+      ).appendTo($element)
+
+      $element.append($solutions)
+
+    activateSolution = ($element) ->
+      type = $element.attr('data-type') or 'solution'
+
+      $body = $element.children()
+      $element.children().remove()
+
+      $typeContainer = jQuery(SOLUTION_TYPE_CONTAINER)
+      $typeContainer.find('.type').text(type.charAt(0).toUpperCase() + type.slice(1) )
+
+      $typeContainer.find('.dropdown-menu li').each (i, li) =>
+        if jQuery(li).children('a').text().toLowerCase() == type
+          jQuery(li).addClass('checked')
+
+      $typeContainer.prependTo($element)
+
+      jQuery('<div>')
+        .addClass('body')
+        .append($body)
+        .appendTo($element)
+        .aloha()
+
+    deactivateSolution = ($element) ->
+      content = $element.children('.body').html()
+      $element.children().remove()
+      jQuery('<p>').append(content).appendTo($element)
+    
+
     Plugin.create('exercise', {
+      getLabel: ($element) ->
+        if $element.is('.exercise')
+          return 'Exercise'
+        else if $element.is('.solution')
+          return 'Solution'
+
+      activate: ($element) ->
+        if $element.is('.exercise')
+          activateExercise($element)
+        else if $element.is('.solution')
+          activateSolution($element)
+
+      deactivate: ($element) ->
+        if $element.is('.exercise')
+          deactivateExercise($element)
+        else if $element.is('.solution')
+          deactivateSolution($element)
+
+      selector: '.exercise,.solution' #this plugin handles both exercises and solutions
       init: () ->
-        semanticBlock.activateHandler('.exercise', (element) ->
 
-          type = element.attr('data-type') or 'exercise'
-
-          problem = element.children('.problem')
-          solutions = element.children('.solution')
-
-          element.children().remove()
-
-          typeContainer = jQuery(TYPE_CONTAINER)
-          typeContainer.find('.type').text(type.charAt(0).toUpperCase() + type.slice(1) )
-
-          typeContainer.find('.dropdown-menu li').each (i, li) =>
-            if jQuery(li).children('a').text().toLowerCase() == type
-              jQuery(li).addClass('checked')
-
-          typeContainer.prependTo(element)
-
-          problem
-            .attr('placeholder', "Type the text of your problem here.")
-            .appendTo(element)
-            .aloha()
-
-          jQuery('<div>')
-            .addClass('solutions')
-            .appendTo(element)
-
-          jQuery('<div>')
-            .addClass('solution-controls')
-            .append('<a class="add-solution">Click here to add an answer/solution</a>')
-            .append('<a class="solution-toggle"></a>')
-            .appendTo(element)
-
-          if not solutions.length
-            element.children('.solution-controls').children('.solution-toggle').hide()
-        )
-        semanticBlock.deactivateHandler('.exercise', (element) ->
-          problem = element.children('.problem')
-          solutions = element.children('.solutions').children()
-          
-          if problem.html() == '' or problem.html() == '<p></p>'
-            problem.html('&nbsp;')
-
-          element.children().remove()
-
-          jQuery("<div>").addClass('problem').html(
-            jQuery('<p>').append(problem.html())
-          ).appendTo(element)
-
-          element.append(solutions)
-        )
-        semanticBlock.activateHandler('.solution', (element) ->
-          type = element.attr('data-type') or 'solution'
-
-          body = element.children()
-          element.children().remove()
-
-          typeContainer = jQuery(SOLUTION_TYPE_CONTAINER)
-          typeContainer.find('.type').text(type.charAt(0).toUpperCase() + type.slice(1) )
-
-          typeContainer.find('.dropdown-menu li').each (i, li) =>
-            if jQuery(li).children('a').text().toLowerCase() == type
-              jQuery(li).addClass('checked')
-
-          typeContainer.prependTo(element)
-
-          jQuery('<div>')
-            .addClass('body')
-            .append(body)
-            .appendTo(element)
-            .aloha()
-        )
-        semanticBlock.deactivateHandler('.solution', (element) ->
-          content = element.children('.body').html()
+        semanticBlock.register(this)
  
-          element.children().remove()
-
-          jQuery('<p>').append(content).appendTo(element)
-        )
-        
         UI.adopt 'insertExercise', Button,
           click: -> semanticBlock.insertAtCursor(TEMPLATE)
 
