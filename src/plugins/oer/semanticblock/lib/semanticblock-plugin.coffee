@@ -9,7 +9,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
         <h3></h3>
       </div>
       <div class="modal-body">
-        <div style="margin: 20px 10px 20px 10px; padding: 10px; border: 1px solid black;">
+        <div style="margin: 20px 10px 20px 10px; padding: 10px; border: 1px solid grey;">
             <strong>Custom class</strong>
             <p>
                 Give this element a custom "class". Nothing obvious will change in your document.
@@ -70,8 +70,16 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
     name: 'click'
     selector: '.semantic-container .semantic-settings'
     callback: (e) ->
+
+      if jQuery('.semantic-settings.modal:visible').length
+        return
+
       dialog = jQuery(DIALOG_HTML)
       dialog.modal 'show'
+
+      # put the dialog in the middle of the window
+      dialog.css({'margin-top':(jQuery(window).height()-dialog.height())/2,'top':'0'})
+
       $element = jQuery(this).parents('.semantic-controls').siblings('.aloha-oer-block')
       elementName = getLabel($element)
       dialog.find('h3').text('Edit options for this ' + elementName)
