@@ -39,5 +39,5 @@ define [
       # Add a listener
       UI.adopt "insert-equation", Button,
         click: (e) -> e.preventDefault(); semanticBlock.insertAtCursor(jQuery(TEMPLATE))
-      UI.adopt "insertNote", Button,
+      UI.adopt "insertEquation", Button,
         click: (e) -> e.preventDefault(); semanticBlock.insertAtCursor(jQuery(TEMPLATE))

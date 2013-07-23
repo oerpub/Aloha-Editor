@@ -38,7 +38,7 @@
             return semanticBlock.insertAtCursor(jQuery(TEMPLATE));
           }
         });
-        return UI.adopt("insertNote", Button, {
+        return UI.adopt("insertEquation", Button, {
           click: function(e) {
             e.preventDefault();
             return semanticBlock.insertAtCursor(jQuery(TEMPLATE));
