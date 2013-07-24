@@ -233,6 +233,11 @@
         });
       }
     });
+    Aloha.bind('aloha-editable-created', function(event, editable) {
+      return editable.obj.on('click', 'a', function(e) {
+        return e.preventDefault();
+      });
+    });
     return {
       selector: selector,
       populator: populator,

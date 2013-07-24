@@ -187,7 +187,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
       # Though the tooltip was bound to the editor and delegates
       # to these items, you still have to clean it up youself
       $el.siblings('.math-element-spaceafter').remove()
-      $el.trigger('hide').tooltip('destroy').remove()
+      $el.trigger('hide-popover').tooltip('destroy').remove()
       Aloha.activeEditable.smartContentChange {type: 'block-change'}
       e.preventDefault()
     )
@@ -221,7 +221,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
     if range.isCollapsed()
       GENTICS.Utils.Dom.insertIntoDOM $el, range, Aloha.activeEditable.obj
       # Callback opens up the math editor by "clicking" on it
-      $el.trigger 'show'
+      $el.trigger 'show-popover'
       makeCloseIcon($el)
     else
       # Assume the user highlighted ASCIIMath (by putting the text in backticks)
@@ -267,10 +267,10 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
 
     # Bind some actions for the buttons
     $editor.find('.done').on 'click', =>
-      $span.trigger 'hide'
+      $span.trigger 'hide-popover'
       placeCursorAfter($span)
     $editor.find('.remove').on 'click', =>
-      $span.trigger 'hide'
+      $span.trigger 'hide-popover'
       cleanupFormula($editor, $span, true)
 
     $formula = $editor.find('.formula')
@@ -350,7 +350,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
         clearTimeout(keyTimeout)
         setTimeout(keyDelay.bind($formula), 500)
 
-    $span.off('shown-popover.math').on 'shown-popover.math', () ->
+    $span.off('shown.math').on 'shown.math', () ->
       $span.css 'background-color', '#E5EEF5'
       $el = jQuery(@)
       tt = $el.data('tooltip')
@@ -360,7 +360,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
         $popover.$tip.find('.formula').trigger('focus') if $popover
       , 10)
 
-    $span.off('hidden-popover.math').on 'hidden-popover.math', () ->
+    $span.off('hidden.math').on 'hidden.math', () ->
       $span.css 'background-color', ''
       tt = jQuery(@).data('tooltip')
       tt.enable() if tt
