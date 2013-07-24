@@ -1,0 +1,22 @@
+.semantic-drag-source .equation:before {
+    content: "Numbered Equation";
+}
+
+body { counter-reset: equation; }
+
+.aloha-oer-block.equation {
+    counter-increment: equation;
+    text-align: center;
+    border: 0;
+    min-height: 30px;
+    padding: 10px 10px 0px 20px;
+}
+.aloha-oer-block.equation:after {
+    content: '(' counter(equation) ')';
+    float: right;
+}
+
+.aloha-oer-block.equation p {
+    display: inline;
+    cursor: pointer;
+}
