@@ -29,6 +29,7 @@
           if ($element.is(type.selector)) {
             $title = $element.children('.title');
             $title.attr('hover-placeholder', 'Add a title (optional)');
+            console.log($title);
             $title.aloha();
             $body = $element.contents().not($title);
             typeContainer = TYPE_CONTAINER.clone();
@@ -98,7 +99,7 @@
           var $title, $titleElement;
           if ($element.is(type.selector) && type.hasTitle) {
             $titleElement = $element.children('.title');
-            $title = jQuery("<" + type.titleTagName + " class=\"title\"></" + type.titleTagName + ">");
+            $title = jQuery("<" + (type.titleTagName || 'span') + " class=\"title\"></" + type.titleTagName + ">");
             if ($titleElement.length) {
               $title.append($titleElement.contents());
               $titleElement.remove();

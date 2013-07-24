@@ -52,6 +52,7 @@ define [
         if $element.is(type.selector)
           $title = $element.children('.title')
           $title.attr('hover-placeholder', 'Add a title (optional)')
+          console.log($title)
           $title.aloha()
        
           $body = $element.contents().not($title)
@@ -102,7 +103,7 @@ define [
        
           typeContainer.find('.type').text(type.label)
           typeContainer.prependTo($element)
-       
+      
           # Create the body and add some placeholder text
           $('<div>').addClass('body')
           .attr('placeholder', "Type the text of your #{type.label.toLowerCase()} here.")
@@ -123,7 +124,7 @@ define [
       jQuery.each types, (i, type) =>
         if $element.is(type.selector) && type.hasTitle
           $titleElement = $element.children('.title')
-          $title = jQuery("<#{type.titleTagName} class=\"title\"></#{type.titleTagName}>")
+          $title = jQuery("<#{type.titleTagName or 'span'} class=\"title\"></#{type.titleTagName}>")
        
           if $titleElement.length
             $title.append($titleElement.contents())
