@@ -9,6 +9,8 @@
         return 'Quotation';
       },
       activate: function($element) {
+        $element.attr('data-format-whitelist', '["p"]');
+        Ephemera.markAttr($element, 'data-format-whitelist');
         $element.attr('placeholder', 'Type the text of you quotation here.');
         return $element.aloha();
       },

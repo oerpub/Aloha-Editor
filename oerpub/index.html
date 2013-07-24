@@ -217,9 +217,6 @@
                             Aloha.jQuery('#statusmessage').data('message')('Preview loaded');
                         });
                     });
-                    var button = Aloha.jQuery('#headingbutton')[0];
-                    button.disabled=true;
-                    Aloha.jQuery('.currentHeading')[0].innerHTML = 'Title'; 
                 });
                 </script>
 
@@ -245,19 +242,9 @@
                       <span class="separator"> </span>
                       <div class="btn-group headings">
                         <button class="btn heading dropdown-toggle" data-toggle="dropdown" rel="tooltip" title="Text Heading" id="headingbutton">
-                          <span class="currentHeading">Nothing</span>
+                          <span class="currentHeading">&nbsp;</span>
                           <span class="caret"></span></button>
-                        <ul class="dropdown-menu">
-                          <!-- "changeHeading" is important so a click can be attached and
-                               data-tagname is used both to identify if the cursor is in one of these and
-                           is used to change one heading to another
-                           -->
-                          <li><a href="#" class="action changeHeading" data-tagname="p">Normal Text</a></li>
-                          <li><a href="#" class="action changeHeading" data-tagname="h1">Heading</a></li>
-                          <li><a href="#" class="action changeHeading" data-tagname="h2">Subheading</a></li>
-                          <li><a href="#" class="action changeHeading" data-tagname="h3">SubSubHeading</a></li>
-                          <li><a href="#" class="action changeHeading" data-tagname="pre">Code</a></li>
-                        </ul>
+                        <ul class="dropdown-menu"></ul>
                       </div>
                       <span class="separator"> </span>
                       <div class="btn-group">

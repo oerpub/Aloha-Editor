@@ -48,6 +48,9 @@ define [
           return type.label
       
     activate: ($element) ->
+      $element.attr('data-format-whitelist', '["p"]')
+      Ephemera.markAttr($element, 'data-format-whitelist')
+
       jQuery.each types, (i, type) =>
         if $element.is(type.selector)
           $title = $element.children('.title')
