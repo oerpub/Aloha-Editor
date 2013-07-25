@@ -121,10 +121,9 @@
         callback: function() {
           var $el;
           $el = jQuery(this);
-          if (!$el.text().trim()) {
-            $el.empty();
+          if (!$el.text().trim() && !$el.find('.aloha-oer-block').length) {
+            return $el.empty();
           }
-          return $el.toggleClass('aloha-empty', $el.is(':empty'));
         }
       }
     ];
@@ -226,9 +225,6 @@
       },
       init: function() {
         var _this = this;
-        Aloha.bind('aloha-editable-created', function(e, params) {
-          return jQuery('[placeholder],[hover-placeholder]').blur();
-        });
         return Aloha.bind('aloha-editable-created', function(e, params) {
           var $root, classes, type, _i, _len;
           $root = params.obj;

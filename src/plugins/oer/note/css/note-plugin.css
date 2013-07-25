@@ -8,4 +8,5 @@
 
 .note .body {
   margin: 10px;
+  background-color: inherit;
 }

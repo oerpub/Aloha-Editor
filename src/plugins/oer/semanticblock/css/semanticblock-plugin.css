@@ -5,20 +5,20 @@
 
     Then, the placeholder text should appear on an element when all of the following occur:
     - has a `placeholder` attribute
-    - does not contain text in the children (`.aloha-empty` is set on init/blur)
+    - does not contain text
     - is not currently being edited (no cursor inside)
 
     The placeholder text is added to the DOM using `:before { content: '...'; }`.
     This way, the browser does most of the heavy lifting AND the actual text
     is never part of the DOM for serializing.
  */
-.semantic-container       *[placeholder].aloha-empty:not(:focus):before,
 .semantic-container       *[placeholder]:empty:not(:focus):before {
     content: attr(placeholder);
     color: #AAA;
     font-style: italic;
 }
-.semantic-container:hover *[hover-placeholder].aloha-empty:not(:focus):before {
+.semantic-container:hover *[hover-placeholder]:empty:not(:focus):before {
+    font-weight: normal;
     content: attr(hover-placeholder);
     color: #AAA;
     font-style: italic;
@@ -167,7 +167,6 @@
 .aloha-oer-block .title {
     font-size: 1em;
 }
-.aloha-oer-block .title:not(.aloha-empty),
 .aloha-oer-block .title:focus {
     font-weight: bold;
 }

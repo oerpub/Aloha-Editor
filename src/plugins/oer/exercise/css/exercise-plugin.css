@@ -6,7 +6,11 @@
 }
 
 .exercise .problem {
+  background-color: inherit;
   margin: 10px;
+}
+.exercise .solution .body {
+  background-color: inherit;
 }
 
 .semantic-container .exercise .solution-placeholder {

@@ -10,7 +10,8 @@
       },
       activate: function($element) {
         $element.attr('placeholder', 'Type the text of you quotation here.');
-        return $element.aloha();
+        $element.aloha();
+        return $element.addClass('aloha-block-dropzone');
       },
       deactivate: function($element) {
         $element.mahalo();
