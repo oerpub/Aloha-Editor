@@ -21,9 +21,9 @@
         }
       });
       $typeContainer.prependTo($element);
-      $problem.attr('placeholder', "Type the text of your problem here.").appendTo($element).aloha();
-      jQuery('<div>').addClass('solutions').appendTo($element);
-      jQuery('<div>').addClass('solution-controls').append('<span class="add-solution btn-link">Click here to add an answer/solution</span>').append('<span class="solution-toggle"></span>').appendTo($element);
+      $problem.attr('placeholder', "Type the text of your problem here.").appendTo($element).addClass('aloha-block-dropzone').aloha();
+      jQuery('<div>').addClass('solutions').appendTo($element).append($solutions);
+      jQuery('<div>').addClass('solution-controls').append('<span class="add-solution btn-link">Click here to add an answer/solution</span>').append('<span class="solution-toggle">show solution</span>').appendTo($element);
       if (!$solutions.length) {
         return $element.children('.solution-controls').children('.solution-toggle').hide();
       }
@@ -53,7 +53,7 @@
         }
       });
       $typeContainer.prependTo($element);
-      return jQuery('<div>').addClass('body').append($body).appendTo($element).aloha();
+      return jQuery('<div>').addClass('body').appendTo($element).aloha().append($body).addClass('aloha-block-dropzone');
     };
     deactivateSolution = function($element) {
       var content;

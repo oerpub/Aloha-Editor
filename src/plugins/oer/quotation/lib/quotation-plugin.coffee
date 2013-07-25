@@ -19,6 +19,7 @@ define [
 
       $element.attr('placeholder', 'Type the text of you quotation here.')
       $element.aloha()
+      $element.addClass('aloha-block-dropzone')
     deactivate: ($element) ->
       $element.mahalo()
       $element.attr('class', 'quote')

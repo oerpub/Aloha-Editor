@@ -2,3 +2,6 @@
     font-style: normal;
     content: "Quotation";
 }
+.quote.aloha-oer-block {
+    background-color: inherit;
+}

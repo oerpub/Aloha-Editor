@@ -31,7 +31,6 @@
           if ($element.is(type.selector)) {
             $title = $element.children('.title');
             $title.attr('hover-placeholder', 'Add a title (optional)');
-            console.log($title);
             $title.aloha();
             $body = $element.contents().not($title);
             typeContainer = TYPE_CONTAINER.clone();
@@ -83,7 +82,7 @@
             }
             typeContainer.find('.type').text(type.label);
             typeContainer.prependTo($element);
-            return $('<div>').addClass('body').attr('placeholder', "Type the text of your " + (type.label.toLowerCase()) + " here.").append($body).appendTo($element).aloha();
+            return $body = $('<div>').addClass('body').addClass('aloha-block-dropzone').attr('placeholder', "Type the text of your " + (type.label.toLowerCase()) + " here.").appendTo($element).aloha().append($body);
           }
         });
       },

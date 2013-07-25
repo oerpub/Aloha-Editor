@@ -55,7 +55,6 @@ define [
         if $element.is(type.selector)
           $title = $element.children('.title')
           $title.attr('hover-placeholder', 'Add a title (optional)')
-          console.log($title)
           $title.aloha()
        
           $body = $element.contents().not($title)
@@ -106,13 +105,17 @@ define [
        
           typeContainer.find('.type').text(type.label)
           typeContainer.prependTo($element)
-      
+
           # Create the body and add some placeholder text
-          $('<div>').addClass('body')
-          .attr('placeholder', "Type the text of your #{type.label.toLowerCase()} here.")
-          .append($body)
-          .appendTo($element)
-          .aloha()
+          $body = $('<div>')
+            .addClass('body')
+            .addClass('aloha-block-dropzone')
+            .attr('placeholder', "Type the text of your #{type.label.toLowerCase()} here.")
+            .appendTo($element)
+            .aloha()
+            .append($body)
+
+          
      
     deactivate: ($element) ->
       $body = $element.children('.body')
