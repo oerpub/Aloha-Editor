@@ -18,7 +18,7 @@ define [
         </div> 
 	'''
     TYPE_CONTAINER = '''
-        <div class="type-container dropdown">
+        <div class="type-container dropdown aloha-ephemera">
             <a class="type" data-toggle="dropdown"></a>
             <ul class="dropdown-menu">
                 <li><a href="">Exercise</a></li>
@@ -30,7 +30,7 @@ define [
         </div>
     '''
     SOLUTION_TYPE_CONTAINER = '''
-        <div class="type-container dropdown">
+        <div class="type-container dropdown aloha-ephemera">
             <a class="type" data-toggle="dropdown"></a>
             <ul class="dropdown-menu">
                 <li><a href="">Answer</a></li>
@@ -64,11 +64,13 @@ define [
 
       jQuery('<div>')
         .addClass('solutions')
+        .addClass('aloha-ephemera-wrapper')
         .appendTo($element)
         .append($solutions)
 
       jQuery('<div>')
         .addClass('solution-controls')
+        .addClass('aloha-ephemera')
         .append('<a class="add-solution">Click here to add an answer/solution</a>')
         .append('<a class="solution-toggle">show solution</a>')
         .appendTo($element)
@@ -78,7 +80,7 @@ define [
 
     deactivateExercise = ($element) ->
       $problem = $element.children('.problem')
-      $solutions = $element.children('.solutions').children()
+      $solutions = $element.children('.solution')
       
       if $problem.html() == '' or $problem.html() == '<p></p>'
         $problem.html('&nbsp;')

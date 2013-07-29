@@ -24,9 +24,9 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       </div>
     </div>'''
 
-  blockTemplate = jQuery('<div class="semantic-container"></div>')
-  blockControls = jQuery('<div class="semantic-controls"><button class="semantic-delete" title="Remove this element."><i class="icon-remove"></i></button><button class="semantic-settings" title="advanced options."><i class="icon-cog"></i></button></div>')
-  blockDragHelper = jQuery('<div class="semantic-drag-helper"><div class="title"></div><div class="body">Drag me to the desired location in the document</div></div>')
+  blockTemplate = jQuery('<div class="semantic-container aloha-ephemera-wrapper"></div>')
+  blockControls = jQuery('<div class="semantic-controls aloha-ephemera"><button class="semantic-delete" title="Remove this element."><i class="icon-remove"></i></button><button class="semantic-settings" title="advanced options."><i class="icon-cog"></i></button></div>')
+  blockDragHelper = jQuery('<div class="semantic-drag-helper aloha-ephemera"><div class="title"></div><div class="body">Drag me to the desired location in the document</div></div>')
   registeredTypes = []
   pluginEvents = [
     name: 'mouseenter'
@@ -142,16 +142,13 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
           break
 
   deactivate = (element) ->
-    if element.parent('.semantic-container').length or element.is('.semantic-container')
-      element.removeClass 'aloha-oer-block ui-draggable'
-      element.removeAttr 'style'
+    element.removeClass 'aloha-oer-block ui-draggable'
+    element.removeAttr 'style'
 
-      for type in registeredTypes
-        if element.is(type.selector)
-          type.deactivate element
-          break
-      element.siblings('.semantic-controls').remove()
-      element.unwrap()
+    for type in registeredTypes
+      if element.is(type.selector)
+        type.deactivate element
+        break
 
   bindEvents = (element) ->
     return  if element.data('oerBlocksInitialized')
