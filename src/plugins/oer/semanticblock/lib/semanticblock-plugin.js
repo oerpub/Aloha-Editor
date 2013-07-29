@@ -209,19 +209,18 @@
       return bindEvents(jQuery(document));
     });
     return Plugin.create('semanticblock', {
+      defaults: {
+        defaultSelector: 'div:not(.aloha-oer-block,.aloha-editable,.aloha-block,.aloha-ephemera-wrapper,.aloha-ephemera)'
+      },
       makeClean: function(content) {
-        var type, _i, _len;
         content.find('.semantic-container').each(function() {
           if (jQuery(this).children().not('.semantic-controls').length === 0) {
             return jQuery(this).remove();
           }
         });
-        for (_i = 0, _len = registeredTypes.length; _i < _len; _i++) {
-          type = registeredTypes[_i];
-          content.find(".aloha-oer-block" + type.selector).each(function() {
-            return deactivate(jQuery(this));
-          });
-        }
+        content.find(".aloha-oer-block").each(function() {
+          return deactivate(jQuery(this));
+        });
         return cleanIds(content);
       },
       init: function() {
@@ -234,12 +233,9 @@
             type = registeredTypes[_i];
             classes.push(type.selector);
           }
-          $root.find(classes.join()).each(function(i, el) {
+          $root.find(_this.settings.defaultSelector + ',' + classes.join()).each(function(i, el) {
             var $el;
             $el = jQuery(el);
-            if (!$el.parents('.semantic-drag-source')[0]) {
-              $el.addClass('aloha-oer-block');
-            }
             return activate($el);
           });
           if ($root.is('.aloha-block-blocklevel-sortable') && !$root.parents('.aloha-editable').length) {
@@ -290,7 +286,10 @@
         return activate($element);
       },
       register: function(plugin) {
-        return registeredTypes.push(plugin);
+        registeredTypes.push(plugin);
+        if (plugin.ignore) {
+          return this.settings.defaultSelector += ':not(' + plugin.ignore + ')';
+        }
       },
       registerEvent: function(name, selector, callback) {
         return pluginEvents.push({

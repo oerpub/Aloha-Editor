@@ -141,6 +141,8 @@ define [
           deactivateSolution($element)
 
       selector: '.exercise,.solution' #this plugin handles both exercises and solutions
+      ignore: '.problem'
+
       init: () ->
 
         semanticBlock.register(this)

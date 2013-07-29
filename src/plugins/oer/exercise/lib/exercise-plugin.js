@@ -85,6 +85,7 @@
         }
       },
       selector: '.exercise,.solution',
+      ignore: '.problem',
       init: function() {
         semanticBlock.register(this);
         UI.adopt('insertExercise', Button, {

@@ -178,15 +178,17 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
 
   Plugin.create 'semanticblock',
 
+    defaults: {
+      defaultSelector: 'div:not(.aloha-oer-block,.aloha-editable,.aloha-block,.aloha-ephemera-wrapper,.aloha-ephemera)'
+    }
     makeClean: (content) ->
 
       content.find('.semantic-container').each ->
         if jQuery(this).children().not('.semantic-controls').length == 0
           jQuery(this).remove()
 
-      for type in registeredTypes
-        content.find(".aloha-oer-block#{type.selector}").each ->
-          deactivate jQuery(this)
+      content.find(".aloha-oer-block").each ->
+        deactivate jQuery(this)
 
       cleanIds(content)
 
@@ -197,9 +199,8 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
         # Add a `.aloha-oer-block` to all registered classes
         classes = []
         classes.push type.selector for type in registeredTypes
-        $root.find(classes.join()).each (i, el) ->
+        $root.find(@settings.defaultSelector + ',' + classes.join()).each (i, el) ->
           $el = jQuery(el)
-          $el.addClass 'aloha-oer-block' if not $el.parents('.semantic-drag-source')[0]
           activate $el
 
         if $root.is('.aloha-block-blocklevel-sortable') and not $root.parents('.aloha-editable').length
@@ -243,6 +244,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
 
     register: (plugin) ->
       registeredTypes.push(plugin)
+      @settings.defaultSelector += ':not('+plugin.ignore+')' if plugin.ignore
 
     registerEvent: (name, selector, callback) ->
       pluginEvents.push
