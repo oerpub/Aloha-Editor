@@ -179,44 +179,23 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
               dialog.find('.modal-header h3').text(title)
             dialog.modal 'show'
 
-  uploadImage = (file, callback) ->
-    plugin = @
-    settings = Aloha.require('assorted/assorted-plugin').settings
-    xhr = new XMLHttpRequest()
-    if xhr.upload
-      if not settings.image.uploadurl
-        throw new Error("uploadurl not defined")
+  insertImage = () ->
+    template = $('<span class="media aloha-ephemera"><img /></span>')
+    semanticBlock.insertAtCursor(template)
+    newEl = template.find('img')
+    promise = showModalDialog(newEl)
 
-      xhr.onload = () ->
-        if settings.image.parseresponse
-          url = parseresponse(xhr)
-        else
-          url = JSON.parse(xhr.response).url
-        callback(url)
-
-      xhr.open("POST", settings.image.uploadurl, true)
-      xhr.setRequestHeader("Cache-Control", "no-cache")
-      f = new FormData()
-      f.append(settings.image.uploadfield or 'upload', file, file.name)
-      xhr.send(f)
-
-  UI.adopt 'insertImage-oer', null,
-    click: () ->
-      template = $('<span class="media aloha-ephemera"><img /></span>')
-      semanticBlock.insertAtCursor(template)
-      newEl = template.find('img')
-      promise = showModalDialog(newEl)
-
-      promise.done (data)->
-        # Uploading if a local file was chosen
-        if data.files.length
-          newEl.addClass('aloha-image-uploading')
-          uploadImage data.files[0], (url) ->
+    promise.done (data)=>
+      # Uploading if a local file was chosen
+      if data.files.length
+        newEl.addClass('aloha-image-uploading')
+        @uploadImage data.files[0], newEl, (url) ->
+          if url
             jQuery(data.target).attr('src', url)
-            newEl.removeClass('aloha-image-uploading')
+          newEl.removeClass('aloha-image-uploading')
 
-      # Finally show the dialog
-      promise.show()
+    # Finally show the dialog
+    promise.show()
 
   $('body').bind 'aloha-image-resize', ->
     setWidth Image.imageObj
@@ -287,9 +266,34 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
     deactivate: deactivate
     selector: '.media'
     init: () ->
+      plugin = @
+      UI.adopt 'insertImage-oer', null,
+        click: (e) -> insertImage.bind(plugin)(e)
+
       semanticBlock.register(this)
       semanticBlock.registerEvent 'click', '.aloha-oer-block .image-edit', ->
         img = $(this).siblings('img')
         promise = showModalDialog(img)
         promise.show('Edit image')
+
+    uploadImage: (file, el, callback) ->
+      plugin = @
+      settings = Aloha.require('assorted/assorted-plugin').settings
+      xhr = new XMLHttpRequest()
+      if xhr.upload
+        if not settings.image.uploadurl
+          throw new Error("uploadurl not defined")
+
+        xhr.onload = () ->
+          if settings.image.parseresponse
+            url = parseresponse(xhr)
+          else
+            url = JSON.parse(xhr.response).url
+          callback(url)
+
+        xhr.open("POST", settings.image.uploadurl, true)
+        xhr.setRequestHeader("Cache-Control", "no-cache")
+        f = new FormData()
+        f.append(settings.image.uploadfield or 'upload', file, file.name)
+        xhr.send(f)
   })
