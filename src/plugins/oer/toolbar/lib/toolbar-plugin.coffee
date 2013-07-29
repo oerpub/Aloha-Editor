@@ -83,13 +83,31 @@ define [ 'jquery', 'aloha', 'aloha/plugin', 'ui/ui', 'PubSub' ], (
           if not ($target.is(':disabled') or $target.parent().is('.disabled'))
             settings.unpreview.bind(@)(evt)
 
+  formats = {}
+
+  buildMenu = (options, selected) ->
+    $container = $ROOT.find('.headings ul')
+    $container.empty()
+    for tag, label of options
+      $container.append("<li><a href=\"#\" class=\"action changeHeading\" data-tagname=\"#{tag}\">#{label}</a></li>")
+    $ROOT.find('.headings .currentHeading').text(formats[selected])
+
   ###
    register the plugin with unique name
   ###
   Plugin.create "toolbar",
+    defaults: {
+      defaultFormat: 'p'
+      formats:
+        'p':  'Normal Text'
+        'h1': 'Heading'
+        'h2': 'Subheading'
+        'h3': 'SubSubHeading'
+    }
     init: ->
-
       toolbar = @
+      formats = @settings.formats
+      jQuery.extend(toolbar.settings, @defaults)
 
       changeHeading = (evt) ->
         evt.preventDefault()
@@ -120,29 +138,30 @@ define [ 'jquery', 'aloha', 'aloha/plugin', 'ui/ui', 'PubSub' ], (
 
       PubSub.sub 'aloha.selection.context-change', (data) ->
         el = data.range.commonAncestorContainer
-        # Use the first button in the headings area
-        button = $ROOT.find('.headings button').first()
-        currentHeading = $ROOT.find('.headings .currentHeading')
-        headings = $ROOT.find('.action.changeHeading')
-        tagnames = []
-        headings.each () ->
-          tagnames.push($(this).attr('data-tagname').toUpperCase())
 
         # Figure out if we are in any particular heading
-        h = $(el).parentsUntil('.aloha-editable').andSelf()
-        h = h.filter(tagnames.join(',')).first()
+        parents = $(el).parents().andSelf()
+        currentHeading = parents.filter(Object.keys(formats).join(',')).first()
+      
+        blacklist = []
+        parents.filter('[data-format-blacklist]').each ->
+          blacklist += jQuery(@).data('formatBlacklist')
 
-        if not h.length
-          button.prop('disabled', true)
-          currentHeading.html(headings.first().text())
+        whitelist = []
+        parents.filter('[data-format-whitelist]').each ->
+          whitelist += jQuery(@).data('formatWhitelist')
+
+        allowedFormats = []
+        for tag, label of formats
+          if (!blacklist.length || blacklist.indexOf(tag) == -1) && (!whitelist.length || whitelist.indexOf(tag) != -1)
+            allowedFormats[tag] = label
+
+        if currentHeading.length
+          currentHeading = currentHeading.get(0).tagName.toLowerCase()
         else
-          button.prop('disabled', false)
-          active = $.grep headings, (elem, i) ->
-            $(elem).attr('data-tagname').toUpperCase()==h[0].tagName
-          if active.length
-            currentHeading.html($(active[0]).html())
-          else
-            currentHeading.html(headings.first().text())
+          currentHeading = toolbar.settings.defaultFormat
+
+        buildMenu(allowedFormats, currentHeading)
 
     # Components of which we are the parent (not buttons) will call
     # these when they are activated. Change it into an event so it can

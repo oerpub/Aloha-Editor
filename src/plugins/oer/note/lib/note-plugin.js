@@ -24,6 +24,8 @@
       },
       activate: function($element) {
         var _this = this;
+        $element.attr('data-format-whitelist', '["p"]');
+        Ephemera.markAttr($element, 'data-format-whitelist');
         return jQuery.each(types, function(i, type) {
           var $body, $title, typeContainer;
           if ($element.is(type.selector)) {

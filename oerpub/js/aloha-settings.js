@@ -29,6 +29,15 @@
             genericbutton: {
                 buttons: [{'id': 'save', 'title': 'Save', 'event': 'swordpushweb.save' }]
             },
+            toolbar: {
+                formats: {
+                  'p':   'Normal Text',
+                  'h1':  'Heading',
+                  'h2':  'Subheading',
+                  'h3':  'SubSubHeading',
+                  'pre': 'Code'
+                }
+            },
             format: {
                 config : ['b', 'i', 'u', 'p', 'sub', 'sup', 'h1', 'h2', 'h3']
             },
