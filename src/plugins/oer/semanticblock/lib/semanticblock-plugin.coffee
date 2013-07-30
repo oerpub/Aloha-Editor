@@ -148,8 +148,10 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       $title = $element.children('.title').first()
       $title.attr('hover-placeholder', 'Add a title')
       $title.aloha()
-      
-      $element.aloha()
+
+      $contents = $element.children().not($title)
+      $contents.wrap(jQuery('<div class="body"></body>'))
+      $element.children('.body').aloha()
 
   deactivate = ($element) ->
     $element.removeClass 'aloha-oer-block ui-draggable'
@@ -162,8 +164,10 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
 
     # if we make it this far none of the deactivators have run
     $title = $element.children('.title').first()
-    $title.mahalo()
-    $element.mahalo()
+      .mahalo()
+      .removeClass('aloha-editable aloha-block-blocklevel-sortable ui-sortable')
+      .removeAttr('hover-placeholder')
+    $element.find('.body').children().unwrap()
 
   bindEvents = (element) ->
     return  if element.data('oerBlocksInitialized')

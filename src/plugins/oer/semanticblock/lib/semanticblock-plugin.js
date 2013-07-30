@@ -139,7 +139,7 @@
       }
     };
     activate = function($element) {
-      var $title, type, _i, _len;
+      var $contents, $title, type, _i, _len;
       if (!($element.parent('.semantic-container').length || $element.is('.semantic-container'))) {
         $element.addClass('aloha-oer-block');
         $element.wrap(blockTemplate).parent().append(blockControls.clone()).alohaBlock();
@@ -153,7 +153,9 @@
         $title = $element.children('.title').first();
         $title.attr('hover-placeholder', 'Add a title');
         $title.aloha();
-        return $element.aloha();
+        $contents = $element.children().not($title);
+        $contents.wrap(jQuery('<div class="body"></body>'));
+        return $element.children('.body').aloha();
       }
     };
     deactivate = function($element) {
@@ -167,9 +169,8 @@
           return;
         }
       }
-      $title = $element.children('.title').first();
-      $title.mahalo();
-      return $element.mahalo();
+      $title = $element.children('.title').first().mahalo().removeClass('aloha-editable aloha-block-blocklevel-sortable ui-sortable').removeAttr('hover-placeholder');
+      return $element.find('.body').children().unwrap();
     };
     bindEvents = function(element) {
       var event, i, _results;
