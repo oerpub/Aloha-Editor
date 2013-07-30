@@ -139,7 +139,11 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       for type in registeredTypes
         if element.is(type.selector)
           type.activate element
-          break
+          return
+
+      # if we make it this far none of the activators have run
+      # just make it editable
+      element.aloha()
 
   deactivate = (element) ->
     element.removeClass 'aloha-oer-block ui-draggable'

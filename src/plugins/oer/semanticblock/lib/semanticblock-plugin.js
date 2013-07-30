@@ -139,21 +139,18 @@
       }
     };
     activate = function(element) {
-      var type, _i, _len, _results;
+      var type, _i, _len;
       if (!(element.parent('.semantic-container').length || element.is('.semantic-container'))) {
         element.addClass('aloha-oer-block');
         element.wrap(blockTemplate).parent().append(blockControls.clone()).alohaBlock();
-        _results = [];
         for (_i = 0, _len = registeredTypes.length; _i < _len; _i++) {
           type = registeredTypes[_i];
           if (element.is(type.selector)) {
             type.activate(element);
-            break;
-          } else {
-            _results.push(void 0);
+            return;
           }
         }
-        return _results;
+        return element.aloha();
       }
     };
     deactivate = function(element) {
