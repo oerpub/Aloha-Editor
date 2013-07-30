@@ -191,6 +191,9 @@ There are 3 variables that are stored on each element;
     if (typeof $.fn.tooltip.defaults.container === 'undefined') {
       monkeyPatch();
     }
+    if (typeof $.fn.tooltip.defaults.container === 'undefined') {
+      monkeyPatch();
+    }
     Popover = {
       MILLISECS: 2000,
       register: function(cfg) {
@@ -269,8 +272,8 @@ There are 3 variables that are stored on each element;
           $node.removeData('aloha-bubble-timer');
           $node.data('aloha-bubble-selected', false);
           if ($node.data('aloha-bubble-visible')) {
-            $node.popover('hide');
-            return $node.removeData('aloha-bubble-visible');
+            $node.removeData('aloha-bubble-visible');
+            return $node.popover('hide');
           }
         });
         return $el.on('mouseenter.bubble', this.selector, function(evt) {

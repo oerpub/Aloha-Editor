@@ -150,6 +150,7 @@
     margin: 5px 10px 0 5px;
     color: #369;
     text-decoration: none;
+    text-transform: uppercase; 
 }
 
 .aloha-oer-block .type-container ul.dropdown-menu {

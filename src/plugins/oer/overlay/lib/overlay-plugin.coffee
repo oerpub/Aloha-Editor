@@ -214,6 +214,14 @@ define [ 'aloha', 'jquery', 'css!../../../oer/overlay/css/popover.css' ], (Aloha
   if typeof($.fn.tooltip.defaults.container) == 'undefined'
     monkeyPatch()
 
+  # We only want to apply the patches for old versions of bootstrap. With
+  # no way to obtain the version of bootstrap, we need to look for some other
+  # defining feature that is bound to be available. I use here the fact that
+  # in 2.3 bootstrap added the 'container' option to tooltips/popovers, so
+  # not having that is a sign that patching is needed.
+  if typeof($.fn.tooltip.defaults.container) == 'undefined'
+    monkeyPatch()
+
   Popover =
     MILLISECS: 2000
     register: (cfg) -> bindHelper(new Helper(cfg))
@@ -285,8 +293,8 @@ define [ 'aloha', 'jquery', 'css!../../../oer/overlay/css/popover.css' ], (Aloha
         $node.removeData('aloha-bubble-timer')
         $node.data('aloha-bubble-selected', false)
         if $node.data('aloha-bubble-visible')
-          $node.popover 'hide'
           $node.removeData('aloha-bubble-visible')
+          $node.popover 'hide'
 
       # The only reason I map mouseenter is so I can catch new elements that are added to the DOM
       $el.on 'mouseenter.bubble', @selector, (evt) =>
