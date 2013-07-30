@@ -131,28 +131,39 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       if $element.is(type.selector)
         return type.getLabel $element
 
-  activate = (element) ->
-    unless element.parent('.semantic-container').length or element.is('.semantic-container')
-      element.addClass 'aloha-oer-block'
-      element.wrap(blockTemplate).parent().append(blockControls.clone()).alohaBlock()
+  activate = ($element) ->
+    unless $element.parent('.semantic-container').length or $element.is('.semantic-container')
+      $element.addClass 'aloha-oer-block'
+      $element.wrap(blockTemplate).parent().append(blockControls.clone()).alohaBlock()
       
       for type in registeredTypes
-        if element.is(type.selector)
-          type.activate element
+        if $element.is(type.selector)
+          type.activate $element
           return
 
       # if we make it this far none of the activators have run
       # just make it editable
-      element.aloha()
 
-  deactivate = (element) ->
-    element.removeClass 'aloha-oer-block ui-draggable'
-    element.removeAttr 'style'
+      # if there is a title, give it a placeholder and make it editable
+      $title = $element.children('.title').first()
+      $title.attr('hover-placeholder', 'Add a title')
+      $title.aloha()
+      
+      $element.aloha()
+
+  deactivate = ($element) ->
+    $element.removeClass 'aloha-oer-block ui-draggable'
+    $element.removeAttr 'style'
 
     for type in registeredTypes
-      if element.is(type.selector)
-        type.deactivate element
-        break
+      if $element.is(type.selector)
+        type.deactivate $element
+        return
+
+    # if we make it this far none of the deactivators have run
+    $title = $element.children('.title').first()
+    $title.mahalo()
+    $element.mahalo()
 
   bindEvents = (element) ->
     return  if element.data('oerBlocksInitialized')
@@ -183,7 +194,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
   Plugin.create 'semanticblock',
 
     defaults: {
-      defaultSelector: 'div:not(.aloha-oer-block,.aloha-editable,.aloha-block,.aloha-ephemera-wrapper,.aloha-ephemera)'
+      defaultSelector: 'div:not(.title,.aloha-oer-block,.aloha-editable,.aloha-block,.aloha-ephemera-wrapper,.aloha-ephemera)'
     }
     makeClean: (content) ->
 

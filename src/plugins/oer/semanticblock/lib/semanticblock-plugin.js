@@ -138,36 +138,38 @@
         }
       }
     };
-    activate = function(element) {
-      var type, _i, _len;
-      if (!(element.parent('.semantic-container').length || element.is('.semantic-container'))) {
-        element.addClass('aloha-oer-block');
-        element.wrap(blockTemplate).parent().append(blockControls.clone()).alohaBlock();
+    activate = function($element) {
+      var $title, type, _i, _len;
+      if (!($element.parent('.semantic-container').length || $element.is('.semantic-container'))) {
+        $element.addClass('aloha-oer-block');
+        $element.wrap(blockTemplate).parent().append(blockControls.clone()).alohaBlock();
         for (_i = 0, _len = registeredTypes.length; _i < _len; _i++) {
           type = registeredTypes[_i];
-          if (element.is(type.selector)) {
-            type.activate(element);
+          if ($element.is(type.selector)) {
+            type.activate($element);
             return;
           }
         }
-        return element.aloha();
+        $title = $element.children('.title').first();
+        $title.attr('hover-placeholder', 'Add a title');
+        $title.aloha();
+        return $element.aloha();
       }
     };
-    deactivate = function(element) {
-      var type, _i, _len, _results;
-      element.removeClass('aloha-oer-block ui-draggable');
-      element.removeAttr('style');
-      _results = [];
+    deactivate = function($element) {
+      var $title, type, _i, _len;
+      $element.removeClass('aloha-oer-block ui-draggable');
+      $element.removeAttr('style');
       for (_i = 0, _len = registeredTypes.length; _i < _len; _i++) {
         type = registeredTypes[_i];
-        if (element.is(type.selector)) {
-          type.deactivate(element);
-          break;
-        } else {
-          _results.push(void 0);
+        if ($element.is(type.selector)) {
+          type.deactivate($element);
+          return;
         }
       }
-      return _results;
+      $title = $element.children('.title').first();
+      $title.mahalo();
+      return $element.mahalo();
     };
     bindEvents = function(element) {
       var event, i, _results;
@@ -207,7 +209,7 @@
     });
     return Plugin.create('semanticblock', {
       defaults: {
-        defaultSelector: 'div:not(.aloha-oer-block,.aloha-editable,.aloha-block,.aloha-ephemera-wrapper,.aloha-ephemera)'
+        defaultSelector: 'div:not(.title,.aloha-oer-block,.aloha-editable,.aloha-block,.aloha-ephemera-wrapper,.aloha-ephemera)'
       },
       makeClean: function(content) {
         content.find('.semantic-container').each(function() {
