@@ -63,7 +63,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
   ,
     name: 'click'
     selector: '.semantic-container .semantic-delete'
-    callback: (e) ->
+    callback: () ->
       jQuery(this).parents('.semantic-container').first().slideUp 'slow', ->
         jQuery(this).remove()
   ,

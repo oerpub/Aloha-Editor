@@ -8,8 +8,7 @@ define ['aloha', 'aloha/plugin', 'jquery', 'css!../../../oer/mathcheatsheet/css/
       Aloha.require ['math/math-plugin'], (MathPlugin) ->
         MathPlugin.editor.find('.math-container').before '''
             <div class="math-help-link">
-                <a title="Help using the math editor"
-                   href="javascript:;">See help</a>
+                <span class="btn-link" title="Help using the math editor">See help</a>
             </div>'''
         MathPlugin.editor.find('.plaintext-label').after '''
             <label class="cheatsheet-label checkbox inline">
@@ -21,7 +20,7 @@ define ['aloha', 'aloha/plugin', 'jquery', 'css!../../../oer/mathcheatsheet/css/
           else
             jQuery('#math-cheatsheet').trigger "hide"
 
-        MathPlugin.editor.find('.math-help-link a').on 'click', (e) ->
+        MathPlugin.editor.find('.math-help-link span').on 'click', (e) ->
           HELP_TEMPLATE = '<div class="popover math-editor-help-text"><div class="arrow"></div><div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content"></div></div></div>'
           $h = jQuery(@)
           $h.unbind 'click'
@@ -94,12 +93,12 @@ define ['aloha', 'aloha/plugin', 'jquery', 'css!../../../oer/mathcheatsheet/css/
       ''')
       jQuery('body').append(help)
       opener = help.find('.cheatsheet-open')
-      
+
       help.on 'show', (e) ->
         opener.hide()
         # It says slideDown, but it really causes it to slid up.
         jQuery(@).find('.cheatsheet').slideDown "fast"
-      
+
       help.on 'hide', (e) ->
         jQuery(@).find('.cheatsheet').slideUp "fast", () ->
             opener.show('slow')
@@ -109,17 +108,17 @@ define ['aloha', 'aloha/plugin', 'jquery', 'css!../../../oer/mathcheatsheet/css/
           jQuery(@).trigger 'hide'
         else
           jQuery(@).trigger 'show'
-      
+
       opener.on 'click', (e) ->
         help.trigger 'show'
         # Tick the cheat sheet activator tickbox
         jQuery('body > .popover .math-editor-dialog #cheatsheet-activator').prop('checked', true)
-      
+
       help.find('.cheatsheet-close').on "click", (e) ->
         help.trigger "hide"
         # Untick activator
         jQuery('body > .popover .math-editor-dialog #cheatsheet-activator').prop('checked', false)
-      
+
       help.find('.cheatsheet-type input').on "change", (e) ->
         sh = jQuery(e.target).val()
         help.find('.cheatsheet-ascii').hide()

@@ -17,13 +17,13 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
         <div class="image-options">
             <div class="image-selection">
               <div class="dia-alternative">
-                <a class="upload-image-link">Choose an image to upload</a>
+                <span class="upload-image-link btn-link">Choose an image to upload</span>
               </div>
               <div class="dia-alternative">
                 OR
               </div>
               <div class="dia-alternative">
-                <a class="upload-url-link">get image from the Web</a>
+                <span class="upload-url-link btn-link">get image from the Web</span>
               </div>
             </div>
             <div class="placeholder preview hide">
@@ -105,15 +105,13 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
         reader.readAsDataURL(file)
 
       # Add click handlers
-      dialog.find('.upload-image-link').on 'click', (evt) ->
-        evt.preventDefault()
+      dialog.find('.upload-image-link').on 'click', () ->
         $placeholder.hide()
         $uploadUrl.hide()
         $uploadImage.click()
         $uploadImage.show()
 
-      dialog.find('.upload-url-link').on 'click', (evt) ->
-        evt.preventDefault()
+      dialog.find('.upload-url-link').on 'click', () ->
         $placeholder.hide()
         $uploadImage.hide()
         $uploadUrl.show().focus()

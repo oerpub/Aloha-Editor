@@ -35,8 +35,8 @@ define [
         <h4 id="link-destination">Link Destination</h4>
         <div class="tabbable tabs-left"> <!-- Only required for left/right tabs -->
           <ul class="nav nav-tabs">
-            <li><a href="#link-tab-external" data-toggle="tab">External</a></li>
-            <li><a href="#link-tab-internal" data-toggle="tab">Internal</a></li>
+            <li><span data-target="#link-tab-external" data-toggle="tab">External</span></li>
+            <li><span data-target="#link-tab-internal" data-toggle="tab">Internal</span></li>
           </ul>
           <div class="tab-content">
             <div class="tab-pane" id="link-tab-external">
