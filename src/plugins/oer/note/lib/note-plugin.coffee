@@ -114,8 +114,6 @@ define [
             .appendTo($element)
             .aloha()
             .append($body)
-
-          $body.empty() if not $body.text().trim()
      
     deactivate: ($element) ->
       $body = $element.children('.body')

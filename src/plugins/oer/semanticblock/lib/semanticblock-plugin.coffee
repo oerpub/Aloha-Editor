@@ -122,7 +122,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       $el = jQuery @
       # If the element does not contain any text (just empty paragraphs)
       # Clear the contents so `:empty` is true
-      $el.empty() if not $el.text().trim() and not $el.find('.aloha-oer-block').length
+      #$el.empty() if not $el.text().trim() and not $el.find('.aloha-oer-block').length
   ]
   insertElement = (element) ->
   
@@ -140,6 +140,10 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
         if element.is(type.selector)
           type.activate element
           break
+
+      # this might could be more efficient
+      element.find('*').andSelf().filter('[placeholder],[hover-placeholder]').each ->
+        jQuery(@).empty() if not jQuery(@).text().trim()
 
   deactivate = (element) ->
     if element.parent('.semantic-container').length or element.is('.semantic-container')
