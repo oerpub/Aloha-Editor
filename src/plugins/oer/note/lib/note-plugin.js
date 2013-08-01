@@ -83,7 +83,10 @@
             }
             typeContainer.find('.type').text(type.label);
             typeContainer.prependTo($element);
-            return $body = $('<div>').addClass('body').addClass('aloha-block-dropzone').attr('placeholder', "Type the text of your " + (type.label.toLowerCase()) + " here.").appendTo($element).aloha().append($body);
+            $body = $('<div>').addClass('body').addClass('aloha-block-dropzone').attr('placeholder', "Type the text of your " + (type.label.toLowerCase()) + " here.").appendTo($element).aloha().append($body);
+            if (!$body.text().trim()) {
+              return $body.empty();
+            }
           }
         });
       },

@@ -12,12 +12,12 @@
     This way, the browser does most of the heavy lifting AND the actual text
     is never part of the DOM for serializing.
  */
-.semantic-container       *[placeholder]:empty:not(:focus):before {
+.semantic-container       *[placeholder]:empty:before {
     content: attr(placeholder);
     color: #AAA;
     font-style: italic;
 }
-.semantic-container:hover *[hover-placeholder]:empty:not(:focus):before {
+.semantic-container:hover *[hover-placeholder]:empty:before {
     font-weight: normal;
     content: attr(hover-placeholder);
     color: #AAA;
