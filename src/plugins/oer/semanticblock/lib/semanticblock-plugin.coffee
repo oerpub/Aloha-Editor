@@ -143,7 +143,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
           break 
 
       # this might could be more efficient
-      element.find('*').andSelf().filter('[placeholder],[hover-placeholder]').each ->
+      $element.find('*').andSelf().filter('[placeholder],[hover-placeholder]').each ->
         jQuery(@).empty() if not jQuery(@).text().trim()
 
       return if matched
