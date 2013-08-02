@@ -7,9 +7,9 @@
       return pluginManager.plugins.semanticblock;
     }
     DIALOG_HTML = '<div class="semantic-settings modal hide" id="linkModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="false">\n  <div class="modal-header">\n    <h3></h3>\n  </div>\n  <div class="modal-body">\n    <div style="margin: 20px 10px 20px 10px; padding: 10px; border: 1px solid grey;">\n        <strong>Custom class</strong>\n        <p>\n            Give this element a custom "class". Nothing obvious will change in your document.\n            This is for advanced book styling and requires support from the publishing system.\n        </p> \n        <input type="text" placeholder="custom element class" name="custom_class">\n    </div>\n  </div>\n  <div class="modal-footer">\n    <button class="btn btn-primary action submit">Save changes</button>\n    <button class="btn action cancel">Cancel</button>\n  </div>\n</div>';
-    blockTemplate = jQuery('<div class="semantic-container"></div>');
-    blockControls = jQuery('<div class="semantic-controls"><button class="semantic-delete" title="Remove this element."><i class="icon-remove"></i></button><button class="semantic-settings" title="advanced options."><i class="icon-cog"></i></button></div>');
-    blockDragHelper = jQuery('<div class="semantic-drag-helper"><div class="title"></div><div class="body">Drag me to the desired location in the document</div></div>');
+    blockTemplate = jQuery('<div class="semantic-container aloha-ephemera-wrapper"></div>');
+    blockControls = jQuery('<div class="semantic-controls aloha-ephemera"><button class="semantic-delete" title="Remove this element."><i class="icon-remove"></i></button><button class="semantic-settings" title="advanced options."><i class="icon-cog"></i></button></div>');
+    blockDragHelper = jQuery('<div class="semantic-drag-helper aloha-ephemera"><div class="title"></div><div class="body">Drag me to the desired location in the document</div></div>');
     registeredTypes = [];
     pluginEvents = [
       {
@@ -138,40 +138,49 @@
         }
       }
     };
-    activate = function(element) {
-      var type, _i, _len;
-      if (!(element.parent('.semantic-container').length || element.is('.semantic-container'))) {
-        element.addClass('aloha-oer-block');
-        element.wrap(blockTemplate).parent().append(blockControls.clone()).alohaBlock();
+    activate = function($element) {
+      var $contents, $title, matched, type, _i, _len;
+      if (!($element.parent('.semantic-container').length || $element.is('.semantic-container'))) {
+        $element.addClass('aloha-oer-block');
+        $element.wrap(blockTemplate).parent().append(blockControls.clone()).alohaBlock();
         for (_i = 0, _len = registeredTypes.length; _i < _len; _i++) {
           type = registeredTypes[_i];
-          if (element.is(type.selector)) {
-            type.activate(element);
-            break;
+          if ($element.is(type.selector)) {
+            type.activate($element);
+            matched = true;
+            return;
           }
         }
-        return element.find('*').andSelf().filter('[placeholder],[hover-placeholder]').each(function() {
+        element.find('*').andSelf().filter('[placeholder],[hover-placeholder]').each(function() {
           if (!jQuery(this).text().trim()) {
             return jQuery(this).empty();
           }
         });
+        if (matched) {
+          return;
+        }
+        $title = $element.children('.title').first();
+        $title.attr('hover-placeholder', 'Add a title');
+        $title.aloha();
+        $contents = $element.children().not($title);
+        $contents.wrap(jQuery('<div class="body"></body>'));
+        return $element.children('.body').aloha();
       }
     };
-    deactivate = function(element) {
-      var type, _i, _len;
-      if (element.parent('.semantic-container').length || element.is('.semantic-container')) {
-        element.removeClass('aloha-oer-block ui-draggable');
-        element.removeAttr('style');
-        for (_i = 0, _len = registeredTypes.length; _i < _len; _i++) {
-          type = registeredTypes[_i];
-          if (element.is(type.selector)) {
-            type.deactivate(element);
-            break;
-          }
+    deactivate = function($element) {
+      var $title, type, _i, _len;
+      $element.removeClass('aloha-oer-block ui-draggable');
+      $element.removeAttr('style');
+      for (_i = 0, _len = registeredTypes.length; _i < _len; _i++) {
+        type = registeredTypes[_i];
+        if ($element.is(type.selector)) {
+          type.deactivate($element);
+          return;
         }
-        element.siblings('.semantic-controls').remove();
-        return element.unwrap();
       }
+      $title = $element.children('.title').first().mahalo().removeClass('aloha-editable aloha-block-blocklevel-sortable ui-sortable').removeAttr('hover-placeholder');
+      $element.find('.body').children().unwrap();
+      return $element.attr('data-unknown', 'true');
     };
     bindEvents = function(element) {
       var event, i, _results;
@@ -210,19 +219,18 @@
       return bindEvents(jQuery(document));
     });
     return Plugin.create('semanticblock', {
+      defaults: {
+        defaultSelector: 'div:not(.title,.aloha-oer-block,.aloha-editable,.aloha-block,.aloha-ephemera-wrapper,.aloha-ephemera)'
+      },
       makeClean: function(content) {
-        var type, _i, _len;
         content.find('.semantic-container').each(function() {
           if (jQuery(this).children().not('.semantic-controls').length === 0) {
             return jQuery(this).remove();
           }
         });
-        for (_i = 0, _len = registeredTypes.length; _i < _len; _i++) {
-          type = registeredTypes[_i];
-          content.find(".aloha-oer-block" + type.selector).each(function() {
-            return deactivate(jQuery(this));
-          });
-        }
+        content.find(".aloha-oer-block").each(function() {
+          return deactivate(jQuery(this));
+        });
         return cleanIds(content);
       },
       init: function() {
@@ -235,12 +243,9 @@
             type = registeredTypes[_i];
             classes.push(type.selector);
           }
-          $root.find(classes.join()).each(function(i, el) {
+          $root.find(_this.settings.defaultSelector + ',' + classes.join()).each(function(i, el) {
             var $el;
             $el = jQuery(el);
-            if (!$el.parents('.semantic-drag-source')[0]) {
-              $el.addClass('aloha-oer-block');
-            }
             return activate($el);
           });
           if ($root.is('.aloha-block-blocklevel-sortable') && !$root.parents('.aloha-editable').length) {
@@ -291,7 +296,10 @@
         return activate($element);
       },
       register: function(plugin) {
-        return registeredTypes.push(plugin);
+        registeredTypes.push(plugin);
+        if (plugin.ignore) {
+          return this.settings.defaultSelector += ':not(' + plugin.ignore + ')';
+        }
       },
       registerEvent: function(name, selector, callback) {
         return pluginEvents.push({
