@@ -140,7 +140,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
         if $element.is(type.selector)
           type.activate $element
           matched = true
-          return
+          break 
 
       # this might could be more efficient
       element.find('*').andSelf().filter('[placeholder],[hover-placeholder]').each ->

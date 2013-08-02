@@ -148,7 +148,7 @@
           if ($element.is(type.selector)) {
             type.activate($element);
             matched = true;
-            return;
+            break;
           }
         }
         element.find('*').andSelf().filter('[placeholder],[hover-placeholder]').each(function() {
