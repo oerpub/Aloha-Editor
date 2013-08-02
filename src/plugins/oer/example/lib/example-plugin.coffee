@@ -6,41 +6,39 @@ define [
   'ui/ui'
   'ui/button'
   'semanticblock/semanticblock-plugin'
-  'css!note/css/note-plugin.css'], (Aloha, Plugin, jQuery, Ephemera, UI, Button, semanticBlock) ->
+  'css!example/css/example-plugin.css'], (Aloha, Plugin, jQuery, Ephemera, UI, Button, semanticBlock) ->
 
   TYPE_CONTAINER = jQuery '''
       <span class="type-container dropdown aloha-ephemera">
-          <span class="type btn-link" data-toggle="dropdown"></span>
+          <a class="type" href="#" data-toggle="dropdown"></a>
           <ul class="dropdown-menu">
           </ul>
       </span>
   '''
 
-  # Find all classes that could mean something is "notish"
-  # so they can be removed when the type is changed from the dropdown.
-  notishClasses = {}
+  exampleishClasses = {}
   types = []
 
-  Plugin.create 'note',
+  Plugin.create 'example',
     # Default Settings
     # -------
-    # The plugin can listen to various classes that should "behave" like a note.
-    # For each notish element provide a:
+    # The plugin can listen to various classes that should "behave" like an example.
+    # For each exampleish element provide a:
     # - `label`: **Required** Shows up in dropdown
     # - `cls` :  **Required** The classname to enable this plugin on
     # - `hasTitle`: **Required** `true` if the element allows optional titles
     # - `type`: value in the `data-type` attribute.
-    # - `tagName`: Default: `div`. The HTML element name to use when creating a new note
+    # - `tagName`: Default: `div`. The HTML element name to use when creating a new example
     # - `titleTagName`: Default: `div`. The HTML element name to use when creating a new title
-    #
-    # For example, a Warning could look like this:
-    #
-    #     { label:'Warning', cls:'note', hasTitle:false, type:'warning'}
     #
     # Then, when the user selects "Warning" from the dropdown the element's
     # class and type will be changed and its `> .title` will be removed.
     defaults: [
-      { label: 'Note', cls: 'note', hasTitle: true }
+      { label: 'Example', cls: 'example', hasTitle: true },
+      { label: 'Case in point', cls: 'example', hasTitle: true, type: 'case-in-point' },
+      { label: 'Case study', cls: 'example', hasTitle: true, type: 'case-study' },
+      { label: 'Demonstration', cls: 'example', hasTitle: true, type: 'demonstration' },
+      { label: 'Illustration', cls: 'example', hasTitle: true, type: 'illustration' },
     ]
     getLabel: ($element) ->
       for type in types
@@ -48,9 +46,6 @@ define [
           return type.label
       
     activate: ($element) ->
-      $element.attr('data-format-whitelist', '["p"]')
-      Ephemera.markAttr($element, 'data-format-whitelist')
-
       jQuery.each types, (i, type) =>
         if $element.is(type.selector)
           $title = $element.children('.title')
@@ -63,19 +58,20 @@ define [
           # Add dropdown elements for each possible type
           if types.length > 1
             jQuery.each types, (i, dropType) =>
-              $option = jQuery('<li><span class="btn-link"></span></li>')
+              $option = jQuery('<li><a href="#"></a></li>')
               $option.appendTo(typeContainer.find('.dropdown-menu'))
-              $option = $option.children('span')
-              $option.text(dropType.label.toUpperCase())
+              $option = $option.children('a')
+              $option.text(dropType.label)
               typeContainer.find('.type').on 'click', =>
                 jQuery.each types, (i, dropType) =>
                   if $element.attr('data-type') == dropType.type
                     typeContainer.find('.dropdown-menu li').each (i, li) =>
                       jQuery(li).removeClass('checked')
-                      if jQuery(li).children('span').text() == dropType.label
+                      if jQuery(li).children('a').text() == dropType.label
                         jQuery(li).addClass('checked')
-
-              $option.on 'click', () =>
+                  
+              $option.on 'click', (e) =>
+                e.preventDefault()
                 # Remove the title if this type does not have one
                 if dropType.hasTitle
                   # If there is no `.title` element then add one in and enable it as an Aloha block
@@ -83,20 +79,20 @@ define [
                     $newTitle = jQuery("<#{dropType.titleTagName or 'span'} class='title'></#{dropType.titleTagName or 'span'}")
                     $element.append($newTitle)
                     $newTitle.aloha()
-
+          
                 else
                   $element.children('.title').remove()
-
+          
                 # Remove the `data-type` if this type does not have one
                 if dropType.type
                   $element.attr('data-type', dropType.type)
                 else
                   $element.removeAttr('data-type')
-
+              
                 typeContainer.find('.type').text(dropType.label)
-
+          
                 # Remove all notish class names and then add this one in
-                for key of notishClasses
+                for key of exampleishClasses
                   $element.removeClass key
                 $element.addClass(dropType.cls)
           else
@@ -105,23 +101,27 @@ define [
        
           typeContainer.find('.type').text(type.label)
           typeContainer.prependTo($element)
-          
+      
           # Create the body and add some placeholder text
-          $body = $('<div>')
-            .addClass('body')
-            .addClass('aloha-block-dropzone')
-            .attr('placeholder', "Type the text of your #{type.label.toLowerCase()} here.")
-            .appendTo($element)
-            .aloha()
-            .append($body)
+          $('<div>').addClass('body')
+          .attr('placeholder', "Type the text of your #{type.label.toLowerCase()} here.")
+          .append($body)
+          .appendTo($element)
+          .aloha()
      
     deactivate: ($element) ->
       $body = $element.children('.body')
       # The body div could just contain text children.
       # If so, we need to wrap them in a `p` element
       hasTextChildren = $body.children().length != $body.contents().length
-      $body = $body.contents()
-      $body = $body.wrap('<p></p>').parent() if hasTextChildren
+      # we also need to poke a `p` in there if its empty 
+      isEmpty = $body.text().trim() == ''
+
+      if isEmpty
+        $body = jQuery('<p class="para"></p>')
+      else
+        $body = $body.contents()
+        $body = $body.wrap('<p></p>').parent() if hasTextChildren
 
       $element.children('.body').remove()
 
@@ -143,17 +143,11 @@ define [
       # Load up specific classes to listen to or use the default
       types = @settings
       jQuery.each types, (i, type) =>
-        className = type.cls or throw 'BUG Invalid configuration of note plugin. cls required!'
+        className = type.cls or throw 'BUG Invalid configuration of example plugin. cls required!'
         typeName = type.type
         hasTitle = !!type.hasTitle
-        label = type.label or throw 'BUG Invalid configuration of note plugin. label required!'
+        label = type.label or throw 'BUG Invalid configuration of example plugin. label required!'
 
-        # These 2 variables allow other note-ish classes
-        # to define what the element name is that is generated for the note and
-        # for the title.
-        #
-        # Maybe they could eventually be functions so titles for inline notes generate
-        # a `span` instead of a `div` for example.
         tagName = type.tagName or 'div'
         titleTagName = type.titleTagName or 'div'
 
@@ -169,7 +163,7 @@ define [
         else
           this.selector = type.selector
 
-        notishClasses[className] = true
+        exampleishClasses[className] = true
 
         newTemplate = jQuery("<#{tagName}></#{tagName}")
         newTemplate.addClass(className)
@@ -181,9 +175,8 @@ define [
         UI.adopt "insert-#{className}#{typeName}", Button,
           click: -> semanticBlock.insertAtCursor(newTemplate.clone())
 
-        # For legacy toolbars listen to 'insertNote'
-        if 'note' == className and not typeName
-          UI.adopt "insertNote", Button,
+        if 'example' == className and not typeName
+          UI.adopt "insertExample", Button,
             click: -> semanticBlock.insertAtCursor(newTemplate.clone())
 
       semanticBlock.register(this)
