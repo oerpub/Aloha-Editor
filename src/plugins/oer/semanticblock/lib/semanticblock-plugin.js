@@ -121,7 +121,10 @@
         selector: '[placeholder],[hover-placeholder]',
         callback: function() {
           var $el;
-          return $el = jQuery(this);
+          $el = jQuery(this);
+          if (!$el.text().trim() && !$el.find('.aloha-oer-block').length) {
+            return $el.empty();
+          }
         }
       }
     ];

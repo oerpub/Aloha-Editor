@@ -122,7 +122,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       $el = jQuery @
       # If the element does not contain any text (just empty paragraphs)
       # Clear the contents so `:empty` is true
-      #$el.empty() if not $el.text().trim() and not $el.find('.aloha-oer-block').length
+      $el.empty() if not $el.text().trim() and not $el.find('.aloha-oer-block').length
   ]
   insertElement = (element) ->
   
