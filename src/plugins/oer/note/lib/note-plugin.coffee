@@ -51,11 +51,16 @@ define [
       $element.attr('data-format-whitelist', '["p"]')
       Ephemera.markAttr($element, 'data-format-whitelist')
 
+      $title = $element.children('.title')
+      $title.attr('hover-placeholder', 'Add a title (optional)')
+      $title.aloha()
+
+      label = 'Note'
+
       jQuery.each types, (i, type) =>
         if $element.is(type.selector)
-          $title = $element.children('.title')
-          $title.attr('hover-placeholder', 'Add a title (optional)')
-          $title.aloha()
+       
+          label = type.label
        
           $body = $element.contents().not($title)
        
@@ -106,14 +111,14 @@ define [
           typeContainer.find('.type').text(type.label)
           typeContainer.prependTo($element)
  
-          # Create the body and add some placeholder text
-          $body = $('<div>')
-            .addClass('body')
-            .addClass('aloha-block-dropzone')
-            .attr('placeholder', "Type the text of your #{type.label.toLowerCase()} here.")
-            .appendTo($element)
-            .aloha()
-            .append($body)
+      # Create the body and add some placeholder text
+      $body = $('<div>')
+        .addClass('body')
+        .addClass('aloha-block-dropzone')
+        .attr('placeholder', "Type the text of your #{label.toLowerCase()} here.")
+        .appendTo($element)
+        .aloha()
+        .append($body)
      
     deactivate: ($element) ->
       $body = $element.children('.body')
@@ -124,21 +129,31 @@ define [
       $body = $body.wrap('<p></p>').parent() if hasTextChildren
 
       $element.children('.body').remove()
+      
+      # this is kind of awkward. we want to process the title if our current
+      # type is configured to have a title, OR if the current type is not 
+      # recognized we process the title if its there
+      hasTitle = undefined
+      titleTag = 'span'
 
       jQuery.each types, (i, type) =>
-        if $element.is(type.selector) && type.hasTitle
-          $titleElement = $element.children('.title')
-          $title = jQuery("<#{type.titleTagName or 'span'} class=\"title\"></#{type.titleTagName}>")
+        if $element.is(type.selector)
+          hasTitle = type.hasTitle || false
+          titleTag = type.titleTagName || titleTag
+
+      if hasTitle or hasTitle == undefined
+        $titleElement = $element.children('.title')
+        $title = jQuery("<#{titleTag} class=\"title\"></#{titleTag}>")
        
-          if $titleElement.length
-            $title.append($titleElement.contents())
-            $titleElement.remove()
+        if $titleElement.length
+          $title.append($titleElement.contents())
+          $titleElement.remove()
        
-          $title.prependTo($element)
+        $title.prependTo($element)
 
       $element.append($body)
 
-    selector: ''
+    selector: '.note'
     init: () ->
       # Load up specific classes to listen to or use the default
       types = @settings
@@ -161,13 +176,6 @@ define [
           type.selector = ".#{className}[data-type='#{typeName}']"
         else
           type.selector = ".#{className}:not([data-type])"
-
-        # store a global selector for this plugin, so the semantic block plugin knows when
-        # to defer to us
-        if this.selector.length
-          this.selector += ","+type.selector
-        else
-          this.selector = type.selector
 
         notishClasses[className] = true
 
