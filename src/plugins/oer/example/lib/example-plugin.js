@@ -44,14 +44,17 @@
         }
       },
       activate: function($element) {
-        var _this = this;
-        return jQuery.each(types, function(i, type) {
-          var $body, $title, typeContainer;
+        var $body, $title, label,
+          _this = this;
+        $title = $element.children('.title');
+        $title.attr('hover-placeholder', 'Add a title (optional)');
+        $title.aloha();
+        label = 'Exercise';
+        $body = $element.contents().not($title);
+        jQuery.each(types, function(i, type) {
+          var typeContainer;
           if ($element.is(type.selector)) {
-            $title = $element.children('.title');
-            $title.attr('hover-placeholder', 'Add a title (optional)');
-            $title.aloha();
-            $body = $element.contents().not($title);
+            label = type.label;
             typeContainer = TYPE_CONTAINER.clone();
             if (types.length > 1) {
               jQuery.each(types, function(i, dropType) {
@@ -101,10 +104,10 @@
               typeContainer.find('.type').removeAttr('data-toggle');
             }
             typeContainer.find('.type').text(type.label);
-            typeContainer.prependTo($element);
-            return $('<div>').addClass('body').attr('placeholder', "Type the text of your " + (type.label.toLowerCase()) + " here.").append($body).appendTo($element).aloha();
+            return typeContainer.prependTo($element);
           }
         });
+        return $('<div>').addClass('body').attr('placeholder', "Type the text of your " + (label.toLowerCase()) + " here.").append($body).appendTo($element).aloha();
       },
       deactivate: function($element) {
         var $body, hasTextChildren, isEmpty,
@@ -135,7 +138,7 @@
         });
         return $element.append($body);
       },
-      selector: '',
+      selector: '.example',
       init: function() {
         var _this = this;
         types = this.settings;
@@ -155,11 +158,6 @@
             type.selector = "." + className + "[data-type='" + typeName + "']";
           } else {
             type.selector = "." + className + ":not([data-type])";
-          }
-          if (_this.selector.length) {
-            _this.selector += "," + type.selector;
-          } else {
-            _this.selector = type.selector;
           }
           exampleishClasses[className] = true;
           newTemplate = jQuery("<" + tagName + "></" + tagName);
