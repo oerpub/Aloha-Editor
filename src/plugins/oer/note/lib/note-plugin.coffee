@@ -105,7 +105,7 @@ define [
        
           typeContainer.find('.type').text(type.label)
           typeContainer.prependTo($element)
-
+ 
           # Create the body and add some placeholder text
           $body = $('<div>')
             .addClass('body')
@@ -114,8 +114,6 @@ define [
             .appendTo($element)
             .aloha()
             .append($body)
-
-          
      
     deactivate: ($element) ->
       $body = $element.children('.body')

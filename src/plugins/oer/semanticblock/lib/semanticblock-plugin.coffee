@@ -141,6 +141,10 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
           type.activate element
           break
 
+      # this might could be more efficient
+      element.find('*').andSelf().filter('[placeholder],[hover-placeholder]').each ->
+        jQuery(@).empty() if not jQuery(@).text().trim()
+
   deactivate = (element) ->
     if element.parent('.semantic-container').length or element.is('.semantic-container')
       element.removeClass 'aloha-oer-block ui-draggable'
