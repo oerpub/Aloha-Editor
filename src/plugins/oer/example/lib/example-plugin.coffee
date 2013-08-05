@@ -130,16 +130,26 @@ define [
 
       $element.children('.body').remove()
 
+      # this is kind of awkward. we want to process the title if our current
+      # type is configured to have a title, OR if the current type is not 
+      # recognized we process the title if its there
+      hasTitle = undefined
+      titleTag = 'span'
+
       jQuery.each types, (i, type) =>
-        if $element.is(type.selector) && type.hasTitle
-          $titleElement = $element.children('.title')
-          $title = jQuery("<#{type.titleTagName or 'span'} class=\"title\"></#{type.titleTagName}>")
+        if $element.is(type.selector)
+          hasTitle = type.hasTitle || false
+          titleTag = type.titleTagName || titleTag
+
+      if hasTitle or hasTitle == undefined
+        $titleElement = $element.children('.title')
+        $title = jQuery("<#{titleTag} class=\"title\"></#{titleTag}>")
        
-          if $titleElement.length
-            $title.append($titleElement.contents())
-            $titleElement.remove()
+        if $titleElement.length
+          $title.append($titleElement.contents())
+          $titleElement.remove()
        
-          $title.prependTo($element)
+        $title.prependTo($element)
 
       $element.append($body)
 

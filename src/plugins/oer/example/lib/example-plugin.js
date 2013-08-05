@@ -110,7 +110,7 @@
         return $('<div>').addClass('body').attr('placeholder', "Type the text of your " + (label.toLowerCase()) + " here.").append($body).appendTo($element).aloha();
       },
       deactivate: function($element) {
-        var $body, hasTextChildren, isEmpty,
+        var $body, $title, $titleElement, hasTextChildren, hasTitle, isEmpty, titleTag,
           _this = this;
         $body = $element.children('.body');
         hasTextChildren = $body.children().length !== $body.contents().length;
@@ -124,18 +124,23 @@
           }
         }
         $element.children('.body').remove();
+        hasTitle = void 0;
+        titleTag = 'span';
         jQuery.each(types, function(i, type) {
-          var $title, $titleElement;
-          if ($element.is(type.selector) && type.hasTitle) {
-            $titleElement = $element.children('.title');
-            $title = jQuery("<" + (type.titleTagName || 'span') + " class=\"title\"></" + type.titleTagName + ">");
-            if ($titleElement.length) {
-              $title.append($titleElement.contents());
-              $titleElement.remove();
-            }
-            return $title.prependTo($element);
+          if ($element.is(type.selector)) {
+            hasTitle = type.hasTitle || false;
+            return titleTag = type.titleTagName || titleTag;
           }
         });
+        if (hasTitle || hasTitle === void 0) {
+          $titleElement = $element.children('.title');
+          $title = jQuery("<" + titleTag + " class=\"title\"></" + titleTag + ">");
+          if ($titleElement.length) {
+            $title.append($titleElement.contents());
+            $titleElement.remove();
+          }
+          $title.prependTo($element);
+        }
         return $element.append($body);
       },
       selector: '.example',
