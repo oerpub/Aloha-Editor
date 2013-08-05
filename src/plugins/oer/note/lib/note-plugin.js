@@ -24,15 +24,18 @@
         }
       },
       activate: function($element) {
-        var _this = this;
+        var $body, $title, label,
+          _this = this;
         $element.attr('data-format-whitelist', '["p"]');
         Ephemera.markAttr($element, 'data-format-whitelist');
-        return jQuery.each(types, function(i, type) {
-          var $body, $title, typeContainer;
+        $title = $element.children('.title');
+        $title.attr('hover-placeholder', 'Add a title (optional)');
+        $title.aloha();
+        label = 'Note';
+        jQuery.each(types, function(i, type) {
+          var $body, typeContainer;
           if ($element.is(type.selector)) {
-            $title = $element.children('.title');
-            $title.attr('hover-placeholder', 'Add a title (optional)');
-            $title.aloha();
+            label = type.label;
             $body = $element.contents().not($title);
             typeContainer = TYPE_CONTAINER.clone();
             if (types.length > 1) {
@@ -82,13 +85,13 @@
               typeContainer.find('.type').removeAttr('data-toggle');
             }
             typeContainer.find('.type').text(type.label);
-            typeContainer.prependTo($element);
-            return $body = $('<div>').addClass('body').addClass('aloha-block-dropzone').attr('placeholder', "Type the text of your " + (type.label.toLowerCase()) + " here.").appendTo($element).aloha().append($body);
+            return typeContainer.prependTo($element);
           }
         });
+        return $body = $('<div>').addClass('body').addClass('aloha-block-dropzone').attr('placeholder', "Type the text of your " + (label.toLowerCase()) + " here.").appendTo($element).aloha().append($body);
       },
       deactivate: function($element) {
-        var $body, hasTextChildren,
+        var $body, $title, $titleElement, hasTextChildren, hasTitle, titleTag,
           _this = this;
         $body = $element.children('.body');
         hasTextChildren = $body.children().length !== $body.contents().length;
@@ -97,21 +100,26 @@
           $body = $body.wrap('<p></p>').parent();
         }
         $element.children('.body').remove();
+        hasTitle = void 0;
+        titleTag = 'span';
         jQuery.each(types, function(i, type) {
-          var $title, $titleElement;
-          if ($element.is(type.selector) && type.hasTitle) {
-            $titleElement = $element.children('.title');
-            $title = jQuery("<" + (type.titleTagName || 'span') + " class=\"title\"></" + type.titleTagName + ">");
-            if ($titleElement.length) {
-              $title.append($titleElement.contents());
-              $titleElement.remove();
-            }
-            return $title.prependTo($element);
+          if ($element.is(type.selector)) {
+            hasTitle = type.hasTitle || false;
+            return titleTag = type.titleTagName || titleTag;
           }
         });
+        if (hasTitle || hasTitle === void 0) {
+          $titleElement = $element.children('.title');
+          $title = jQuery("<" + titleTag + " class=\"title\"></" + titleTag + ">");
+          if ($titleElement.length) {
+            $title.append($titleElement.contents());
+            $titleElement.remove();
+          }
+          $title.prependTo($element);
+        }
         return $element.append($body);
       },
-      selector: '',
+      selector: '.note',
       init: function() {
         var _this = this;
         types = this.settings;
@@ -131,11 +139,6 @@
             type.selector = "." + className + "[data-type='" + typeName + "']";
           } else {
             type.selector = "." + className + ":not([data-type])";
-          }
-          if (_this.selector.length) {
-            _this.selector += "," + type.selector;
-          } else {
-            _this.selector = type.selector;
           }
           notishClasses[className] = true;
           newTemplate = jQuery("<" + tagName + "></" + tagName);
