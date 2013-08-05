@@ -29,6 +29,16 @@ form.plugin.image .upload-image-input {
     width: 98%;
 }
 
+form.plugin.image .image-title {
+  width: 476px;
+  height: 16px;
+}
+
+form.plugin.image .image-caption {
+  width: 450px;
+  height: 16px;
+}
+
 form#linkModal:focus {
     outline: none;
 }

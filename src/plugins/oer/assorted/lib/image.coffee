@@ -32,6 +32,12 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
         </div>
         <input type="file" class="upload-image-input" />
         <input type="url" class="upload-url-input" placeholder="Enter URL of image ..."/>
+        <div>
+          <strong>Image title:</strong><input class="image-title" type="text" placeholder="Shows up above image"></textarea>
+        </div>
+        <div>
+          <strong>Image caption:</strong><input class="image-caption" type="text" placeholder="Shows up below image"></textarea>
+        </div>
         <div class="image-alt">
           <div class="forminfo">
             <i class="icon-warning"></i><strong>Describe the image for someone who cannot see it.</strong> This description can be read aloud, making it possible for visually impaired learners to understand the content.
@@ -42,7 +48,7 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
         </div>
       </div>
       <div class="modal-footer">
-        <button type="submit" disabled="true" class="btn btn-primary action insert">Save</button>
+        <button type="submit" disabled="true" class="btn btn-primary action insert">Next</button>
         <button class="btn action cancel">Cancel</button>
       </div>
     </form>'''
