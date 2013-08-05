@@ -31,7 +31,6 @@ define [
     '''
     SOLUTION_TYPE_CONTAINER = '''
         <div class="type-container dropdown aloha-ephemera">
-            <a class="type" data-toggle="dropdown"></a>
             <span class="type btn-link" data-toggle="dropdown"></span>
             <ul class="dropdown-menu">
                 <li><span class="btn-link">Answer</span></li>
@@ -73,7 +72,7 @@ define [
         .addClass('solution-controls')
         .addClass('aloha-ephemera')
         .append('<span class="add-solution btn-link">Click here to add an answer/solution</span>')
-        .append('<span class="solution-toggle"></span>')
+        .append('<span class="solution-toggle">hide solution</span>')
         .appendTo($element)
 
       if not $solutions.length

@@ -151,14 +151,14 @@
             break;
           }
         }
+        if (matched) {
+          return;
+        }
         $element.find('*').andSelf().filter('[placeholder],[hover-placeholder]').each(function() {
           if (!jQuery(this).text().trim()) {
             return jQuery(this).empty();
           }
         });
-        if (matched) {
-          return;
-        }
         $title = $element.children('.title').first();
         $title.attr('hover-placeholder', 'Add a title');
         $title.aloha();
