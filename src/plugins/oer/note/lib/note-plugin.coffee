@@ -57,12 +57,12 @@ define [
 
       label = 'Note'
 
+      $body = $element.contents().not($title)
+
       jQuery.each types, (i, type) =>
         if $element.is(type.selector)
        
           label = type.label
-       
-          $body = $element.contents().not($title)
        
           typeContainer = TYPE_CONTAINER.clone()
           # Add dropdown elements for each possible type

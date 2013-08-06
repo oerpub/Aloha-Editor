@@ -32,11 +32,11 @@
         $title.attr('hover-placeholder', 'Add a title (optional)');
         $title.aloha();
         label = 'Note';
+        $body = $element.contents().not($title);
         jQuery.each(types, function(i, type) {
-          var $body, typeContainer;
+          var typeContainer;
           if ($element.is(type.selector)) {
             label = type.label;
-            $body = $element.contents().not($title);
             typeContainer = TYPE_CONTAINER.clone();
             if (types.length > 1) {
               jQuery.each(types, function(i, dropType) {
