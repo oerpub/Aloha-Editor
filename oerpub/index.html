@@ -63,6 +63,7 @@
             <script type="text/javascript" src="../src/lib/aloha.js"
                     tal:attributes="src string:${request.application_url}/aloha/src/lib/aloha.js"
                 data-aloha-plugins="common/ui,
+                                    oer/copy,
                                     oer/toolbar,
                                     oer/overlay,
                                     oer/format,
@@ -302,6 +303,9 @@
                           <li><a href="#" class="action insertQuotation">Quotation</a></li>
                           <li><a href="#" class="action insertEquation">Equation</a></li>
                         </ul>
+                      </div>
+                      <div class="btn-group">
+                        <button class="btn hide action paste" rel="tooltip" title="paste"><i class="icon-image-insert"></i></button>
                       </div>
                     </div>
 

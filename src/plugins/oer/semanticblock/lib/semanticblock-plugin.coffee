@@ -1,4 +1,4 @@
-define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'jquery', 'aloha/ephemera', 'ui/ui', 'ui/button', 'css!semanticblock/css/semanticblock-plugin.css'], (Aloha, BlockManager, Plugin, pluginManager, jQuery, Ephemera, UI, Button) ->
+define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'jquery', 'aloha/ephemera', 'ui/ui', 'ui/button', 'copy/copy-plugin', 'css!semanticblock/css/semanticblock-plugin.css'], (Aloha, BlockManager, Plugin, pluginManager, jQuery, Ephemera, UI, Button, Copy) ->
 
   # hack to accomodate multiple executions
   return pluginManager.plugins.semanticblock  if pluginManager.plugins.semanticblock
@@ -26,8 +26,15 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
 
   blockTemplate = jQuery('<div class="semantic-container aloha-ephemera-wrapper"></div>')
   blockControls = jQuery('<div class="semantic-controls aloha-ephemera"><button class="semantic-delete" title="Remove this element."><i class="icon-remove"></i></button><button class="semantic-settings" title="advanced options."><i class="icon-cog"></i></button></div>')
+  blockControls = jQuery('''
+    <div class="semantic-controls aloha-ephemera">
+      <button class="semantic-delete" title="Remove this element."><i class="icon-remove"></i></button>
+      <button class="semantic-settings" title="advanced options."><i class="icon-cog"></i></button>
+      <button class="copy" title="copy"><i class="icon-file"></i></button>
+    </div>''')
   blockDragHelper = jQuery('<div class="semantic-drag-helper aloha-ephemera"><div class="title"></div><div class="body">Drag me to the desired location in the document</div></div>')
   registeredTypes = []
+  copyBuffer = null
   pluginEvents = [
     name: 'mouseenter'
     selector: '.aloha-block-draghandle'
@@ -66,6 +73,13 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
     callback: () ->
       jQuery(this).parents('.semantic-container').first().slideUp 'slow', ->
         jQuery(this).remove()
+  ,
+    name: 'click'
+    selector: '.semantic-container .semantic-controls .copy'
+    callback: (e) ->
+      # grab the content of the block that was just clicked
+      $element = jQuery(this).parents('.semantic-container').first()
+      Copy.buffer $element.outerHtml()
   ,
     name: 'click'
     selector: '.semantic-container .semantic-settings'
@@ -132,7 +146,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
         return type.getLabel $element
 
   activate = ($element) ->
-    unless $element.parent('.semantic-container').length or $element.is('.semantic-container')
+    unless $element.is('.semantic-container')
       $element.addClass 'aloha-oer-block'
       $element.wrap(blockTemplate).parent().append(blockControls.clone()).alohaBlock()
       
@@ -222,12 +236,12 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       Aloha.bind 'aloha-editable-created', (e, params) =>
         $root = params.obj
 
-        # Add a `.aloha-oer-block` to all registered classes
         classes = []
         classes.push type.selector for type in registeredTypes
-        $root.find(@settings.defaultSelector + ',' + classes.join()).each (i, el) ->
-          $el = jQuery(el)
-          activate $el
+        selector = @settings.defaultSelector + ',' + classes.join()
+
+        $root.find(selector).each (i, element) ->
+          activate jQuery(element) if not jQuery(element).parents('.semantic-drag-source').length
 
         if $root.is('.aloha-block-blocklevel-sortable') and not $root.parents('.aloha-editable').length
 
@@ -251,7 +265,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
 
           $root.sortable 'option', 'stop', (e, ui) ->
             $el = jQuery(ui.item)
-            activate $el if $el.is(classes.join())
+            activate $el if $el.is(selector)
           $root.sortable 'option', 'placeholder', 'aloha-oer-block-placeholder aloha-ephemera'
 
     insertAtCursor: (template) ->
