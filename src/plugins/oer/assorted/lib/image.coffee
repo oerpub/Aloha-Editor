@@ -75,8 +75,12 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
 
       # On submit $el.attr('src') will point to what is set in this variable
       # preserve the alt text if editing an image
-      imageSource = $el.attr('src')
-      imageAltText = $el.attr('alt')
+      $img     = $el
+      imageSource  = $img.attr('src')
+      imageAltText = $img.attr('alt')
+      $figure = jQuery( $img.parents('figure')[0] )
+      $title   = $figure.find('div.title')
+      $caption = $figure.find('figcaption')
 
       if imageSource
         dialog.find('.action.insert').removeAttr('disabled')
@@ -153,6 +157,12 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
 
         $el.attr 'src', imageSource
         $el.attr 'alt', dialog.find('[name=alt]').val()
+        
+        if dialog.find('input.image-title').val()
+          $title.html dialog.find('input.image-title').val()
+        
+        if dialog.find('input.image-caption').val()
+          $caption.html dialog.find('input.image-caption').val()
 
         if altAdded
           setThankYou $el.parent()
@@ -160,7 +170,7 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
           setEditText $el.parent()
 
         deferred.resolve(target: $el[0], files: $uploadImage[0].files)
-        $el.parents('.media').removeClass('aloha-ephemera')
+        $el.parents('.figure').removeClass('aloha-ephemera')
         dialog.modal('hide')
 
       dialog.on 'click', '.btn.action.cancel', (evt) =>
@@ -184,7 +194,7 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
             dialog.modal 'show'
 
   insertImage = () ->
-    template = $('<span class="media aloha-ephemera"><img /></span>')
+    template = $('<figure class="figure aloha-ephemera"><div class="title" /><img /><figcaption /></figuren>')
     semanticBlock.insertAtCursor(template)
     newEl = template.find('img')
     promise = showModalDialog(newEl)
@@ -231,36 +241,30 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
     wrapper = $('<div class="image-wrapper">').css('width', element.css('width'))
     edit = $('<div class="image-edit">')
 
-    img = element.find('img')
+    $title   = element.find('.title')
+    $img     = element.find('img')
+    $caption = element.find('figcaption')
+
     element.children().remove()
 
-    img.appendTo(element).wrap(wrapper)
+    $title.appendTo(element)
+    $img.appendTo(element).wrap(wrapper)
+    $caption.appendTo(element)
 
     setEditText element.children('.image-wrapper').prepend(edit)
     element.find('img').load ->
       setWidth $(this)
 
   deactivate = (element) ->
-    img = element.find('img')
-    element.children().remove()
-    element.append(img)
-    element.attr('data-alt', img.attr('alt') || '')
-
-    # image must be contained within a media element
-    $mediaset = element.closest('.media')
-    if $mediaset.length > 0
-      $media = jQuery($mediaset[0])
-      # media must be contained in :
-      # preformat (media must be block display), para, title, label, cite, cite-title, 
-      # link, emphasis, term, sub, sup, quote (media must be block display), foreign, 
-      # footnote, equation, note (media must be block display), item, code (media must be block display), 
-      # figure, subfigure, caption, commentary, meaning, entry, statement, proof, problem, 
-      # solution, content (media must be block display), section (media must be block display)
-      legalparents = $media.parents("figure, .para, .equation, .note, .quote")
-      if legalparents.length == 0
-        # media/image appears to be orphaned (via either user editing or block moving)
-        # add a p container to keep html canonical
-        element.parents('.semantic-container').wrap('<p class="para">')
+    # removeClass('figure')
+    $figure = element
+    $title = $figure.find('div.title')
+    $img = $figure.find('img')
+    $caption = $figure.find('figcaption')
+    $figure.children().remove()
+    $figure.append($title)
+    $figure.append($img)
+    $figure.append($caption)
     return
 
   # Return config
@@ -268,7 +272,7 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
     getLabel: -> 'Image'
     activate: activate
     deactivate: deactivate
-    selector: '.media'
+    selector: '.figure'
     init: () ->
       plugin = @
       UI.adopt 'insertImage-oer', null,
