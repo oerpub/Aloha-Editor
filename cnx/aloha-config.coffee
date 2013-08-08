@@ -45,6 +45,7 @@
       'oer/semanticblock'
       'oer/exercise'
       'oer/note'
+      # **NOTE:** Update `build/aloha/build-profile-with-oer.js` when adding a new plugin
     ]
 
     note: [

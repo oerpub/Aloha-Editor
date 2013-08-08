@@ -9,7 +9,6 @@ define [
   'ui/ui',
   'aloha/console',
   'aloha/ephemera',
-  'css!assorted/css/link.css'
 ], (
   Aloha,
   jQuery,
