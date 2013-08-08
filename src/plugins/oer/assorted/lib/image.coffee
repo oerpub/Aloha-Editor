@@ -7,8 +7,10 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
   # This will be prefixed with Aloha.settings.baseUrl
   WARNING_IMAGE_PATH = '/../plugins/oer/image/img/warning.png'
 
+  DIALOG_HTML_CONTAINER = '''
+      <form class="plugin image modal hide fade" id="linkModal" tabindex="-1" role="dialog" aria-labelledby="linkModalLabel" aria-hidden="true" data-backdrop="false" />'''
+
   DIALOG_HTML = '''
-    <form class="plugin image modal hide fade" id="linkModal" tabindex="-1" role="dialog" aria-labelledby="linkModalLabel" aria-hidden="true" data-backdrop="false">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         <h3>Insert image</h3>
@@ -50,13 +52,44 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
       <div class="modal-footer">
         <button type="submit" disabled="true" class="btn btn-primary action insert">Next</button>
         <button class="btn action cancel">Cancel</button>
+      </div>'''
+
+  DIALOG_HTML2 = '''
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Insert image</h3>
       </div>
-    </form>'''
+      <div class="modal-body">
+        <div>
+          <strong>Source for this image (Required)</strong>
+        </div>
+        <div class="source-selection">
+          <ul style="list-style-type: none; padding: 0; margin-left: 0;">
+            <li>
+            <input type="radio" name=image-source-selection" value="i-own-this" checked="checked">
+              <span>I own it (no citation needed)</span><br/>
+            </li>
+            <li>
+            <input type="radio" name=image-source-selection" value="i-got-permission">
+              <span>I am allowed to reuse it:</span><br/>
+            </li>
+            <li>
+            <input type="radio" name=image-source-selection" value="i-dont-know">
+              <span>I don't know (skip citation for now)</span><br/>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-primary action insert">Save</button>
+        <button class="btn action cancel">Cancel</button>
+      </div>'''
 
   showModalDialog = ($el) ->
       settings = Aloha.require('assorted/assorted-plugin').settings
       root = Aloha.activeEditable.obj
-      dialog = jQuery(DIALOG_HTML)
+      dialog = jQuery(DIALOG_HTML_CONTAINER)
+      dialog.append(jQuery(DIALOG_HTML))
 
       # Find the dynamic modal elements and bind events to the buttons
       $imageselect = dialog.find('.image-selection')
@@ -75,10 +108,10 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
 
       # On submit $el.attr('src') will point to what is set in this variable
       # preserve the alt text if editing an image
-      $img     = $el
+      $img = $el
       imageSource  = $img.attr('src')
       imageAltText = $img.attr('alt')
-      $figure = jQuery( $img.parents('figure')[0] )
+      $figure  = jQuery( $img.parents('figure')[0] )
       $title   = $figure.find('div.title')
       $caption = $figure.find('figcaption')
 
@@ -91,6 +124,7 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
 
       if editing
         dialog.find('.image-options').hide()
+        dialog.find('.btn-primary').text('Save')
 
       # Set onerror of preview image
       ((img, baseurl) ->
@@ -160,18 +194,18 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
         
         if dialog.find('input.image-title').val()
           $title.html dialog.find('input.image-title').val()
+        # else probably should remove the $title element
         
         if dialog.find('input.image-caption').val()
           $caption.html dialog.find('input.image-caption').val()
+        # else probably should remove the $caption element
 
         if altAdded
           setThankYou $el.parent()
         else
           setEditText $el.parent()
 
-        deferred.resolve(target: $el[0], files: $uploadImage[0].files)
-        $el.parents('.figure').removeClass('aloha-ephemera')
-        dialog.modal('hide')
+        deferred.resolve({target: $el[0], files: $uploadImage[0].files})
 
       dialog.on 'click', '.btn.action.cancel', (evt) =>
         evt.preventDefault() # Don't submit the form
@@ -187,29 +221,70 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
         dialog.remove()
 
       # Return promise, with an added show method
-      jQuery.extend true, deferred.promise(),
-        show: (title) ->
-            if title
-              dialog.find('.modal-header h3').text(title)
-            dialog.modal 'show'
+      promise = jQuery.extend true, deferred.promise(),
+            show: (title) ->
+              if title
+                dialog.find('.modal-header h3').text(title)
+              dialog.modal 'show'
+      return {
+          dialog: dialog,
+          figure: $figure,
+          img: $img,
+          promise: promise}
 
+  showModalDialog2 = ($figure, $img, $dialog) ->
+      $dialog.children().remove()
+      $dialog.append(jQuery(DIALOG_HTML2))
+
+      deferred = $.Deferred()
+      $dialog.off('submit').on 'submit', (evt) =>
+        evt.preventDefault() # Don't submit the form
+        deferred.resolve({target: $img[0]})
+        $figure.removeClass('aloha-ephemera')
+
+      $dialog.off('click').on 'click', '.btn.action.cancel', (evt) =>
+        evt.preventDefault() # Don't submit the form
+        $img.parents('.semantic-container').remove()
+        deferred.reject(target: $img[0])
+        $dialog.modal('hide')
+
+      return deferred.promise()
+            
   insertImage = () ->
     template = $('<figure class="figure aloha-ephemera"><div class="title" /><img /><figcaption /></figuren>')
     semanticBlock.insertAtCursor(template)
     newEl = template.find('img')
-    promise = showModalDialog(newEl)
+    blob = showModalDialog(newEl)
+    promise = blob.promise
+    $figure = blob.figure
+    $img    = blob.img
+    $dialog = blob.dialog
+    # show the dialog
+    promise.show()
+    
+    source_this_image_dialog = ()=>
+      next_promise = showModalDialog2($figure, $img, $dialog)
+      return next_promise
 
-    promise.done (data)=>
-      # Uploading if a local file was chosen
+    promise.then( (data)=>
+      # upload image, if a local file was chosen
       if data.files.length
         newEl.addClass('aloha-image-uploading')
         @uploadImage data.files[0], newEl, (url) ->
           if url
             jQuery(data.target).attr('src', url)
           newEl.removeClass('aloha-image-uploading')
-
-    # Finally show the dialog
-    promise.show()
+      # once we start using jQuery 1.8+ promise.then() will return a new promise
+      # and we can rewrite this as 
+      # when(promise).then(...).then(source_this_image_dialog).then(...)
+      promise2 = source_this_image_dialog()
+      promise2.then( ()=>
+        # hide the dialog on the way out
+        $dialog.modal 'hide'
+        return
+      )
+    )
+    return
 
   $('body').bind 'aloha-image-resize', ->
     setWidth Image.imageObj
@@ -283,6 +358,11 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
         img = $(this).siblings('img')
         promise = showModalDialog(img)
         promise.show('Edit image')
+        $.when(promise).then(  (data)=>
+          data.dialog.modal 'hide'
+        )
+        return
+      return
 
     uploadImage: (file, el, callback) ->
       plugin = @

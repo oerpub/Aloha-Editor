@@ -39,6 +39,10 @@ form.plugin.image .image-caption {
   height: 16px;
 }
 
+form.plugin.image .source-selection {
+  margin-left: 10px;
+}
+
 form#linkModal:focus {
     outline: none;
 }
