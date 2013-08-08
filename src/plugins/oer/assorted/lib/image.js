@@ -178,7 +178,7 @@
         var $option, attribution, basedOnURL, buildAttribution, creator, publisher, rightsName, rightsUrl;
         evt.preventDefault();
         buildAttribution = function(creator, publisher, basedOnURL, rightsName) {
-          var attribution, baseOn;
+          var attribution, baseOn, baseOnEscaped;
           attribution = "";
           if (creator && creator.length > 0) {
             attribution += "Image by " + creator + ".";
@@ -187,7 +187,8 @@
             attribution += "Published by " + publisher + ".";
           }
           if (basedOnURL && basedOnURL.length > 0) {
-            baseOn = jQuery('<div />').text('<link src="' + basedOnURL + '">Original source</link>.').html();
+            baseOn = '<link src="' + basedOnURL + '">Original source</link>.';
+            baseOnEscaped = jQuery('<div />').text(baseOn).html();
             attribution += baseOn;
           }
           if (rightsName && rightsName.length > 0) {

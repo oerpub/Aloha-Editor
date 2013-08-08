@@ -306,7 +306,8 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
           if publisher and publisher.length > 0
             attribution += "Published by " + publisher + "."
           if basedOnURL and basedOnURL.length > 0
-            baseOn = jQuery('<div />').text('<link src="' + basedOnURL + '">Original source</link>.').html()
+            baseOn = '<link src="' + basedOnURL + '">Original source</link>.'
+            baseOnEscaped = jQuery('<div />').text(baseOn).html()
             attribution += baseOn
           if rightsName and rightsName.length > 0
             attribution += 'License: ' + rightsName + "."
