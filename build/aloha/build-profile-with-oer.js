@@ -211,6 +211,8 @@
 		"listenforcer/res": "../plugins/extra/listenforcer/res",
 
     // OER Plugins
+    'draganddropfiles': '../plugins/extra/draganddropfiles/lib',
+    'draganddropfiles/nls': '../plugins/extra/draganddropfiles/nls',
     'overlay'     : '../plugins/oer/overlay/lib',
     'overlay/css' : '../plugins/oer/overlay/css',
     'toolbar'     : '../plugins/oer/toolbar/lib',
@@ -469,6 +471,7 @@
 				'listenforcer/listenforcer-plugin',
 
         // OER Plugins
+        'draganddropfiles/draganddropfiles-plugin',
         'overlay/overlay-plugin',
         'assorted/assorted-plugin',
         'toolbar/toolbar-plugin',
