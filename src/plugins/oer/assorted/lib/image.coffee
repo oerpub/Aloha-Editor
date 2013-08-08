@@ -64,18 +64,56 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
           <strong>Source for this image (Required)</strong>
         </div>
         <div class="source-selection">
-          <ul style="list-style-type: none; padding: 0; margin-left: 0;">
-            <li>
-            <input type="radio" name=image-source-selection" value="i-own-this" checked="checked">
-              <span>I own it (no citation needed)</span><br/>
+          <ul style="list-style-type: none; padding: 0; margin: 0;">
+            <li id="listitem-i-own-this">
+              <input type="radio" name="image-source-selection" value="i-own-this">
+                <span>I own it (no citation needed)</span><br/>
             </li>
-            <li>
-            <input type="radio" name=image-source-selection" value="i-got-permission">
-              <span>I am allowed to reuse it:</span><br/>
+            <li id="listitem-i-got-permission">
+              <input type="radio" name="image-source-selection" value="i-got-permission">
+                <span>I am allowed to reuse it:</span><br/>
+              <div class="source-selection-allowed">
+                <ul style="list-style-type: none; padding: 0; margin: 0;">
+                  <li>
+                    <div>Who is the original author of this image?</div>
+                    <div>
+                      <input type="text" id="reuse-author"">
+                    </div>
+                  </li>
+                  <li>
+                    <div>What organization owns this image?</div>
+                    <div>
+                      <input type="text" id="reuse-org"">
+                    </div>
+                  </li>
+                  <li>
+                    <div>What is the original URL of this image?</div>
+                    <div>
+                      <input type="text" id="reuse-url" placeholder="http://">
+                    </div>
+                  </li>
+                  <li>
+                    <div>Permission to reuse</div>
+                    <div>
+                      <select id="reuse-license">
+                        <option>Choose a license</option>
+                        <option>Creative Commons Attribution - CC-BY</option>
+                        <option>Creative Commons Attribution-NoDerivs - CC BY-ND</option>
+                        <option>Creative Commons Attribution-ShareAlike - CC BY-SA</option>
+                        <option>Creative Commons Attribution-NonCommercial - CC BY-NC</option>
+                        <option>Creative Commons Attribution-NonCommercial-ShareAlike - CC BY-NC-SA</option>
+                        <option>Creative Commons Attribution-NonCommercial-NoDerivs - CC BY-NC-ND</option>
+                        <option>Public domain</option>
+                        <option>other</option>
+                      </select>
+                    </div>
+                  </li>
+                </ul>
+              </div>
             </li>
-            <li>
-            <input type="radio" name=image-source-selection" value="i-dont-know">
-              <span>I don't know (skip citation for now)</span><br/>
+            <li id="listitem-i-dont-know">
+              <input type="radio" name="image-source-selection" value="i-dont-know">
+                <span>I don't know (skip citation for now)</span><br/>
             </li>
           </ul>
         </div>
@@ -235,6 +273,16 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
   showModalDialog2 = ($figure, $img, $dialog) ->
       $dialog.children().remove()
       $dialog.append(jQuery(DIALOG_HTML2))
+
+      $dialog.find('input[name="image-source-selection"]').click (evt) =>
+        evt.stopPropagation()
+        return
+
+      $dialog.find('li#listitem-i-own-this, li#listitem-i-got-permission, li#listitem-i-dont-know').click (evt)=>
+        $current_target = jQuery(evt.currentTarget)
+        $cb = $current_target.find 'input[name="image-source-selection"]'
+        $cb.click() if $cb
+        return 
 
       deferred = $.Deferred()
       $dialog.off('submit').on 'submit', (evt) =>
