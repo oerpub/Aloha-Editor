@@ -64,18 +64,63 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
           <strong>Source for this image (Required)</strong>
         </div>
         <div class="source-selection">
-          <ul style="list-style-type: none; padding: 0; margin-left: 0;">
-            <li>
-            <input type="radio" name=image-source-selection" value="i-own-this" checked="checked">
-              <span>I own it (no citation needed)</span><br/>
+          <ul style="list-style-type: none; padding: 0; margin: 0;">
+            <li id="listitem-i-own-this">
+              <input type="radio" name="image-source-selection" value="i-own-this">
+                <span>I own it (no citation needed)</span><br/>
             </li>
-            <li>
-            <input type="radio" name=image-source-selection" value="i-got-permission">
-              <span>I am allowed to reuse it:</span><br/>
+            <li id="listitem-i-got-permission">
+              <input type="radio" name="image-source-selection" value="i-got-permission">
+                <span>I am allowed to reuse it:</span><br/>
+              <div class="source-selection-allowed">
+                <ul style="list-style-type: none; padding: 0; margin: 0;">
+                  <li>
+                    <div>Who is the original author of this image?</div>
+                    <div>
+                      <input type="text" id="reuse-author"">
+                    </div>
+                  </li>
+                  <li>
+                    <div>What organization owns this image?</div>
+                    <div>
+                      <input type="text" id="reuse-org"">
+                    </div>
+                  </li>
+                  <li>
+                    <div>What is the original URL of this image?</div>
+                    <div>
+                      <input type="text" id="reuse-url" placeholder="http://">
+                    </div>
+                  </li>
+                  <li>
+                    <div>Permission to reuse</div>
+                    <div>
+                      <select id="reuse-license">
+                        <option value="">Choose a license</option>
+                        <option value="http://creativecommons.org/licenses/by/3.0/">
+                          Creative Commons Attribution - CC-BY</option>
+                        <option value="http://creativecommons.org/licenses/by-nd/3.0/">
+                          Creative Commons Attribution-NoDerivs - CC BY-ND</option>
+                        <option value="http://creativecommons.org/licenses/by-sa/3.0/">
+                          Creative Commons Attribution-ShareAlike - CC BY-SA</option>
+                        <option value="http://creativecommons.org/licenses/by-nc/3.0/">
+                          Creative Commons Attribution-NonCommercial - CC BY-NC</option>
+                        <option value="http://creativecommons.org/licenses/by-nc-sa/3.0/">
+                          Creative Commons Attribution-NonCommercial-ShareAlike - CC BY-NC-SA</option>
+                        <option value="http://creativecommons.org/licenses/by-nc-nd/3.0/">
+                          Creative Commons Attribution-NonCommercial-NoDerivs - CC BY-NC-ND</option>
+                        <option value="http://creativecommons.org/publicdomain/">
+                          Public domain</option>
+                        <option>other</option>
+                      </select>
+                    </div>
+                  </li>
+                </ul>
+              </div>
             </li>
-            <li>
-            <input type="radio" name=image-source-selection" value="i-dont-know">
-              <span>I don't know (skip citation for now)</span><br/>
+            <li id="listitem-i-dont-know">
+              <input type="radio" name="image-source-selection" value="i-dont-know">
+                <span>I don't know (skip citation for now)</span><br/>
             </li>
           </ul>
         </div>
@@ -235,10 +280,58 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
   showModalDialog2 = ($figure, $img, $dialog) ->
       $dialog.children().remove()
       $dialog.append(jQuery(DIALOG_HTML2))
+      
+      src = $img.attr('src')
+      if src and /^http/.test(src)
+        $dialog.find('input#reuse-url').val(src)
+
+      $dialog.find('input[name="image-source-selection"]').click (evt) =>
+        evt.stopPropagation()
+        return
+
+      $dialog.find('li#listitem-i-own-this, li#listitem-i-got-permission, li#listitem-i-dont-know').click (evt)=>
+        $current_target = jQuery(evt.currentTarget)
+        $cb = $current_target.find 'input[name="image-source-selection"]'
+        $cb.click() if $cb
+        return 
 
       deferred = $.Deferred()
       $dialog.off('submit').on 'submit', (evt) =>
         evt.preventDefault() # Don't submit the form
+
+        buildAttribution = (creator, publisher, basedOnURL, rightsName) =>
+          attribution = ""
+          if creator and creator.length > 0
+            attribution += "Image by " + creator + "."
+          if publisher and publisher.length > 0
+            attribution += "Published by " + publisher + "."
+          if basedOnURL and basedOnURL.length > 0
+            baseOn = '<link src="' + basedOnURL + '">Original source</link>.'
+            baseOnEscaped = jQuery('<div />').text(baseOn).html()
+            attribution += baseOn
+          if rightsName and rightsName.length > 0
+            attribution += 'License: ' + rightsName + "."
+          return attribution
+
+        if $dialog.find('input[value="i-got-permission"]').prop 'checked'
+          creator = $dialog.find('input#reuse-author').val()
+          if creator and creator.length > 0
+            $img.attr 'data-lrmi-creator', creator
+          publisher = $dialog.find('input#reuse-org').val()
+          if publisher and publisher.length > 0
+            $img.attr 'data-lrmi-publisher', publisher
+          basedOnURL = $dialog.find('input#reuse-url').val()
+          if basedOnURL and basedOnURL.length > 0
+            $img.attr 'data-lrmi-isBasedOnURL', basedOnURL
+          $option = $dialog.find('select#reuse-license :selected')
+          rightsUrl = $option.attr 'value'
+          rightsName = $.trim $option.text()
+          if rightsUrl and rightsUrl.length > 0
+            $img.attr 'data-lrmi-useRightsURL', rightsUrl
+          attribution = buildAttribution(creator, publisher, basedOnURL, rightsName)
+          if attribution and attribution.length > 0
+            $img.attr 'data-tbook-permissionText', attribution
+
         deferred.resolve({target: $img[0]})
         $figure.removeClass('aloha-ephemera')
 
