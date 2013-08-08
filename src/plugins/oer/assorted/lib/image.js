@@ -2,15 +2,18 @@
 (function() {
 
   define(['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'semanticblock/semanticblock-plugin', 'css!assorted/css/image.css'], function(Aloha, jQuery, AlohaPlugin, Image, UI, semanticBlock) {
-    var DIALOG_HTML, WARNING_IMAGE_PATH, activate, deactivate, insertImage, setEditText, setThankYou, setWidth, showModalDialog;
+    var DIALOG_HTML, DIALOG_HTML2, DIALOG_HTML_CONTAINER, WARNING_IMAGE_PATH, activate, deactivate, insertImage, setEditText, setThankYou, setWidth, showModalDialog, showModalDialog2;
     WARNING_IMAGE_PATH = '/../plugins/oer/image/img/warning.png';
-    DIALOG_HTML = '<form class="plugin image modal hide fade" id="linkModal" tabindex="-1" role="dialog" aria-labelledby="linkModalLabel" aria-hidden="true" data-backdrop="false">\n  <div class="modal-header">\n    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>\n    <h3>Insert image</h3>\n  </div>\n  <div class="modal-body">\n    <div class="image-options">\n        <div class="image-selection">\n          <div class="dia-alternative">\n            <span class="upload-image-link btn-link">Choose an image to upload</span>\n          </div>\n          <div class="dia-alternative">\n            OR\n          </div>\n          <div class="dia-alternative">\n            <span class="upload-url-link btn-link">get image from the Web</span>\n          </div>\n        </div>\n        <div class="placeholder preview hide">\n          <img class="preview-image"/>\n        </div>\n    </div>\n    <input type="file" class="upload-image-input" />\n    <input type="url" class="upload-url-input" placeholder="Enter URL of image ..."/>\n    <div>\n      <strong>Image title:</strong><input class="image-title" type="text" placeholder="Shows up above image"></textarea>\n    </div>\n    <div>\n      <strong>Image caption:</strong><input class="image-caption" type="text" placeholder="Shows up below image"></textarea>\n    </div>\n    <div class="image-alt">\n      <div class="forminfo">\n        <i class="icon-warning"></i><strong>Describe the image for someone who cannot see it.</strong> This description can be read aloud, making it possible for visually impaired learners to understand the content.\n      </div>\n      <div>\n        <textarea name="alt" type="text" placeholder="Enter description ..."></textarea>\n      </div>\n    </div>\n  </div>\n  <div class="modal-footer">\n    <button type="submit" disabled="true" class="btn btn-primary action insert">Next</button>\n    <button class="btn action cancel">Cancel</button>\n  </div>\n</form>';
+    DIALOG_HTML_CONTAINER = '<form class="plugin image modal hide fade" id="linkModal" tabindex="-1" role="dialog" aria-labelledby="linkModalLabel" aria-hidden="true" data-backdrop="false" />';
+    DIALOG_HTML = '<div class="modal-header">\n  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>\n  <h3>Insert image</h3>\n</div>\n<div class="modal-body">\n  <div class="image-options">\n      <div class="image-selection">\n        <div class="dia-alternative">\n          <span class="upload-image-link btn-link">Choose an image to upload</span>\n        </div>\n        <div class="dia-alternative">\n          OR\n        </div>\n        <div class="dia-alternative">\n          <span class="upload-url-link btn-link">get image from the Web</span>\n        </div>\n      </div>\n      <div class="placeholder preview hide">\n        <img class="preview-image"/>\n      </div>\n  </div>\n  <input type="file" class="upload-image-input" />\n  <input type="url" class="upload-url-input" placeholder="Enter URL of image ..."/>\n  <div>\n    <strong>Image title:</strong><input class="image-title" type="text" placeholder="Shows up above image"></textarea>\n  </div>\n  <div>\n    <strong>Image caption:</strong><input class="image-caption" type="text" placeholder="Shows up below image"></textarea>\n  </div>\n  <div class="image-alt">\n    <div class="forminfo">\n      <i class="icon-warning"></i><strong>Describe the image for someone who cannot see it.</strong> This description can be read aloud, making it possible for visually impaired learners to understand the content.\n    </div>\n    <div>\n      <textarea name="alt" type="text" placeholder="Enter description ..."></textarea>\n    </div>\n  </div>\n</div>\n<div class="modal-footer">\n  <button type="submit" disabled="true" class="btn btn-primary action insert">Next</button>\n  <button class="btn action cancel">Cancel</button>\n</div>';
+    DIALOG_HTML2 = '<div class="modal-header">\n  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>\n  <h3>Insert image</h3>\n</div>\n<div class="modal-body">\n  HELLO WORLD.\n</div>\n<div class="modal-footer">\n  <button type="submit" class="btn btn-primary action insert">Save</button>\n  <button class="btn action cancel">Cancel</button>\n</div>';
     showModalDialog = function($el) {
-      var $caption, $figure, $imageselect, $img, $placeholder, $submit, $title, $uploadImage, $uploadUrl, deferred, dialog, editing, imageAltText, imageSource, loadLocalFile, root, setImageSource, settings,
+      var $caption, $figure, $imageselect, $img, $placeholder, $submit, $title, $uploadImage, $uploadUrl, deferred, dialog, editing, imageAltText, imageSource, loadLocalFile, promise, root, setImageSource, settings,
         _this = this;
       settings = Aloha.require('assorted/assorted-plugin').settings;
       root = Aloha.activeEditable.obj;
-      dialog = jQuery(DIALOG_HTML);
+      dialog = jQuery(DIALOG_HTML_CONTAINER);
+      dialog.append(jQuery(DIALOG_HTML));
       $imageselect = dialog.find('.image-selection');
       $placeholder = dialog.find('.placeholder.preview');
       $uploadImage = dialog.find('.upload-image-input').hide();
@@ -29,6 +32,7 @@
       dialog.find('[name=alt]').val(imageAltText);
       if (editing) {
         dialog.find('.image-options').hide();
+        dialog.find('.btn-primary').text('Save');
       }
       (function(img, baseurl) {
         return img.onerror = function() {
@@ -111,12 +115,10 @@
         } else {
           setEditText($el.parent());
         }
-        deferred.resolve({
+        return deferred.resolve({
           target: $el[0],
           files: $uploadImage[0].files
         });
-        $el.parents('.figure').removeClass('aloha-ephemera');
-        return dialog.modal('hide');
       });
       dialog.on('click', '.btn.action.cancel', function(evt) {
         evt.preventDefault();
@@ -136,7 +138,7 @@
         }
         return dialog.remove();
       });
-      return jQuery.extend(true, deferred.promise(), {
+      promise = jQuery.extend(true, deferred.promise(), {
         show: function(title) {
           if (title) {
             dialog.find('.modal-header h3').text(title);
@@ -144,26 +146,69 @@
           return dialog.modal('show');
         }
       });
+      return {
+        dialog: dialog,
+        figure: $figure,
+        img: $img,
+        promise: promise
+      };
+    };
+    showModalDialog2 = function($figure, $img, $dialog) {
+      var deferred,
+        _this = this;
+      $dialog.children().remove();
+      $dialog.append(jQuery(DIALOG_HTML2));
+      deferred = $.Deferred();
+      $dialog.off('submit').on('submit', function(evt) {
+        evt.preventDefault();
+        deferred.resolve({
+          target: $img[0]
+        });
+        return $figure.removeClass('aloha-ephemera');
+      });
+      $dialog.off('click').on('click', '.btn.action.cancel', function(evt) {
+        evt.preventDefault();
+        $img.parents('.semantic-container').remove();
+        deferred.reject({
+          target: $img[0]
+        });
+        return $dialog.modal('hide');
+      });
+      return deferred.promise();
     };
     insertImage = function() {
-      var newEl, promise, template,
+      var $dialog, $figure, $img, blob, newEl, promise, source_this_image_dialog, template,
         _this = this;
       template = $('<figure class="figure aloha-ephemera"><div class="title" /><img /><figcaption /></figuren>');
       semanticBlock.insertAtCursor(template);
       newEl = template.find('img');
-      promise = showModalDialog(newEl);
-      promise.done(function(data) {
+      blob = showModalDialog(newEl);
+      promise = blob.promise;
+      $figure = blob.figure;
+      $img = blob.img;
+      $dialog = blob.dialog;
+      promise.show();
+      source_this_image_dialog = function() {
+        var next_promise;
+        next_promise = showModalDialog2($figure, $img, $dialog);
+        return next_promise;
+      };
+      promise.then(function(data) {
+        var promise2;
         if (data.files.length) {
           newEl.addClass('aloha-image-uploading');
-          return _this.uploadImage(data.files[0], newEl, function(url) {
+          _this.uploadImage(data.files[0], newEl, function(url) {
             if (url) {
               jQuery(data.target).attr('src', url);
             }
             return newEl.removeClass('aloha-image-uploading');
           });
         }
+        promise2 = source_this_image_dialog();
+        return promise2.then(function() {
+          $dialog.modal('hide');
+        });
       });
-      return promise.show();
     };
     $('body').bind('aloha-image-resize', function() {
       return setWidth(Image.imageObj);
@@ -246,11 +291,15 @@
           }
         });
         semanticBlock.register(this);
-        return semanticBlock.registerEvent('click', '.aloha-oer-block .image-edit', function() {
-          var img, promise;
+        semanticBlock.registerEvent('click', '.aloha-oer-block .image-edit', function() {
+          var img, promise,
+            _this = this;
           img = $(this).siblings('img');
           promise = showModalDialog(img);
-          return promise.show('Edit image');
+          promise.show('Edit image');
+          $.when(promise).then(function(data) {
+            return data.dialog.modal('hide');
+          });
         });
       },
       uploadImage: function(file, el, callback) {
