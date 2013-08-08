@@ -211,11 +211,16 @@
 		"listenforcer/res": "../plugins/extra/listenforcer/res",
 
     // OER Plugins
-    'oer/toolbar'  : '../plugins/oer/toolbar',
-    'oer/overlay'  : '../plugins/oer/overlay',
-    'oer/math'     : '../plugins/oer/math',
-    'oer/assorted' : '../plugins/oer/assorted',
-    'oer/note'     : '../plugins/oer/note',
+    'overlay'     : '../plugins/oer/overlay/lib',
+    'overlay/css' : '../plugins/oer/overlay/css',
+    'toolbar'     : '../plugins/oer/toolbar/lib',
+    'toolbar/css' : '../plugins/oer/toolbar/css',
+    'math'     : '../plugins/oer/math/lib',
+    'assorted' : '../plugins/oer/assorted/lib',
+    'note'     : '../plugins/oer/note/lib',
+    'semanticblock': '../plugins/oer/semanticblock/lib',
+    'semanticblock/css': '../plugins/oer/semanticblock/css', // Hmm, adding the css directory does not seem to help
+
     //Do not forget to add these to aloha.coffee
 
     },
@@ -224,6 +229,13 @@
     //for more information.
     packagePaths: [],
     packages: [],
+    // To get CSS files I tried the following but still failed
+    // packages: [{
+    //     name: 'css',
+    //     location: './',
+    //     main: 'css'
+    // }],
+
 
     //The directory path to save the output. If not specified, then
     //the path will default to be a directory called "build" as a sibling
@@ -455,6 +467,14 @@
 				'headerids/headerids-plugin',
 				'metaview/metaview-plugin',
 				'listenforcer/listenforcer-plugin',
+
+        // OER Plugins
+        'overlay/overlay-plugin',
+        'assorted/assorted-plugin',
+        'toolbar/toolbar-plugin',
+        'math/math-plugin',
+        'note/note-plugin',
+        'semanticblock/semanticblock-plugin',
 			],
         },
 

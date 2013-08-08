@@ -6,7 +6,7 @@ define [
   'ui/ui'
   'ui/button'
   'semanticblock/semanticblock-plugin'
-  'css!note/css/note-plugin.css'], (Aloha, Plugin, jQuery, Ephemera, UI, Button, semanticBlock) ->
+], (Aloha, Plugin, jQuery, Ephemera, UI, Button, semanticBlock) ->
 
   TYPE_CONTAINER = jQuery '''
       <span class="type-container dropdown aloha-ephemera">

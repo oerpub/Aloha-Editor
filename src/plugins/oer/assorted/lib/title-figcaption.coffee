@@ -2,7 +2,7 @@
 # * -----------------
 # * This plugin provides a bubble next to a title and figcaption when it is selected
 #
-define ['aloha', 'jquery', 'aloha/console', 'css!./title-figcaption.css'], (Aloha, jQuery, console) ->
+define ['aloha', 'jquery', 'aloha/console'], (Aloha, jQuery, console) ->
 
   buildTitle = ($el, content=null) ->
     $el.text('')
