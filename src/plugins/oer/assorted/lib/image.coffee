@@ -60,7 +60,25 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
         <h3>Insert image</h3>
       </div>
       <div class="modal-body">
-        HELLO WORLD.
+        <div>
+          <strong>Source for this image (Required)</strong>
+        </div>
+        <div class="source-selection">
+          <ul style="list-style-type: none; padding: 0; margin-left: 0;">
+            <li>
+            <input type="radio" name=image-source-selection" value="i-own-this" checked="checked">
+              <span>I own it (no citation needed)</span><br/>
+            </li>
+            <li>
+            <input type="radio" name=image-source-selection" value="i-got-permission">
+              <span>I am allowed to reuse it:</span><br/>
+            </li>
+            <li>
+            <input type="radio" name=image-source-selection" value="i-dont-know">
+              <span>I don't know (skip citation for now)</span><br/>
+            </li>
+          </ul>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="submit" class="btn btn-primary action insert">Save</button>
