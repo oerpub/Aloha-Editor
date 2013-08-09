@@ -351,10 +351,11 @@
         });
         semanticBlock.register(this);
         semanticBlock.registerEvent('click', '.aloha-oer-block .image-edit', function() {
-          var img, promise,
+          var blob, img, promise,
             _this = this;
           img = $(this).siblings('img');
-          promise = showModalDialog(img);
+          blob = showModalDialog(img);
+          promise = blob.promise;
           promise.show('Edit image');
           $.when(promise).then(function(data) {
             return data.dialog.modal('hide');

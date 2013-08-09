@@ -449,7 +449,8 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
       semanticBlock.register(this)
       semanticBlock.registerEvent 'click', '.aloha-oer-block .image-edit', ->
         img = $(this).siblings('img')
-        promise = showModalDialog(img)
+        blob = showModalDialog(img)
+        promise = blob.promise
         promise.show('Edit image')
         $.when(promise).then(  (data)=>
           data.dialog.modal 'hide'
