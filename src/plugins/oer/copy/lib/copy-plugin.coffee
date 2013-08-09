@@ -3,18 +3,27 @@ define ['aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button'], (Aloha, Plugin
   buffer = ''
  
   Plugin.create 'copy',
+    getBuffer: ->
+      if localStorage
+        return localStorage.alohaOerCopyBuffer
+      else
+        return buffer
 
     buffer: (content) ->
       buffer = content
       buffer = buffer.replace /id="[^"]+"/, ''
+
+      localStorage.alohaOerCopyBuffer = buffer if localStorage
+
       jQuery('.action.paste').fadeIn('fast')
 
     init: ->
-      console.log 'loaded'
+      plugin = @
+    
+      jQuery('.action.paste').fadeIn('fast') if localStorage and localStorage.alohaOerCopyBuffer
+
       # Add a listener
       UI.adopt "paste", Button,
         click: ->
           range = Aloha.Selection.getRangeObject()
-          GENTICS.Utils.Dom.insertIntoDOM jQuery(buffer), range, Aloha.activeEditable.obj
-
-          #jQuery('.action.paste').fadeOut('fast')
+          GENTICS.Utils.Dom.insertIntoDOM jQuery(plugin.getBuffer()), range, Aloha.activeEditable.obj
