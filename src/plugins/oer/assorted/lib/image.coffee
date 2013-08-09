@@ -2,7 +2,21 @@
 # * -----------------
 # * This plugin handles when the insertImage button is clicked and provides a bubble next to an image when it is selected
 #
-define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'semanticblock/semanticblock-plugin', 'css!assorted/css/image.css'], (Aloha, jQuery, AlohaPlugin, Image, UI, semanticBlock) ->
+define [
+  'aloha', 
+  'jquery', 
+  'aloha/plugin', 
+  'image/image-plugin', 
+  'ui/ui', 
+  'semanticblock/semanticblock-plugin', 
+  'css!assorted/css/image.css'], 
+(
+  Aloha, 
+  jQuery, 
+  AlohaPlugin, 
+  Image, 
+  UI, 
+  semanticBlock) ->
 
   # This will be prefixed with Aloha.settings.baseUrl
   WARNING_IMAGE_PATH = '/../plugins/oer/image/img/warning.png'
