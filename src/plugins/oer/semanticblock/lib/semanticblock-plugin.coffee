@@ -154,15 +154,15 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
         if $element.is(type.selector)
           type.activate $element
           matched = true
-          break 
-
-      return if matched
-      # if we make it this far none of the activators have run
-      # just make it editable
+          break
 
       # this might could be more efficient
       $element.find('*').andSelf().filter('[placeholder],[hover-placeholder]').each ->
         jQuery(@).empty() if not jQuery(@).text().trim()
+
+      return if matched
+      # if we make it this far none of the activators have run
+      # just make it editable
 
       # if there is a title, give it a placeholder and make it editable
       $title = $element.children('.title').first()
