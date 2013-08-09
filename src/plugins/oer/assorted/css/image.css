@@ -39,6 +39,23 @@ form.plugin.image .image-caption {
   height: 16px;
 }
 
+form.plugin.image .source-selection {
+  margin-left: 10px;
+}
+
+form.plugin.image .source-selection-allowed {
+  margin-left: 30px;
+}
+
+form.plugin.image .source-selection-allowed li input[type="text"]{
+  width: 95%;
+  height: 16px;
+}
+
+form.plugin.image .source-selection-allowed li select{
+  width: 95%;
+}
+
 form#linkModal:focus {
     outline: none;
 }
