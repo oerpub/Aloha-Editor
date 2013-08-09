@@ -2,18 +2,15 @@
 (function() {
 
   define(['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'semanticblock/semanticblock-plugin', 'css!assorted/css/image.css'], function(Aloha, jQuery, AlohaPlugin, Image, UI, semanticBlock) {
-    var DIALOG_HTML, DIALOG_HTML2, DIALOG_HTML_CONTAINER, WARNING_IMAGE_PATH, activate, deactivate, insertImage, setEditText, setThankYou, setWidth, showModalDialog, showModalDialog2;
+    var DIALOG_HTML, WARNING_IMAGE_PATH, activate, deactivate, insertImage, setEditText, setThankYou, setWidth, showModalDialog;
     WARNING_IMAGE_PATH = '/../plugins/oer/image/img/warning.png';
-    DIALOG_HTML_CONTAINER = '<form class="plugin image modal hide fade" id="linkModal" tabindex="-1" role="dialog" aria-labelledby="linkModalLabel" aria-hidden="true" data-backdrop="false" />';
-    DIALOG_HTML = '<div class="modal-header">\n  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>\n  <h3>Insert image</h3>\n</div>\n<div class="modal-body">\n  <div class="image-options">\n      <div class="image-selection">\n        <div class="dia-alternative">\n          <span class="upload-image-link btn-link">Choose an image to upload</span>\n        </div>\n        <div class="dia-alternative">\n          OR\n        </div>\n        <div class="dia-alternative">\n          <span class="upload-url-link btn-link">get image from the Web</span>\n        </div>\n      </div>\n      <div class="placeholder preview hide">\n        <img class="preview-image"/>\n      </div>\n  </div>\n  <input type="file" class="upload-image-input" />\n  <input type="url" class="upload-url-input" placeholder="Enter URL of image ..."/>\n  <div>\n    <strong>Image title:</strong><input class="image-title" type="text" placeholder="Shows up above image"></textarea>\n  </div>\n  <div>\n    <strong>Image caption:</strong><input class="image-caption" type="text" placeholder="Shows up below image"></textarea>\n  </div>\n  <div class="image-alt">\n    <div class="forminfo">\n      <i class="icon-warning"></i><strong>Describe the image for someone who cannot see it.</strong> This description can be read aloud, making it possible for visually impaired learners to understand the content.\n    </div>\n    <div>\n      <textarea name="alt" type="text" placeholder="Enter description ..."></textarea>\n    </div>\n  </div>\n</div>\n<div class="modal-footer">\n  <button type="submit" disabled="true" class="btn btn-primary action insert">Next</button>\n  <button class="btn action cancel">Cancel</button>\n</div>';
-    DIALOG_HTML2 = '<div class="modal-header">\n  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>\n  <h3>Insert image</h3>\n</div>\n<div class="modal-body">\n  <div>\n    <strong>Source for this image (Required)</strong>\n  </div>\n  <div class="source-selection">\n    <ul style="list-style-type: none; padding: 0; margin: 0;">\n      <li id="listitem-i-own-this">\n        <input type="radio" name="image-source-selection" value="i-own-this">\n          <span>I own it (no citation needed)</span><br/>\n      </li>\n      <li id="listitem-i-got-permission">\n        <input type="radio" name="image-source-selection" value="i-got-permission">\n          <span>I am allowed to reuse it:</span><br/>\n        <div class="source-selection-allowed">\n          <ul style="list-style-type: none; padding: 0; margin: 0;">\n            <li>\n              <div>Who is the original author of this image?</div>\n              <div>\n                <input type="text" id="reuse-author"">\n              </div>\n            </li>\n            <li>\n              <div>What organization owns this image?</div>\n              <div>\n                <input type="text" id="reuse-org"">\n              </div>\n            </li>\n            <li>\n              <div>What is the original URL of this image?</div>\n              <div>\n                <input type="text" id="reuse-url" placeholder="http://">\n              </div>\n            </li>\n            <li>\n              <div>Permission to reuse</div>\n              <div>\n                <select id="reuse-license">\n                  <option value="">Choose a license</option>\n                  <option value="http://creativecommons.org/licenses/by/3.0/">\n                    Creative Commons Attribution - CC-BY</option>\n                  <option value="http://creativecommons.org/licenses/by-nd/3.0/">\n                    Creative Commons Attribution-NoDerivs - CC BY-ND</option>\n                  <option value="http://creativecommons.org/licenses/by-sa/3.0/">\n                    Creative Commons Attribution-ShareAlike - CC BY-SA</option>\n                  <option value="http://creativecommons.org/licenses/by-nc/3.0/">\n                    Creative Commons Attribution-NonCommercial - CC BY-NC</option>\n                  <option value="http://creativecommons.org/licenses/by-nc-sa/3.0/">\n                    Creative Commons Attribution-NonCommercial-ShareAlike - CC BY-NC-SA</option>\n                  <option value="http://creativecommons.org/licenses/by-nc-nd/3.0/">\n                    Creative Commons Attribution-NonCommercial-NoDerivs - CC BY-NC-ND</option>\n                  <option value="http://creativecommons.org/publicdomain/">\n                    Public domain</option>\n                  <option>other</option>\n                </select>\n              </div>\n            </li>\n          </ul>\n        </div>\n      </li>\n      <li id="listitem-i-dont-know">\n        <input type="radio" name="image-source-selection" value="i-dont-know">\n          <span>I don\'t know (skip citation for now)</span><br/>\n      </li>\n    </ul>\n  </div>\n</div>\n<div class="modal-footer">\n  <button type="submit" class="btn btn-primary action insert">Save</button>\n  <button class="btn action cancel">Cancel</button>\n</div>';
+    DIALOG_HTML = '<form class="plugin image modal hide fade" id="linkModal" tabindex="-1" role="dialog" aria-labelledby="linkModalLabel" aria-hidden="true" data-backdrop="false">\n  <div class="modal-header">\n    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>\n    <h3>Insert image</h3>\n  </div>\n  <div class="modal-body">\n    <div class="image-options">\n        <div class="image-selection">\n          <div class="dia-alternative">\n            <span class="upload-image-link btn-link">Choose an image to upload</span>\n          </div>\n          <div class="dia-alternative">\n            OR\n          </div>\n          <div class="dia-alternative">\n            <span class="upload-url-link btn-link">get image from the Web</span>\n          </div>\n        </div>\n        <div class="placeholder preview hide">\n          <img class="preview-image"/>\n        </div>\n    </div>\n    <input type="file" class="upload-image-input" />\n    <input type="url" class="upload-url-input" placeholder="Enter URL of image ..."/>\n    <div>\n      <strong>Image title:</strong><input class="image-title" type="text" placeholder="Shows up above image"></textarea>\n    </div>\n    <div>\n      <strong>Image caption:</strong><input class="image-caption" type="text" placeholder="Shows up below image"></textarea>\n    </div>\n    <div class="image-alt">\n      <div class="forminfo">\n        <i class="icon-warning"></i><strong>Describe the image for someone who cannot see it.</strong> This description can be read aloud, making it possible for visually impaired learners to understand the content.\n      </div>\n      <div>\n        <textarea name="alt" type="text" placeholder="Enter description ..."></textarea>\n      </div>\n    </div>\n  </div>\n  <div class="modal-footer">\n    <button type="submit" disabled="true" class="btn btn-primary action insert">Next</button>\n    <button class="btn action cancel">Cancel</button>\n  </div>\n</form>';
     showModalDialog = function($el) {
-      var $caption, $figure, $imageselect, $img, $placeholder, $submit, $title, $uploadImage, $uploadUrl, deferred, dialog, editing, imageAltText, imageSource, loadLocalFile, promise, root, setImageSource, settings,
+      var $caption, $figure, $imageselect, $img, $placeholder, $submit, $title, $uploadImage, $uploadUrl, deferred, dialog, editing, imageAltText, imageSource, loadLocalFile, root, setImageSource, settings,
         _this = this;
       settings = Aloha.require('assorted/assorted-plugin').settings;
       root = Aloha.activeEditable.obj;
-      dialog = jQuery(DIALOG_HTML_CONTAINER);
-      dialog.append(jQuery(DIALOG_HTML));
+      dialog = jQuery(DIALOG_HTML);
       $imageselect = dialog.find('.image-selection');
       $placeholder = dialog.find('.placeholder.preview');
       $uploadImage = dialog.find('.upload-image-input').hide();
@@ -32,7 +29,6 @@
       dialog.find('[name=alt]').val(imageAltText);
       if (editing) {
         dialog.find('.image-options').hide();
-        dialog.find('.btn-primary').text('Save');
       }
       (function(img, baseurl) {
         return img.onerror = function() {
@@ -115,10 +111,12 @@
         } else {
           setEditText($el.parent());
         }
-        return deferred.resolve({
+        deferred.resolve({
           target: $el[0],
           files: $uploadImage[0].files
         });
+        $el.parents('.figure').removeClass('aloha-ephemera');
+        return dialog.modal('hide');
       });
       dialog.on('click', '.btn.action.cancel', function(evt) {
         evt.preventDefault();
@@ -138,7 +136,7 @@
         }
         return dialog.remove();
       });
-      promise = jQuery.extend(true, deferred.promise(), {
+      return jQuery.extend(true, deferred.promise(), {
         show: function(title) {
           if (title) {
             dialog.find('.modal-header h3').text(title);
@@ -146,128 +144,26 @@
           return dialog.modal('show');
         }
       });
-      return {
-        dialog: dialog,
-        figure: $figure,
-        img: $img,
-        promise: promise
-      };
-    };
-    showModalDialog2 = function($figure, $img, $dialog) {
-      var deferred, src,
-        _this = this;
-      $dialog.children().remove();
-      $dialog.append(jQuery(DIALOG_HTML2));
-      src = $img.attr('src');
-      if (src && /^http/.test(src)) {
-        $dialog.find('input#reuse-url').val(src);
-      }
-      $dialog.find('input[name="image-source-selection"]').click(function(evt) {
-        evt.stopPropagation();
-      });
-      $dialog.find('li#listitem-i-own-this, li#listitem-i-got-permission, li#listitem-i-dont-know').click(function(evt) {
-        var $cb, $current_target;
-        $current_target = jQuery(evt.currentTarget);
-        $cb = $current_target.find('input[name="image-source-selection"]');
-        if ($cb) {
-          $cb.click();
-        }
-      });
-      deferred = $.Deferred();
-      $dialog.off('submit').on('submit', function(evt) {
-        var $option, attribution, basedOnURL, buildAttribution, creator, publisher, rightsName, rightsUrl;
-        evt.preventDefault();
-        buildAttribution = function(creator, publisher, basedOnURL, rightsName) {
-          var attribution, baseOn, baseOnEscaped;
-          attribution = "";
-          if (creator && creator.length > 0) {
-            attribution += "Image by " + creator + ".";
-          }
-          if (publisher && publisher.length > 0) {
-            attribution += "Published by " + publisher + ".";
-          }
-          if (basedOnURL && basedOnURL.length > 0) {
-            baseOn = '<link src="' + basedOnURL + '">Original source</link>.';
-            baseOnEscaped = jQuery('<div />').text(baseOn).html();
-            attribution += baseOn;
-          }
-          if (rightsName && rightsName.length > 0) {
-            attribution += 'License: ' + rightsName + ".";
-          }
-          return attribution;
-        };
-        if ($dialog.find('input[value="i-got-permission"]').prop('checked')) {
-          creator = $dialog.find('input#reuse-author').val();
-          if (creator && creator.length > 0) {
-            $img.attr('data-lrmi-creator', creator);
-          }
-          publisher = $dialog.find('input#reuse-org').val();
-          if (publisher && publisher.length > 0) {
-            $img.attr('data-lrmi-publisher', publisher);
-          }
-          basedOnURL = $dialog.find('input#reuse-url').val();
-          if (basedOnURL && basedOnURL.length > 0) {
-            $img.attr('data-lrmi-isBasedOnURL', basedOnURL);
-          }
-          $option = $dialog.find('select#reuse-license :selected');
-          rightsUrl = $option.attr('value');
-          rightsName = $.trim($option.text());
-          if (rightsUrl && rightsUrl.length > 0) {
-            $img.attr('data-lrmi-useRightsURL', rightsUrl);
-          }
-          attribution = buildAttribution(creator, publisher, basedOnURL, rightsName);
-          if (attribution && attribution.length > 0) {
-            $img.attr('data-tbook-permissionText', attribution);
-          }
-        }
-        deferred.resolve({
-          target: $img[0]
-        });
-        return $figure.removeClass('aloha-ephemera');
-      });
-      $dialog.off('click').on('click', '.btn.action.cancel', function(evt) {
-        evt.preventDefault();
-        $img.parents('.semantic-container').remove();
-        deferred.reject({
-          target: $img[0]
-        });
-        return $dialog.modal('hide');
-      });
-      return deferred.promise();
     };
     insertImage = function() {
-      var $dialog, $figure, $img, blob, newEl, promise, source_this_image_dialog, template,
+      var newEl, promise, template,
         _this = this;
       template = $('<figure class="figure aloha-ephemera"><div class="title" /><img /><figcaption /></figuren>');
       semanticBlock.insertAtCursor(template);
       newEl = template.find('img');
-      blob = showModalDialog(newEl);
-      promise = blob.promise;
-      $figure = blob.figure;
-      $img = blob.img;
-      $dialog = blob.dialog;
-      promise.show();
-      source_this_image_dialog = function() {
-        var next_promise;
-        next_promise = showModalDialog2($figure, $img, $dialog);
-        return next_promise;
-      };
-      promise.then(function(data) {
-        var promise2;
+      promise = showModalDialog(newEl);
+      promise.done(function(data) {
         if (data.files.length) {
           newEl.addClass('aloha-image-uploading');
-          _this.uploadImage(data.files[0], newEl, function(url) {
+          return _this.uploadImage(data.files[0], newEl, function(url) {
             if (url) {
               jQuery(data.target).attr('src', url);
             }
             return newEl.removeClass('aloha-image-uploading');
           });
         }
-        promise2 = source_this_image_dialog();
-        return promise2.then(function() {
-          $dialog.modal('hide');
-        });
       });
+      return promise.show();
     };
     $('body').bind('aloha-image-resize', function() {
       return setWidth(Image.imageObj);
@@ -309,8 +205,8 @@
     };
     activate = function(element) {
       var $caption, $img, $title, edit, wrapper;
-      wrapper = $('<div class="image-wrapper aloha-ephemera-wrapper">').css('width', element.css('width'));
-      edit = $('<div class="image-edit aloha-ephemera">');
+      wrapper = $('<div class="image-wrapper">').css('width', element.css('width'));
+      edit = $('<div class="image-edit">');
       $title = element.find('.title');
       $img = element.find('img');
       $caption = element.find('figcaption');
@@ -350,15 +246,11 @@
           }
         });
         semanticBlock.register(this);
-        semanticBlock.registerEvent('click', '.aloha-oer-block .image-edit', function() {
-          var img, promise,
-            _this = this;
+        return semanticBlock.registerEvent('click', '.aloha-oer-block .image-edit', function() {
+          var img, promise;
           img = $(this).siblings('img');
           promise = showModalDialog(img);
-          promise.show('Edit image');
-          $.when(promise).then(function(data) {
-            return data.dialog.modal('hide');
-          });
+          return promise.show('Edit image');
         });
       },
       uploadImage: function(file, el, callback) {
