@@ -34,11 +34,13 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
         </div>
         <input type="file" class="upload-image-input" />
         <input type="url" class="upload-url-input" placeholder="Enter URL of image ..."/>
-        <div>
-          <strong>Image title:</strong><input class="image-title" type="text" placeholder="Shows up above image"></textarea>
-        </div>
-        <div>
-          <strong>Image caption:</strong><input class="image-caption" type="text" placeholder="Shows up below image"></textarea>
+        <div class="figure-options">
+          <div>
+            <strong>Image title:</strong><input class="image-title" type="text" placeholder="Shows up above image"></textarea>
+          </div>
+          <div>
+            <strong>Image caption:</strong><input class="image-caption" type="text" placeholder="Shows up below image"></textarea>
+          </div>
         </div>
         <div class="image-alt">
           <div class="forminfo">
@@ -169,6 +171,7 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
 
       if editing
         dialog.find('.image-options').hide()
+        dialog.find('.figure-options').hide()
         dialog.find('.btn-primary').text('Save')
 
       # Set onerror of preview image
@@ -451,9 +454,10 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
         img = $(this).siblings('img')
         blob = showModalDialog(img)
         promise = blob.promise
+        $dialog = blob.dialog
         promise.show('Edit image')
-        $.when(promise).then(  (data)=>
-          data.dialog.modal 'hide'
+        promise.then(  (data)=>
+          $dialog.modal 'hide'
         )
         return
       return
