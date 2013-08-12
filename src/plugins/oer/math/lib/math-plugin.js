@@ -53,20 +53,24 @@
       sel.addRange(range);
       return el.parents('.aloha-editable').first().focus();
     };
-    getMathFor = function(id) {
-      var jax, mathStr;
-      jax = typeof MathJax !== "undefined" && MathJax !== null ? MathJax.Hub.getJaxFor(id) : void 0;
+    getMathFor = function(el) {
+      var jax;
+      jax = MathJax.Hub.getJaxFor(el);
       if (jax) {
-        mathStr = jax.root.toMathML();
-        return jQuery(mathStr);
+        return jQuery(jax.root.toMathML());
       }
+      return null;
     };
     squirrelMath = function($el) {
       var $mml;
-      $mml = getMathFor($el.find('script').attr('id'));
-      $el.find('.mathml-wrapper').remove();
-      $mml.wrap('<span class="mathml-wrapper aloha-ephemera-wrapper"></span>');
-      return $el.append($mml.parent());
+      $mml = getMathFor($el.find('script')[0]);
+      if ($mml !== null) {
+        $el.find('.mathml-wrapper').remove();
+        $mml.wrap('<span class="mathml-wrapper aloha-ephemera-wrapper"></span>');
+        return $el.append($mml.parent());
+      } else {
+        return typeof console !== "undefined" && console !== null ? console.warn($el, 'has no associated Jax. Does this happen too often?') : void 0;
+      }
     };
     Aloha.bind('aloha-editable-created', function(evt, editable) {
       var $maths;
