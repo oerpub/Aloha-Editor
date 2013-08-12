@@ -181,7 +181,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
       # child.
       evt.stopPropagation()
 
-    editable.obj.on('click.matheditor', '.math-element-destroy', () ->
+    editable.obj.on('click.matheditor', '.math-element-destroy', (e) ->
       jQuery(e.target).tooltip('destroy')
       $el = jQuery(e.target).closest('.math-element')
       # Though the tooltip was bound to the editor and delegates
