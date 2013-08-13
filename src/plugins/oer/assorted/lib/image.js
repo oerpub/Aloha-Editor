@@ -5,10 +5,10 @@
     var DIALOG_HTML, DIALOG_HTML2, DIALOG_HTML_CONTAINER, WARNING_IMAGE_PATH, activate, deactivate, insertImage, setEditText, setThankYou, setWidth, showModalDialog, showModalDialog2;
     WARNING_IMAGE_PATH = '/../plugins/oer/image/img/warning.png';
     DIALOG_HTML_CONTAINER = '<form class="plugin image modal hide fade" id="linkModal" tabindex="-1" role="dialog" aria-labelledby="linkModalLabel" aria-hidden="true" data-backdrop="false" />';
-    DIALOG_HTML = '<div class="modal-header">\n  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>\n  <h3>Insert image</h3>\n</div>\n<div class="modal-body">\n  <div class="image-options">\n      <div class="image-selection">\n        <div class="dia-alternative">\n          <span class="upload-image-link btn-link">Choose an image to upload</span>\n        </div>\n        <div class="dia-alternative">\n          OR\n        </div>\n        <div class="dia-alternative">\n          <span class="upload-url-link btn-link">get image from the Web</span>\n        </div>\n      </div>\n      <div class="placeholder preview hide">\n        <img class="preview-image"/>\n      </div>\n  </div>\n  <input type="file" class="upload-image-input" />\n  <input type="url" class="upload-url-input" placeholder="Enter URL of image ..."/>\n  <div class="figure-options">\n    <div>\n      <strong>Image title:</strong><input class="image-title" type="text" placeholder="Shows up above image"></textarea>\n    </div>\n    <div>\n      <strong>Image caption:</strong><input class="image-caption" type="text" placeholder="Shows up below image"></textarea>\n    </div>\n  </div>\n  <div class="image-alt">\n    <div class="forminfo">\n      <i class="icon-warning"></i><strong>Describe the image for someone who cannot see it.</strong> This description can be read aloud, making it possible for visually impaired learners to understand the content.\n    </div>\n    <div>\n      <textarea name="alt" type="text" placeholder="Enter description ..."></textarea>\n    </div>\n  </div>\n</div>\n<div class="modal-footer">\n  <button type="submit" disabled="true" class="btn btn-primary action insert">Next</button>\n  <button class="btn action cancel">Cancel</button>\n</div>';
+    DIALOG_HTML = '<div class="modal-header">\n  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>\n  <h3>Insert image</h3>\n</div>\n<div class="modal-body">\n  <div class="image-options">\n      <div class="image-selection">\n        <div class="dia-alternative">\n          <span class="upload-image-link btn-link">Choose an image to upload</span>\n        </div>\n        <div class="dia-alternative">\n          OR\n        </div>\n        <div class="dia-alternative">\n          <span class="upload-url-link btn-link">get image from the Web</span>\n        </div>\n      </div>\n      <div class="placeholder preview hide">\n        <img class="preview-image"/>\n      </div>\n  </div>\n  <input type="file" class="upload-image-input" />\n  <input type="url" class="upload-url-input" placeholder="Enter URL of image ..."/>\n  <div class="figure-options">\n    <div>\n      <strong>Image title:</strong><input class="image-title" type="text" placeholder="Shows up above image"></input>\n    </div>\n    <div>\n      <strong>Image caption:</strong><input class="image-caption" type="text" placeholder="Shows up below image"></input>\n    </div>\n  </div>\n  <!-- SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY -->\n  <div class="sprint-only">\n    <div>\n      <strong>Image width:</strong><input class="image-width" type="text" style="width: 465px; height: 16px;"></input>\n    </div>\n    <div>\n      <strong>Image height:</strong><input class="image-height" type="text" style="width: 460px; height: 16px;"></input>\n    </div>\n  </div>\n  <!-- SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY -->\n  <div class="image-alt">\n    <div class="forminfo">\n      <i class="icon-warning"></i><strong>Describe the image for someone who cannot see it.</strong> This description can be read aloud, making it possible for visually impaired learners to understand the content.\n    </div>\n    <div>\n      <textarea name="alt" type="text" placeholder="Enter description ..."></textarea>\n    </div>\n  </div>\n</div>\n<div class="modal-footer">\n  <button type="submit" disabled="true" class="btn btn-primary action insert">Next</button>\n  <button class="btn action cancel">Cancel</button>\n</div>';
     DIALOG_HTML2 = '<div class="modal-header">\n  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>\n  <h3>Insert image</h3>\n</div>\n<div class="modal-body">\n  <div>\n    <strong>Source for this image (Required)</strong>\n  </div>\n  <div class="source-selection">\n    <ul style="list-style-type: none; padding: 0; margin: 0;">\n      <li id="listitem-i-own-this">\n        <input type="radio" name="image-source-selection" value="i-own-this">\n          <span>I own it (no citation needed)</span><br/>\n      </li>\n      <li id="listitem-i-got-permission">\n        <input type="radio" name="image-source-selection" value="i-got-permission">\n          <span>I am allowed to reuse it:</span><br/>\n        <div class="source-selection-allowed">\n          <ul style="list-style-type: none; padding: 0; margin: 0;">\n            <li>\n              <div>Who is the original author of this image?</div>\n              <div>\n                <input type="text" id="reuse-author"">\n              </div>\n            </li>\n            <li>\n              <div>What organization owns this image?</div>\n              <div>\n                <input type="text" id="reuse-org"">\n              </div>\n            </li>\n            <li>\n              <div>What is the original URL of this image?</div>\n              <div>\n                <input type="text" id="reuse-url" placeholder="http://">\n              </div>\n            </li>\n            <li>\n              <div>Permission to reuse</div>\n              <div>\n                <select id="reuse-license">\n                  <option value="">Choose a license</option>\n                  <option value="http://creativecommons.org/licenses/by/3.0/">\n                    Creative Commons Attribution - CC-BY</option>\n                  <option value="http://creativecommons.org/licenses/by-nd/3.0/">\n                    Creative Commons Attribution-NoDerivs - CC BY-ND</option>\n                  <option value="http://creativecommons.org/licenses/by-sa/3.0/">\n                    Creative Commons Attribution-ShareAlike - CC BY-SA</option>\n                  <option value="http://creativecommons.org/licenses/by-nc/3.0/">\n                    Creative Commons Attribution-NonCommercial - CC BY-NC</option>\n                  <option value="http://creativecommons.org/licenses/by-nc-sa/3.0/">\n                    Creative Commons Attribution-NonCommercial-ShareAlike - CC BY-NC-SA</option>\n                  <option value="http://creativecommons.org/licenses/by-nc-nd/3.0/">\n                    Creative Commons Attribution-NonCommercial-NoDerivs - CC BY-NC-ND</option>\n                  <option value="http://creativecommons.org/publicdomain/">\n                    Public domain</option>\n                  <option>other</option>\n                </select>\n              </div>\n            </li>\n          </ul>\n        </div>\n      </li>\n      <li id="listitem-i-dont-know">\n        <input type="radio" name="image-source-selection" value="i-dont-know">\n          <span>I don\'t know (skip citation for now)</span><br/>\n      </li>\n    </ul>\n  </div>\n</div>\n<div class="modal-footer">\n  <button type="submit" class="btn btn-primary action insert">Save</button>\n  <button class="btn action cancel">Cancel</button>\n</div>';
     showModalDialog = function($el) {
-      var $caption, $figure, $imageselect, $img, $placeholder, $submit, $title, $uploadImage, $uploadUrl, deferred, dialog, editing, imageAltText, imageSource, loadLocalFile, promise, root, setImageSource, settings,
+      var $caption, $figure, $imageselect, $img, $placeholder, $submit, $title, $uploadImage, $uploadUrl, code_for_spring, deferred, dialog, editing, imageAltText, imageSource, loadLocalFile, promise, root, setImageSource, settings,
         _this = this;
       settings = Aloha.require('assorted/assorted-plugin').settings;
       root = Aloha.activeEditable.obj;
@@ -34,6 +34,24 @@
         dialog.find('.image-options').hide();
         dialog.find('.figure-options').hide();
         dialog.find('.btn-primary').text('Save');
+      }
+      dialog.find('.sprint-only').hide();
+      code_for_spring = true;
+      if (editing && code_for_spring) {
+        dialog.find('.figure-options').show();
+        if ($title && $title.text()) {
+          dialog.find('.figure-options input.image-title').val($title.text());
+        }
+        if ($caption && $caption.text()) {
+          dialog.find('.figure-options input.image-caption').val($caption.text());
+        }
+        dialog.find('.sprint-only').show();
+        if ($img.attr('width')) {
+          dialog.find('.sprint-only input.image-width').val($img.attr('width'));
+        }
+        if ($img.attr('height')) {
+          dialog.find('.sprint-only input.image-height').val($img.attr('height'));
+        }
       }
       (function(img, baseurl) {
         return img.onerror = function() {
@@ -110,6 +128,18 @@
         }
         if (dialog.find('input.image-caption').val()) {
           $caption.html(dialog.find('input.image-caption').val());
+        }
+        if (dialog.find('.sprint-only input.image-width').val()) {
+          $img.attr('width', dialog.find('.sprint-only input.image-width').val());
+          $img.css('width', dialog.find('.sprint-only input.image-width').val());
+        } else {
+          $img.removeAttr('width');
+          $img.css('width', '');
+        }
+        if (dialog.find('.sprint-only input.image-height').val()) {
+          $img.attr('height', dialog.find('.sprint-only input.image-height').val());
+        } else {
+          $img.removeAttr('height');
         }
         if (altAdded) {
           setThankYou($el.parent());
