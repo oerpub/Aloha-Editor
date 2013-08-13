@@ -19,6 +19,10 @@
     max-height: 156px;
 }
 
+form.plugin.image .modal-body {
+  max-height: 500px;
+}
+
 form.plugin.image textarea {
     width: 99%;
     padding: 0.25em;
@@ -38,6 +42,14 @@ form.plugin.image .image-caption {
   width: 450px;
   height: 16px;
 }
+
+/* SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY */
+form.plugin.image .image-width,
+form.plugin.image .image-height {
+  width: 450px;
+  height: 16px;
+}
+/* SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY */
 
 form.plugin.image .source-selection {
   margin-left: 10px;

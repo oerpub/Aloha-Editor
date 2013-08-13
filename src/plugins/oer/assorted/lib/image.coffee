@@ -36,12 +36,22 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
         <input type="url" class="upload-url-input" placeholder="Enter URL of image ..."/>
         <div class="figure-options">
           <div>
-            <strong>Image title:</strong><input class="image-title" type="text" placeholder="Shows up above image"></textarea>
+            <strong>Image title:</strong><input class="image-title" type="text" placeholder="Shows up above image"></input>
           </div>
           <div>
-            <strong>Image caption:</strong><input class="image-caption" type="text" placeholder="Shows up below image"></textarea>
+            <strong>Image caption:</strong><input class="image-caption" type="text" placeholder="Shows up below image"></input>
           </div>
         </div>
+        <!-- SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY -->
+        <div class="sprint-only">
+          <div>
+            <strong>Image width:</strong><input class="image-width" type="text" style="width: 465px; height: 16px;"></input>
+          </div>
+          <div>
+            <strong>Image height:</strong><input class="image-height" type="text" style="width: 460px; height: 16px;"></input>
+          </div>
+        </div>
+        <!-- SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY -->
         <div class="image-alt">
           <div class="forminfo">
             <i class="icon-warning"></i><strong>Describe the image for someone who cannot see it.</strong> This description can be read aloud, making it possible for visually impaired learners to understand the content.
@@ -174,6 +184,24 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
         dialog.find('.figure-options').hide()
         dialog.find('.btn-primary').text('Save')
 
+      # SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY 
+      # SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY 
+      dialog.find('.sprint-only').hide()
+      code_for_spring = true
+      if editing and code_for_spring
+        dialog.find('.figure-options').show()
+        if $title and $title.text()
+          dialog.find('.figure-options input.image-title').val $title.text()
+        if $caption and $caption.text()
+          dialog.find('.figure-options input.image-caption').val $caption.text()
+        dialog.find('.sprint-only').show()
+        if $img.attr('width')
+          dialog.find('.sprint-only input.image-width').val $img.attr('width')
+        if $img.attr('height')
+          dialog.find('.sprint-only input.image-height').val $img.attr('height')
+      # SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY 
+      # SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY 
+
       # Set onerror of preview image
       ((img, baseurl) ->
         img.onerror = ->
@@ -247,6 +275,22 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
         if dialog.find('input.image-caption').val()
           $caption.html dialog.find('input.image-caption').val()
         # else probably should remove the $caption element
+
+        # SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY 
+        # SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY 
+        if dialog.find('.sprint-only input.image-width').val()
+          $img.attr 'width',  dialog.find('.sprint-only input.image-width').val()
+          $img.css 'width', dialog.find('.sprint-only input.image-width').val()
+        else
+          $img.removeAttr 'width'
+          $img.css 'width', ''
+
+        if dialog.find('.sprint-only input.image-height').val()
+          $img.attr 'height', dialog.find('.sprint-only input.image-height').val()
+        else
+          $img.removeAttr 'height'
+        # SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY 
+        # SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY 
 
         if altAdded
           setThankYou $el.parent()
