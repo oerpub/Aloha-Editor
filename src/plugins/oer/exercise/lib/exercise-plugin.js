@@ -11,7 +11,7 @@
       var $problem, $solutions, $typeContainer, type,
         _this = this;
       type = $element.attr('data-type') || 'exercise';
-      $problem = $element.children('.problem');
+      $problem = $element.children('.problem').contents();
       $solutions = $element.children('.solution');
       $element.children().remove();
       $typeContainer = jQuery(TYPE_CONTAINER);
@@ -22,7 +22,7 @@
         }
       });
       $typeContainer.prependTo($element);
-      $problem.attr('placeholder', "Type the text of your problem here.").appendTo($element).addClass('aloha-block-dropzone').aloha();
+      jQuery('<div>').addClass('problem').addClass('aloha-block-dropzone').attr('placeholder', "Type the text of your problem here.").appendTo($element).aloha().append($problem);
       jQuery('<div>').addClass('solutions').appendTo($element).append($solutions);
       jQuery('<div>').addClass('solution-controls').append('<span class="add-solution btn-link">Click here to add an answer/solution</span>').append('<span class="solution-toggle"></span>').appendTo($element);
       if (!$solutions.length) {

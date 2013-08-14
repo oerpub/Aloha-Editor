@@ -250,6 +250,7 @@
               elementLabel = element.attr('class').split(' ')[0];
               return element.draggable({
                 connectToSortable: $root,
+                appendTo: jQuery('body'),
                 revert: 'invalid',
                 helper: function() {
                   var helper;

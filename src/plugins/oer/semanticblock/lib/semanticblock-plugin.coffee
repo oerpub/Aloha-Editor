@@ -217,6 +217,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
             elementLabel = element.attr('class').split(' ')[0]
             element.draggable
               connectToSortable: $root
+              appendTo: jQuery('body')
               revert: 'invalid'
               helper: ->
                 helper = jQuery(blockDragHelper).clone()

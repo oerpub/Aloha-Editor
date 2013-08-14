@@ -42,7 +42,7 @@ define [
     activateExercise = ($element) ->
       type = $element.attr('data-type') or 'exercise'
 
-      $problem = $element.children('.problem')
+      $problem = $element.children('.problem').contents()
       $solutions = $element.children('.solution')
 
       $element.children().remove()
@@ -56,11 +56,13 @@ define [
 
       $typeContainer.prependTo($element)
 
-      $problem
+      jQuery('<div>')
+        .addClass('problem')
+        .addClass('aloha-block-dropzone')
         .attr('placeholder', "Type the text of your problem here.")
         .appendTo($element)
-        .addClass('aloha-block-dropzone')
         .aloha()
+        .append($problem)
 
       jQuery('<div>')
         .addClass('solutions')
