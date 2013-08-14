@@ -20,7 +20,7 @@
             },
             map: {
                 '*': {
-                    'ui/ui': '../plugins/oer/toolbar/lib/ui'
+                    'ui/ui': 'toolbar/toolbar-plugin'
                 }
             }
         },  

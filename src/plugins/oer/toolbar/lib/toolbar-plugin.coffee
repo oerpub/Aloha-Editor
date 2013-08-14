@@ -1,4 +1,4 @@
-define [ 'jquery', 'aloha', 'aloha/plugin', 'PubSub', 'copy/copy-plugin' ], (
+define [ 'jquery', 'aloha', 'aloha/plugin', 'PubSub' ], (
     jQuery, Aloha, Plugin, PubSub, Copy) ->
 
   squirreledEditable = null
@@ -126,7 +126,8 @@ define [ 'jquery', 'aloha', 'aloha/plugin', 'PubSub', 'copy/copy-plugin' ], (
           $elements = jQuery(@).parent().nextUntil(selector).andSelf()
           html = ''
           html += jQuery(element).outerHtml() for element in $elements
-          Copy.buffer html
+          Aloha.require ['copy/copy-plugin'], (Copy) ->
+            Copy.buffer html
       #### end temporary copy paste code
 
       $ROOT.on 'click', '.action.changeHeading', changeHeading
