@@ -1,5 +1,5 @@
-define [ 'jquery', 'aloha', 'aloha/plugin', 'ui/ui', 'PubSub', 'copy/copy-plugin' ], (
-    jQuery, Aloha, Plugin, Ui, PubSub, Copy) ->
+define [ 'jquery', 'aloha', 'aloha/plugin', 'PubSub' ], (
+    jQuery, Aloha, Plugin, PubSub, Copy) ->
 
   squirreledEditable = null
   $ROOT = jQuery('body') # Could also be configured to some other div
@@ -36,26 +36,6 @@ define [ 'jquery', 'aloha', 'aloha/plugin', 'ui/ui', 'PubSub', 'copy/copy-plugin
 
   # Store `{ actionName: action() }` object so we can bind all the clicks when we init the plugin
   adoptedActions = {}
-
-  # Hijack the toolbar buttons so we can customize where they are placed.
-  Ui.adopt = (slot, type, settings) ->
-    # publish an adoption event, if item finds a home, return the
-    # constructed component
-    evt = $.Event('aloha.toolbar.adopt')
-    $.extend(evt,
-        params:
-            slot: slot,
-            type: type,
-            settings: settings
-        component: null)
-    PubSub.pub(evt.type, evt)
-    if evt.isDefaultPrevented()
-      evt.component.adoptParent(toolbar)
-      return evt.component
-
-    adoptedActions[slot] = settings
-    return makeItemRelay slot
-
 
   # Delegate toolbar actions once all the plugins have initialized and called `UI.adopt`
   Aloha.bind 'aloha-ready', (event, editable) ->
@@ -146,7 +126,8 @@ define [ 'jquery', 'aloha', 'aloha/plugin', 'ui/ui', 'PubSub', 'copy/copy-plugin
           $elements = jQuery(@).parent().nextUntil(selector).andSelf()
           html = ''
           html += jQuery(element).outerHtml() for element in $elements
-          Copy.buffer html
+          Aloha.require ['copy/copy-plugin'], (Copy) ->
+            Copy.buffer html
       #### end temporary copy paste code
 
       $ROOT.on 'click', '.action.changeHeading', changeHeading
@@ -205,6 +186,24 @@ define [ 'jquery', 'aloha', 'aloha/plugin', 'ui/ui', 'PubSub', 'copy/copy-plugin
         evt = $.Event('aloha.toolbar.childforeground')
         evt.component = childComponent
         PubSub.pub(evt.type, evt)
+
+    adopt: (slot, type, settings) ->
+      # publish an adoption event, if item finds a home, return the
+      # constructed component
+      evt = $.Event('aloha.toolbar.adopt')
+      $.extend(evt,
+          params:
+              slot: slot,
+              type: type,
+              settings: settings
+          component: null)
+      PubSub.pub(evt.type, evt)
+      if evt.isDefaultPrevented()
+        evt.component.adoptParent(toolbar)
+        return evt.component
+
+      adoptedActions[slot] = settings
+      return makeItemRelay slot
 
     ###
      toString method
