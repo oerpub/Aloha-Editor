@@ -64,7 +64,7 @@ define [
           <div>
             <strong>Image height:</strong><input class="image-height" type="text" style="width: 460px; height: 16px;"></input>
           </div>
-          </div>
+        </div>
         <!-- SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY -->
         <div class="image-alt">
           <div class="forminfo">
