@@ -39,6 +39,7 @@
       code_for_spring = true;
       if (editing && code_for_spring) {
         dialog.find('.figure-options').show();
+        dialog.find('.btn-primary').text('Next');
         if ($title && $title.text()) {
           dialog.find('.figure-options input.image-title').val($title.text());
         }
@@ -184,14 +185,40 @@
         promise: promise
       };
     };
-    showModalDialog2 = function($figure, $img, $dialog) {
-      var deferred, src,
+    showModalDialog2 = function($figure, $img, $dialog, editing) {
+      var $option, basedOnURL, creator, deferred, publisher, rightsUrl, src,
         _this = this;
       $dialog.children().remove();
       $dialog.append(jQuery(DIALOG_HTML2));
       src = $img.attr('src');
       if (src && /^http/.test(src)) {
         $dialog.find('input#reuse-url').val(src);
+      }
+      if (editing) {
+        creator = $img.attr('data-lrmi-creator');
+        if (creator) {
+          $dialog.find('input#reuse-author').val(creator);
+        }
+        publisher = $img.attr('data-lrmi-publisher');
+        if (publisher) {
+          $dialog.find('input#reuse-org').val(publisher);
+        }
+        basedOnURL = $img.attr('data-lrmi-isBasedOnURL');
+        if (basedOnURL) {
+          $dialog.find('input#reuse-url').val(basedOnURL);
+        }
+        rightsUrl = $img.attr('data-lrmi-useRightsURL');
+        if (rightsUrl) {
+          $option = $dialog.find('select#reuse-license option[value="' + rightsUrl + '"]');
+          if ($option) {
+            $option.prop('selected', true);
+          }
+        }
+        if (creator || publisher || rightsUrl) {
+          $dialog.find('input[value="i-got-permission"]').prop('checked', true);
+        }
+      } else {
+
       }
       $dialog.find('input[name="image-source-selection"]').click(function(evt) {
         evt.stopPropagation();
@@ -206,7 +233,7 @@
       });
       deferred = $.Deferred();
       $dialog.off('submit').on('submit', function(evt) {
-        var $option, attribution, basedOnURL, buildAttribution, creator, publisher, rightsName, rightsUrl;
+        var attribution, buildAttribution, rightsName;
         evt.preventDefault();
         buildAttribution = function(creator, publisher, basedOnURL, rightsName) {
           var attribution, baseOn, baseOnEscaped;
@@ -231,25 +258,41 @@
           creator = $dialog.find('input#reuse-author').val();
           if (creator && creator.length > 0) {
             $img.attr('data-lrmi-creator', creator);
+          } else {
+            $img.removeAttr('data-lrmi-creator');
           }
           publisher = $dialog.find('input#reuse-org').val();
           if (publisher && publisher.length > 0) {
             $img.attr('data-lrmi-publisher', publisher);
+          } else {
+            $img.removeAttr('data-lrmi-publisher');
           }
           basedOnURL = $dialog.find('input#reuse-url').val();
           if (basedOnURL && basedOnURL.length > 0) {
             $img.attr('data-lrmi-isBasedOnURL', basedOnURL);
+          } else {
+            $img.removeAttr('data-lrmi-isBasedOnURL');
           }
           $option = $dialog.find('select#reuse-license :selected');
           rightsUrl = $option.attr('value');
           rightsName = $.trim($option.text());
           if (rightsUrl && rightsUrl.length > 0) {
             $img.attr('data-lrmi-useRightsURL', rightsUrl);
+          } else {
+            $img.removeAttr('data-lrmi-useRightsURL');
           }
           attribution = buildAttribution(creator, publisher, basedOnURL, rightsName);
           if (attribution && attribution.length > 0) {
             $img.attr('data-tbook-permissionText', attribution);
+          } else {
+            $img.removeAttr('data-tbook-permissionText');
           }
+        } else {
+          $img.removeAttr('data-lrmi-creator');
+          $img.removeAttr('data-lrmi-publisher');
+          $img.removeAttr('data-lrmi-isBasedOnURL');
+          $img.removeAttr('data-lrmi-useRightsURL');
+          $img.removeAttr('data-tbook-permissionText');
         }
         deferred.resolve({
           target: $img[0]
@@ -258,7 +301,9 @@
       });
       $dialog.off('click').on('click', '.btn.action.cancel', function(evt) {
         evt.preventDefault();
-        $img.parents('.semantic-container').remove();
+        if (!editing) {
+          $img.parents('.semantic-container').remove();
+        }
         deferred.reject({
           target: $img[0]
         });
@@ -279,8 +324,9 @@
       $dialog = blob.dialog;
       promise.show();
       source_this_image_dialog = function() {
-        var next_promise;
-        next_promise = showModalDialog2($figure, $img, $dialog);
+        var editing, next_promise;
+        editing = false;
+        next_promise = showModalDialog2($figure, $img, $dialog, editing);
         return next_promise;
       };
       promise.then(function(data) {
@@ -382,16 +428,35 @@
         });
         semanticBlock.register(this);
         semanticBlock.registerEvent('click', '.aloha-oer-block .image-edit', function() {
-          var $dialog, blob, img, promise,
+          var $dialog, $figure, $img, blob, code_for_spring, img, promise, source_this_image_dialog,
             _this = this;
           img = $(this).siblings('img');
           blob = showModalDialog(img);
           promise = blob.promise;
           $dialog = blob.dialog;
+          $figure = blob.figure;
+          $img = blob.img;
           promise.show('Edit image');
-          promise.then(function(data) {
-            return $dialog.modal('hide');
-          });
+          code_for_spring = true;
+          if (code_for_spring) {
+            source_this_image_dialog = function() {
+              var editing, next_promise;
+              editing = true;
+              next_promise = showModalDialog2($figure, $img, $dialog, editing);
+              return next_promise;
+            };
+            promise.then(function(data) {
+              var promise2;
+              promise2 = source_this_image_dialog();
+              return promise2.then(function() {
+                return $dialog.modal('hide');
+              });
+            });
+          } else {
+            promise.then(function(data) {
+              return $dialog.modal('hide');
+            });
+          }
         });
       },
       uploadImage: function(file, el, callback) {

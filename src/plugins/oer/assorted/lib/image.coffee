@@ -190,6 +190,7 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
       code_for_spring = true
       if editing and code_for_spring
         dialog.find('.figure-options').show()
+        dialog.find('.btn-primary').text('Next')
         if $title and $title.text()
           dialog.find('.figure-options input.image-title').val $title.text()
         if $caption and $caption.text()
@@ -324,13 +325,32 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
           img: $img,
           promise: promise}
 
-  showModalDialog2 = ($figure, $img, $dialog) ->
+  showModalDialog2 = ($figure, $img, $dialog, editing) ->
       $dialog.children().remove()
       $dialog.append(jQuery(DIALOG_HTML2))
       
       src = $img.attr('src')
       if src and /^http/.test(src)
-        $dialog.find('input#reuse-url').val(src)
+        $dialog.find('input#reuse-url').val src
+
+      if editing
+        creator    = $img.attr 'data-lrmi-creator'
+        if creator
+          $dialog.find('input#reuse-author').val creator
+        publisher  = $img.attr 'data-lrmi-publisher'
+        if publisher
+          $dialog.find('input#reuse-org').val publisher
+        basedOnURL = $img.attr 'data-lrmi-isBasedOnURL'
+        if basedOnURL
+          $dialog.find('input#reuse-url').val basedOnURL
+        rightsUrl  = $img.attr 'data-lrmi-useRightsURL'
+        if rightsUrl
+          $option = $dialog.find('select#reuse-license option[value="' + rightsUrl + '"]')
+          if $option
+            $option.prop 'selected', true
+        if creator or publisher or rightsUrl
+          $dialog.find('input[value="i-got-permission"]').prop 'checked', true
+      else
 
       $dialog.find('input[name="image-source-selection"]').click (evt) =>
         evt.stopPropagation()
@@ -364,27 +384,47 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
           creator = $dialog.find('input#reuse-author').val()
           if creator and creator.length > 0
             $img.attr 'data-lrmi-creator', creator
+          else
+            $img.removeAttr 'data-lrmi-creator'
+
           publisher = $dialog.find('input#reuse-org').val()
           if publisher and publisher.length > 0
             $img.attr 'data-lrmi-publisher', publisher
+          else
+            $img.removeAttr 'data-lrmi-publisher'
+
           basedOnURL = $dialog.find('input#reuse-url').val()
           if basedOnURL and basedOnURL.length > 0
             $img.attr 'data-lrmi-isBasedOnURL', basedOnURL
+          else
+            $img.removeAttr 'data-lrmi-isBasedOnURL'
+
           $option = $dialog.find('select#reuse-license :selected')
           rightsUrl = $option.attr 'value'
           rightsName = $.trim $option.text()
           if rightsUrl and rightsUrl.length > 0
             $img.attr 'data-lrmi-useRightsURL', rightsUrl
+          else
+            $img.removeAttr 'data-lrmi-useRightsURL'
+
           attribution = buildAttribution(creator, publisher, basedOnURL, rightsName)
           if attribution and attribution.length > 0
             $img.attr 'data-tbook-permissionText', attribution
+          else
+            $img.removeAttr 'data-tbook-permissionText'
+        else
+          $img.removeAttr 'data-lrmi-creator'
+          $img.removeAttr 'data-lrmi-publisher'
+          $img.removeAttr 'data-lrmi-isBasedOnURL'
+          $img.removeAttr 'data-lrmi-useRightsURL'
+          $img.removeAttr 'data-tbook-permissionText'
 
         deferred.resolve({target: $img[0]})
         $figure.removeClass('aloha-ephemera')
 
       $dialog.off('click').on 'click', '.btn.action.cancel', (evt) =>
         evt.preventDefault() # Don't submit the form
-        $img.parents('.semantic-container').remove()
+        $img.parents('.semantic-container').remove() unless editing
         deferred.reject(target: $img[0])
         $dialog.modal('hide')
 
@@ -403,7 +443,8 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
     promise.show()
     
     source_this_image_dialog = ()=>
-      next_promise = showModalDialog2($figure, $img, $dialog)
+      editing = false
+      next_promise = showModalDialog2($figure, $img, $dialog, editing)
       return next_promise
 
     promise.then( (data)=>
@@ -414,9 +455,8 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
           if url
             jQuery(data.target).attr('src', url)
           newEl.removeClass('aloha-image-uploading')
-      # once we start using jQuery 1.8+ promise.then() will return a new promise
-      # and we can rewrite this as 
-      # when(promise).then(...).then(source_this_image_dialog).then(...)
+      # once we start using jQuery 1.8+, promise.then() will return a new promise and we can rewrite this as :
+      #     when(promise).then(...).then(source_this_image_dialog).then(...)
       promise2 = source_this_image_dialog()
       promise2.then( ()=>
         # hide the dialog on the way out
@@ -496,13 +536,38 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
       semanticBlock.register(this)
       semanticBlock.registerEvent 'click', '.aloha-oer-block .image-edit', ->
         img = $(this).siblings('img')
+
         blob = showModalDialog(img)
         promise = blob.promise
         $dialog = blob.dialog
+        $figure = blob.figure
+        $img    = blob.img
+
         promise.show('Edit image')
-        promise.then(  (data)=>
-          $dialog.modal 'hide'
-        )
+        # SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY 
+        # SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY 
+        code_for_spring = true
+        if code_for_spring
+          source_this_image_dialog = ()=>
+            editing = true
+            next_promise = showModalDialog2($figure, $img, $dialog, editing)
+            return next_promise
+          # once we start using jQuery 1.8+, promise.then() will return a new promise and we can rewrite this as :
+          #     when(promise).then(...).then(source_this_image_dialog).then(...)
+          promise.then(  (data)=>
+            promise2 = source_this_image_dialog()
+            promise2.then( ()=>
+              # hide the dialog on the way out
+              $dialog.modal 'hide'
+            )
+          )
+        else
+          promise.then(  (data)=>
+            # hide the dialog on the way out
+            $dialog.modal 'hide'
+          )
+        # SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY 
+        # SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY 
         return
       return
 
