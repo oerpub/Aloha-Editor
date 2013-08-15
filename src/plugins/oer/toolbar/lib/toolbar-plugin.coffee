@@ -1,5 +1,5 @@
-define [ 'jquery', 'aloha', 'aloha/plugin', 'ui/ui', 'PubSub' ], (
-    jQuery, Aloha, Plugin, Ui, PubSub) ->
+define [ 'jquery', 'aloha', 'aloha/plugin', 'PubSub', 'ui/button' ], (
+    jQuery, Aloha, Plugin, PubSub, Button) ->
 
   squirreledEditable = null
   $ROOT = jQuery('body') # Could also be configured to some other div
@@ -123,8 +123,29 @@ define [ 'jquery', 'aloha', 'aloha/plugin', 'ui/ui', 'PubSub' ], (
         $oldEl = Aloha.jQuery(rangeObject.getCommonAncestorContainer())
         $newEl = Aloha.jQuery(Aloha.Selection.getRangeObject().getCommonAncestorContainer())
         $newEl.addClass($oldEl.attr('class'))
+        
         # $newEl.attr('id', $oldEl.attr('id))
         # Setting the id is commented because otherwise collaboration wouldn't register a change in the document
+
+      #### start temporary copy paste code
+      focusHeading = null
+      Aloha.bind 'aloha-selection-changed', (e, params) =>
+        if params.startOffset == params.endOffset and jQuery(params.startContainer).parents('h1,h2,h3').length
+          focusHeading = jQuery(params.startContainer).parents('h1,h2,h3').first()
+          jQuery('.action.copy').fadeIn('fast')
+        else
+          jQuery('.action.copy').fadeOut('fast')
+        
+      toolbar.adopt "copy", Button,
+        click: (e) ->
+          e.preventDefault()
+          $element = focusHeading
+          selector = "h1,h2,h3".substr(0, "h1,h2,h3".indexOf($element[0].nodeName.toLowerCase())+2)
+          $elements = $element.nextUntil(selector).addBack()
+          html = ''
+          html += jQuery(element).outerHtml() for element in $elements
+          Copy.buffer html
+      #### end temporary copy paste code
 
       $ROOT.on 'click', '.action.changeHeading', changeHeading
 
