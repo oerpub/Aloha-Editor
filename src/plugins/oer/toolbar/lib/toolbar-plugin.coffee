@@ -108,17 +108,18 @@ define [ 'jquery', 'aloha', 'aloha/plugin', 'PubSub' ], (
         # Setting the id is commented because otherwise collaboration wouldn't register a change in the document
 
         #### start temporary copy paste code
-        if $newEl.is('h1,h2,h3') && not $newEl.children('.copy').length
-          $newEl.append(copyButton)
-        else
+        if $newEl.not('h1,h2,h3') && $newEl.children('.copy').length
           $newEl.children('.copy').remove()
 
-      copyButton = '<button class="copy btn aloha-ephemera" style="float: right; padding: 2px; margin: 0 5px 0 0;" title="copy"><i class="icon-file"></i></button>'
+      copyButton = '<i class="icon-file copy btn aloha-ephemera" style="float: right; padding: 2px; margin: 0 5px 0 0;" title="copy" contenteditable="false"></i>'
 
       Aloha.bind 'aloha-editable-created', (e, params) =>
+
         $editable = params.obj
-        $editable.find('h1,h2,h3').each ->
-          jQuery(@).append(copyButton)
+        $editable.on 'mouseover', 'h1,h2,h3', ->
+          jQuery(@).prepend(copyButton) if not jQuery(@).children('.copy.btn').length
+        $editable.on 'mouseout', 'h1,h2,h3', (e) ->
+          jQuery(@).find('.copy.btn').remove() if not jQuery(e.toElement).parents('h1,h2,h3').length
 
         $editable.on 'click', 'h1 > .copy,h2 > .copy,h3 > .copy', ->
           $element = jQuery(@).parent()

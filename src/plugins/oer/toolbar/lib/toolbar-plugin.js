@@ -152,18 +152,23 @@
           $oldEl = Aloha.jQuery(rangeObject.getCommonAncestorContainer());
           $newEl = Aloha.jQuery(Aloha.Selection.getRangeObject().getCommonAncestorContainer());
           $newEl.addClass($oldEl.attr('class'));
-          if ($newEl.is('h1,h2,h3') && !$newEl.children('.copy').length) {
-            return $newEl.append(copyButton);
-          } else {
+          if ($newEl.not('h1,h2,h3') && $newEl.children('.copy').length) {
             return $newEl.children('.copy').remove();
           }
         };
-        copyButton = '<button class="copy btn aloha-ephemera" style="float: right; padding: 2px; margin: 0 5px 0 0;" title="copy"><i class="icon-file"></i></button>';
+        copyButton = '<i class="icon-file copy btn aloha-ephemera" style="float: right; padding: 2px; margin: 0 5px 0 0;" title="copy" contenteditable="false"></i>';
         Aloha.bind('aloha-editable-created', function(e, params) {
           var $editable;
           $editable = params.obj;
-          $editable.find('h1,h2,h3').each(function() {
-            return jQuery(this).append(copyButton);
+          $editable.on('mouseover', 'h1,h2,h3', function() {
+            if (!jQuery(this).children('.copy.btn').length) {
+              return jQuery(this).prepend(copyButton);
+            }
+          });
+          $editable.on('mouseout', 'h1,h2,h3', function(e) {
+            if (!jQuery(e.toElement).parents('h1,h2,h3').length) {
+              return jQuery(this).find('.copy.btn').remove();
+            }
           });
           return $editable.on('click', 'h1 > .copy,h2 > .copy,h3 > .copy', function() {
             var $element, $elements, element, html, selector, _i, _len;

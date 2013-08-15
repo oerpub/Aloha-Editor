@@ -32,8 +32,9 @@
 
 /* ========== section & section headers ========== */
 
-#canvas h1{
+#canvas h1 {
   color: #369;
+  height: 30px;
   padding: 0 0 .1em;
   border: 0 solid #369;
   border-bottom-width: 1px;
