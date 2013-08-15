@@ -1,5 +1,5 @@
-define [ 'jquery', 'aloha', 'aloha/plugin', 'ui/ui', 'PubSub' ], (
-    jQuery, Aloha, Plugin, Ui, PubSub) ->
+define [ 'jquery', 'aloha', 'aloha/plugin', 'ui/ui', 'PubSub', 'copy/copy-plugin' ], (
+    jQuery, Aloha, Plugin, Ui, PubSub, Copy) ->
 
   squirreledEditable = null
   $ROOT = jQuery('body') # Could also be configured to some other div
@@ -123,8 +123,31 @@ define [ 'jquery', 'aloha', 'aloha/plugin', 'ui/ui', 'PubSub' ], (
         $oldEl = Aloha.jQuery(rangeObject.getCommonAncestorContainer())
         $newEl = Aloha.jQuery(Aloha.Selection.getRangeObject().getCommonAncestorContainer())
         $newEl.addClass($oldEl.attr('class'))
+        
         # $newEl.attr('id', $oldEl.attr('id))
         # Setting the id is commented because otherwise collaboration wouldn't register a change in the document
+
+        #### start temporary copy paste code
+        if $newEl.is('h1,h2,h3') && not $newEl.children('.copy').length
+          $newEl.append(copyButton)
+        else
+          $newEl.children('.copy').remove()
+
+      copyButton = '<button class="copy btn aloha-ephemera" style="float: right; padding: 2px; margin: 0 5px 0 0;" title="copy"><i class="icon-file"></i></button>'
+
+      Aloha.bind 'aloha-editable-created', (e, params) =>
+        $editable = params.obj
+        $editable.find('h1,h2,h3').each ->
+          jQuery(@).append(copyButton)
+
+        $editable.on 'click', 'h1 > .copy,h2 > .copy,h3 > .copy', ->
+          $element = jQuery(@).parent()
+          selector = "h1,h2,h3".substr(0, "h1,h2,h3".indexOf($element[0].nodeName.toLowerCase())+2)
+          $elements = jQuery(@).parent().nextUntil(selector).andSelf()
+          html = ''
+          html += jQuery(element).outerHtml() for element in $elements
+          Copy.buffer html
+      #### end temporary copy paste code
 
       $ROOT.on 'click', '.action.changeHeading', changeHeading
 
