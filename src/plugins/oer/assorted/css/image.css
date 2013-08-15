@@ -77,6 +77,12 @@ form#linkModal:focus {
     border: 0;
 }
 
+.figure.aloha-oer-block > .title, 
+.figure.aloha-oer-block > figcaption {
+    display: block;
+    text-align: center
+}
+
 .figure.aloha-oer-block .image-wrapper {
     position: relative;
     display: block;
