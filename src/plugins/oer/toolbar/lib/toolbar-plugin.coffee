@@ -1,5 +1,5 @@
-define [ 'jquery', 'aloha', 'aloha/plugin', 'PubSub' ], (
-    jQuery, Aloha, Plugin, PubSub, Copy) ->
+define [ 'jquery', 'aloha', 'aloha/plugin', 'PubSub', 'ui/button' ], (
+    jQuery, Aloha, Plugin, PubSub, Button) ->
 
   squirreledEditable = null
   $ROOT = jQuery('body') # Could also be configured to some other div
@@ -107,38 +107,21 @@ define [ 'jquery', 'aloha', 'aloha/plugin', 'PubSub' ], (
         # $newEl.attr('id', $oldEl.attr('id))
         # Setting the id is commented because otherwise collaboration wouldn't register a change in the document
 
-        #### start temporary copy paste code
-        if $newEl.not('h1,h2,h3') && $newEl.children('.copy').length
-          $newEl.children('.copy').remove()
-
-      copyButton = '<i class="icon-file copy btn aloha-ephemera" style="float: right; padding: 2px; margin: 0 5px 0 0;" title="copy" contenteditable="false"></i>'
-
-      Aloha.bind 'aloha-editable-created', (e, params) =>
-
-        $editable = params.obj
-
-        # this hack allows clicking on empty headings
-        $editable.on 'click', 'h1,h2,h3', ->
-          for child in jQuery(@).get(0).childNodes
-            if child.nodeName is '#text' && not child.length
-              jQuery(@).find('.copy.btn').remove()
-              range = new GENTICS.Utils.RangeObject
-                startContainer: child
-                endContainer: child
-                startOffset: 0
-                endOffset: 0
-              range.select()
-              jQuery(@).trigger('mouseover')
-
-        $editable.on 'mouseover', 'h1,h2,h3', ->
-          jQuery(@).prepend(copyButton) if not jQuery(@).children('.copy.btn').length
-        $editable.on 'mouseout', 'h1,h2,h3', (e) ->
-          jQuery(@).find('.copy.btn').remove() if not jQuery(e.toElement).parents('h1,h2,h3').length
-
-        $editable.on 'click', 'h1 > .copy,h2 > .copy,h3 > .copy', ->
-          $element = jQuery(@).parent()
+      #### start temporary copy paste code
+      focusHeading = null
+      Aloha.bind 'aloha-selection-changed', (e, params) =>
+        if params.startOffset == params.endOffset and jQuery(params.startContainer).parents('h1,h2,h3').length
+          focusHeading = jQuery(params.startContainer).parents('h1,h2,h3').first()
+          jQuery('.action.copy').fadeIn('fast')
+        else
+          jQuery('.action.copy').fadeOut('fast')
+        
+      toolbar.adopt "copy", Button,
+        click: (e) ->
+          e.preventDefault()
+          $element = focusHeading
           selector = "h1,h2,h3".substr(0, "h1,h2,h3".indexOf($element[0].nodeName.toLowerCase())+2)
-          $elements = jQuery(@).parent().nextUntil(selector).andSelf()
+          $elements = $element.nextUntil(selector).addBack()
           html = ''
           html += jQuery(element).outerHtml() for element in $elements
           Aloha.require ['copy/copy-plugin'], (Copy) ->

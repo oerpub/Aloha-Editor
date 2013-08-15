@@ -24,6 +24,7 @@ define ['aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button'], (Aloha, Plugin
 
       # Add a listener
       UI.adopt "paste", Button,
-        click: ->
+        click: (e) ->
+          e.preventDefault()
           range = Aloha.Selection.getRangeObject()
           GENTICS.Utils.Dom.insertIntoDOM jQuery(plugin.getBuffer()), range, Aloha.activeEditable.obj
