@@ -116,6 +116,20 @@ define [ 'jquery', 'aloha', 'aloha/plugin', 'PubSub' ], (
       Aloha.bind 'aloha-editable-created', (e, params) =>
 
         $editable = params.obj
+
+        # this hack allows clicking on empty headings
+        $editable.on 'click', 'h1,h2,h3', ->
+          for child in jQuery(@).get(0).childNodes
+            if child.nodeName is '#text' && not child.length
+              jQuery(@).find('.copy.btn').remove()
+              range = new GENTICS.Utils.RangeObject
+                startContainer: child
+                endContainer: child
+                startOffset: 0
+                endOffset: 0
+              range.select()
+              jQuery(@).trigger('mouseover')
+
         $editable.on 'mouseover', 'h1,h2,h3', ->
           jQuery(@).prepend(copyButton) if not jQuery(@).children('.copy.btn').length
         $editable.on 'mouseout', 'h1,h2,h3', (e) ->

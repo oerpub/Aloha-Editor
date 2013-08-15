@@ -160,6 +160,28 @@
         Aloha.bind('aloha-editable-created', function(e, params) {
           var $editable;
           $editable = params.obj;
+          $editable.on('click', 'h1,h2,h3', function() {
+            var child, range, _i, _len, _ref, _results;
+            _ref = jQuery(this).get(0).childNodes;
+            _results = [];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              child = _ref[_i];
+              if (child.nodeName === '#text' && !child.length) {
+                jQuery(this).find('.copy.btn').remove();
+                range = new GENTICS.Utils.RangeObject({
+                  startContainer: child,
+                  endContainer: child,
+                  startOffset: 0,
+                  endOffset: 0
+                });
+                range.select();
+                _results.push(jQuery(this).trigger('mouseover'));
+              } else {
+                _results.push(void 0);
+              }
+            }
+            return _results;
+          });
           $editable.on('mouseover', 'h1,h2,h3', function() {
             if (!jQuery(this).children('.copy.btn').length) {
               return jQuery(this).prepend(copyButton);
