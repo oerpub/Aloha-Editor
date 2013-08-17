@@ -281,15 +281,15 @@
                 refreshPositions: true
               });
             });
-            $root.sortable('option', 'stop', function(e, ui) {
-              var $el;
-              $el = jQuery(ui.item);
-              if ($el.is(selector)) {
-                return activate($el);
-              }
-            });
-            return $root.sortable('option', 'placeholder', 'aloha-oer-block-placeholder aloha-ephemera');
           }
+          $root.sortable('option', 'stop', function(e, ui) {
+            var $el;
+            $el = jQuery(ui.item);
+            if ($el.is(selector)) {
+              return activate($el);
+            }
+          });
+          return $root.sortable('option', 'placeholder', 'aloha-oer-block-placeholder aloha-ephemera');
         });
       },
       insertAtCursor: function(template) {

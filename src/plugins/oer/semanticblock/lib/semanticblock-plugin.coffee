@@ -257,17 +257,17 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
                 helper = jQuery(blockDragHelper).clone()
                 helper.find('.title').text elementLabel
                 helper
-
+         
               start: (e, ui) ->
                 $root.addClass 'aloha-block-dropzone'
                 jQuery(ui.helper).addClass 'dragging'
-
+         
               refreshPositions: true
 
-          $root.sortable 'option', 'stop', (e, ui) ->
-            $el = jQuery(ui.item)
-            activate $el if $el.is(selector)
-          $root.sortable 'option', 'placeholder', 'aloha-oer-block-placeholder aloha-ephemera'
+        $root.sortable 'option', 'stop', (e, ui) ->
+          $el = jQuery(ui.item)
+          activate $el if $el.is(selector)
+        $root.sortable 'option', 'placeholder', 'aloha-oer-block-placeholder aloha-ephemera'
 
     insertAtCursor: (template) ->
       $element = jQuery(template)
