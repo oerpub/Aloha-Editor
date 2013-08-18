@@ -73,29 +73,43 @@
       }
     };
     Aloha.bind('aloha-editable-created', function(evt, editable) {
-      var $maths;
+      var $maths, $mathsAlreadyHandled, maths, processSomeMath;
       editable.obj.bind('keydown', 'ctrl+m', function(evt) {
         insertMath();
         return evt.preventDefault();
       });
       $maths = editable.obj.find('math');
+      $mathsAlreadyHandled = editable.obj.find('.math-element.aloha-ephemera-wrapper math');
+      $maths = $maths.not($mathsAlreadyHandled);
       $maths.wrap('<span class="math-element aloha-ephemera-wrapper"><span class="mathjax-wrapper aloha-ephemera"></span></span>');
-      jQuery.each($maths, function(i, mml) {
-        var $mathElement, $mml, mathParts, _ref;
-        $mml = jQuery(mml);
-        $mathElement = $mml.parent().parent();
-        mathParts = findFormula($mml);
-        if (_ref = mathParts.mimeType, __indexOf.call(MATHML_ANNOTATION_MIME_ENCODINGS, _ref) >= 0) {
-          $mathElement.find('.mathjax-wrapper').text(LANGUAGES[mathParts.mimeType].open + mathParts.formula + LANGUAGES[mathParts.mimeType].close);
+      maths = $maths.toArray();
+      processSomeMath = function() {
+        var $mathElement, $mml, i, mathParts, _i;
+        if (!maths.length) {
+          return console.log("DEBUG: End: Typesetting math in editable");
         }
-        return triggerMathJax($mathElement, function() {
-          var _ref1;
-          if (_ref1 = mathParts.mimeType, __indexOf.call(MATHML_ANNOTATION_MIME_ENCODINGS, _ref1) >= 0) {
-            addAnnotation($mathElement, mathParts.formula, mathParts.mimeType);
+        for (i = _i = 0; _i <= 20; i = ++_i) {
+          if (maths.length) {
+            $mml = $(maths.shift());
+            $mathElement = $mml.parent().parent();
+            mathParts = findFormula($mml);
+            triggerMathJax($mathElement, false, function() {
+              var _ref;
+              if (_ref = mathParts.mimeType, __indexOf.call(MATHML_ANNOTATION_MIME_ENCODINGS, _ref) >= 0) {
+                addAnnotation($mathElement, mathParts.formula, mathParts.mimeType);
+              }
+              return makeCloseIcon($mathElement);
+            });
           }
-          return makeCloseIcon($mathElement);
-        });
-      });
+        }
+        return setTimeout(processSomeMath, 50);
+      };
+      if (maths.length) {
+        if ($maths.length > 0) {
+          console.log("DEBUG: Start: Typesetting math in editable: " + $maths.length);
+        }
+        processSomeMath();
+      }
       jQuery(editable.obj).on('click.matheditor', '.math-element, .math-element *', function(evt) {
         var $el, range;
         $el = jQuery(this);
