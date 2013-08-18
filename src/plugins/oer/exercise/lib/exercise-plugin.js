@@ -5,7 +5,7 @@
     var SOLUTION_TEMPLATE, SOLUTION_TYPE_CONTAINER, TEMPLATE, TYPE_CONTAINER, activateExercise, activateSolution, deactivateExercise, deactivateSolution;
     TEMPLATE = '<div class="exercise">\n    <div class="problem"></div>\n</div>';
     SOLUTION_TEMPLATE = '<div class="solution">\n</div>';
-    TYPE_CONTAINER = '<div class="type-container dropdown aloha-ephemera">\n    <span class="type btn-link" data-toggle="dropdown"></span>\n    <ul class="dropdown-menu">\n        <li><span class="btn-link">Exercise</span></li>\n        <li><span class="btn-link">Homework</span></li>\n        <li><span class="btn-link">Problem</span></li>\n        <li><span class="btn-link">Question</span></li>\n        <li><span class="btn-link">Task</span></li>\n    </ul>\n</div>';
+    TYPE_CONTAINER = '<div class="type-container dropdown aloha-ephemera">\n    <span class="type btn-link" data-toggle="dropdown"></span>\n    <ul class="dropdown-menu">\n        <li><span class="btn-link" data-type="">Exercise</span></li>\n        <li><span class="btn-link" data-type="homework">Homework</span></li>\n        <li><span class="btn-link" data-type="problem">Problem</span></li>\n        <li><span class="btn-link" data-type="question">Question</span></li>\n        <li><span class="btn-link" data-type="task">Task</span></li>\n        <li><span class="btn-link" data-type="Worked Example">Worked Example</span></li>\n    </ul>\n</div>';
     SOLUTION_TYPE_CONTAINER = '<div class="type-container dropdown aloha-ephemera">\n    <span class="type btn-link" data-toggle="dropdown"></span>\n    <ul class="dropdown-menu">\n        <li><span class="btn-link">Answer</span></li>\n        <li><span class="btn-link">Solution</span></li>\n    </ul>\n</div>';
     activateExercise = function($element) {
       var $problem, $solutions, $typeContainer, type,
@@ -17,7 +17,7 @@
       $typeContainer = jQuery(TYPE_CONTAINER);
       $typeContainer.find('.type').text(type.charAt(0).toUpperCase() + type.slice(1));
       $typeContainer.find('.dropdown-menu li').each(function(i, li) {
-        if (jQuery(li).children('a').text().toLowerCase() === type) {
+        if (jQuery(li).children('span').data('type') === type) {
           return jQuery(li).addClass('checked');
         }
       });
@@ -128,13 +128,11 @@
             _this = this;
           $el = jQuery(this);
           $el.parents('.type-container').first().children('.type').text($el.text());
-          $el.parents('.aloha-oer-block').first().attr('data-type', $el.text().toLowerCase());
-          return $el.parents('.type-container').find('.dropdown-menu li').each(function(i, li) {
-            jQuery(li).removeClass('checked');
-            if (jQuery(li).children('a').text() === $el.text()) {
-              return jQuery(li).addClass('checked');
-            }
+          $el.parents('.aloha-oer-block').first().attr('data-type', $el.data('type'));
+          $el.parents('.type-container').find('.dropdown-menu li').each(function(i, li) {
+            return jQuery(li).removeClass('checked');
           });
+          return $el.parents('li').first().addclass('checked');
         });
       }
     });

@@ -21,11 +21,12 @@ define [
         <div class="type-container dropdown aloha-ephemera">
             <span class="type btn-link" data-toggle="dropdown"></span>
             <ul class="dropdown-menu">
-                <li><span class="btn-link">Exercise</span></li>
-                <li><span class="btn-link">Homework</span></li>
-                <li><span class="btn-link">Problem</span></li>
-                <li><span class="btn-link">Question</span></li>
-                <li><span class="btn-link">Task</span></li>
+                <li><span class="btn-link" data-type="">Exercise</span></li>
+                <li><span class="btn-link" data-type="homework">Homework</span></li>
+                <li><span class="btn-link" data-type="problem">Problem</span></li>
+                <li><span class="btn-link" data-type="question">Question</span></li>
+                <li><span class="btn-link" data-type="task">Task</span></li>
+                <li><span class="btn-link" data-type="Worked Example">Worked Example</span></li>
             </ul>
         </div>
     '''
@@ -51,7 +52,7 @@ define [
       $typeContainer.find('.type').text(type.charAt(0).toUpperCase() + type.slice(1) )
 
       $typeContainer.find('.dropdown-menu li').each (i, li) =>
-        if jQuery(li).children('a').text().toLowerCase() == type
+        if jQuery(li).children('span').data('type') == type
           jQuery(li).addClass('checked')
 
       $typeContainer.prependTo($element)
@@ -182,11 +183,10 @@ define [
                                               .aloha-oer-block.exercise > .type-container > ul > li > *', (e) ->
           $el = jQuery(@)
           $el.parents('.type-container').first().children('.type').text $el.text()
-          $el.parents('.aloha-oer-block').first().attr 'data-type', $el.text().toLowerCase()
+          $el.parents('.aloha-oer-block').first().attr 'data-type', $el.data('type')
 
           $el.parents('.type-container').find('.dropdown-menu li').each (i, li) =>
             jQuery(li).removeClass('checked')
-            if jQuery(li).children('a').text() == $el.text()
-              jQuery(li).addClass('checked')
+          $el.parents('li').first().addclass('checked')
         )
     })
