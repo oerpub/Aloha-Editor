@@ -205,7 +205,7 @@
       }
     };
     buildEditor = function($span) {
-      var $editor, $formula, formula, keyDelay, keyTimeout, mimeType, radios,
+      var $editor, $formula, $mml, $mmlAnnotation, formula, keyDelay, keyTimeout, mimeType, radios,
         _this = this;
       $editor = $_editor.clone(true);
       if ($span.find('.mathjax-wrapper > *').length === 0) {
@@ -220,9 +220,10 @@
         return cleanupFormula($editor, $span, true);
       });
       $formula = $editor.find('.formula');
-      mimeType = $span.find('script[type]').attr('type') || 'math/asciimath';
-      mimeType = mimeType.split(';')[0];
-      formula = $span.find('script[type]').html();
+      $mml = $span.children('.mathml-wrapper').children();
+      $mmlAnnotation = $mml.find('annotation');
+      mimeType = $mmlAnnotation.attr('encoding');
+      formula = $mmlAnnotation.text();
       $editor.find("input[name=mime-type][value='" + mimeType + "']").attr('checked', true);
       $formula.val(formula);
       $editor.find('.math-container pre span').text(formula);

@@ -313,11 +313,16 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
     # Set the formula in jQuery data if it hasn't been set before
     #$span.data('math-formula', $span.data('math-formula') or $span.attr('data-math-formula') or $span.text())
 
-    mimeType = $span.find('script[type]').attr('type') or 'math/asciimath'
-    # tex could be "math/tex; mode=display" so split in the semicolon
-    mimeType = mimeType.split(';')[0]
 
-    formula = $span.find('script[type]').html()
+    # mimeType = $span.find('script[type]').attr('type') or 'math/asciimath'
+    # # tex could be "math/tex; mode=display" so split in the semicolon
+    # mimeType = mimeType.split(';')[0]
+    # formula = $span.find('script[type]').html()
+
+    $mml = $span.children('.mathml-wrapper').children()
+    $mmlAnnotation = $mml.find('annotation')
+    mimeType = $mmlAnnotation.attr('encoding')
+    formula = $mmlAnnotation.text()
 
     # Set the language and fill in the formula
     $editor.find("input[name=mime-type][value='#{mimeType}']").attr('checked', true)
