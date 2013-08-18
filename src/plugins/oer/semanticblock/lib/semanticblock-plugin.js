@@ -282,14 +282,15 @@
               });
             });
           }
-          $root.sortable('option', 'stop', function(e, ui) {
-            var $el;
-            $el = jQuery(ui.item);
-            if ($el.is(selector)) {
-              return activate($el);
-            }
+          return setTimeout(function() {
+            $root.sortable('option', 'stop', function(e, ui) {
+              $root = jQuery(ui.item);
+              if ($root.is(selector)) {
+                return activate($root);
+              }
+            });
+            return $root.sortable('option', 'placeholder', 'aloha-oer-block-placeholder aloha-ephemera', 100);
           });
-          return $root.sortable('option', 'placeholder', 'aloha-oer-block-placeholder aloha-ephemera');
         });
       },
       insertAtCursor: function(template) {

@@ -264,10 +264,15 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
          
               refreshPositions: true
 
-        $root.sortable 'option', 'stop', (e, ui) ->
-          $el = jQuery(ui.item)
-          activate $el if $el.is(selector)
-        $root.sortable 'option', 'placeholder', 'aloha-oer-block-placeholder aloha-ephemera'
+        # theres no really good way to do this. editables get made into sortables
+        # on `aloha-editable-created` and there is no event following that, so we 
+        # just have to wait
+        setTimeout ->
+          $root.sortable 'option', 'stop', (e, ui) ->
+            $root = jQuery(ui.item)
+            activate $root if $root.is(selector)
+          $root.sortable 'option', 'placeholder', 'aloha-oer-block-placeholder aloha-ephemera',
+          100
 
     insertAtCursor: (template) ->
       $element = jQuery(template)
