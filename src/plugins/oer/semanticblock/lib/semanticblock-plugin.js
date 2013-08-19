@@ -161,7 +161,7 @@
             break;
           }
         }
-        $element.find('*').andSelf().filter('[placeholder],[hover-placeholder]').each(function() {
+        $element.children('[placeholder],[hover-placeholder]').andSelf().filter('[placeholder],[hover-placeholder]').each(function() {
           if (!jQuery(this).text().trim()) {
             return jQuery(this).empty();
           }
