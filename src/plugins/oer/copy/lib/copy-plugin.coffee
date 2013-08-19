@@ -15,6 +15,7 @@ define ['aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button'], (Aloha, Plugin
 
       localStorage.alohaOerCopyBuffer = buffer if localStorage
 
+      console.log(buffer)
       jQuery('.action.paste').fadeIn('fast')
 
     init: ->
@@ -22,10 +23,9 @@ define ['aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button'], (Aloha, Plugin
     
       Aloha.bind 'aloha-editable-created', (e, params) =>
         jQuery('.action.paste').fadeIn('fast') if localStorage and localStorage.alohaOerCopyBuffer
-       
+      
         # Add a listener
-        UI.adopt "paste", Button,
-          click: (e) ->
+        jQuery('.action.paste').unbind('click').click (e) ->
             e.preventDefault()
             range = Aloha.Selection.getRangeObject()
             GENTICS.Utils.Dom.insertIntoDOM jQuery(plugin.getBuffer()), range, Aloha.activeEditable.obj

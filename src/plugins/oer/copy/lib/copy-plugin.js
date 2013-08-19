@@ -18,6 +18,7 @@
         if (localStorage) {
           localStorage.alohaOerCopyBuffer = buffer;
         }
+        console.log(buffer);
         return jQuery('.action.paste').fadeIn('fast');
       },
       init: function() {
@@ -28,13 +29,11 @@
           if (localStorage && localStorage.alohaOerCopyBuffer) {
             jQuery('.action.paste').fadeIn('fast');
           }
-          return UI.adopt("paste", Button, {
-            click: function(e) {
-              var range;
-              e.preventDefault();
-              range = Aloha.Selection.getRangeObject();
-              return GENTICS.Utils.Dom.insertIntoDOM(jQuery(plugin.getBuffer()), range, Aloha.activeEditable.obj);
-            }
+          return jQuery('.action.paste').unbind('click').click(function(e) {
+            var range;
+            e.preventDefault();
+            range = Aloha.Selection.getRangeObject();
+            return GENTICS.Utils.Dom.insertIntoDOM(jQuery(plugin.getBuffer()), range, Aloha.activeEditable.obj);
           });
         });
       }
