@@ -146,7 +146,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
         return type.getLabel $element
 
   activate = ($element) ->
-    unless $element.is('.semantic-container')
+    unless $element.is('.semantic-container') or ($element.is('.alternates') and $element.parents('figure').length)
       $element.addClass 'aloha-oer-block'
 
       #add some paragraphs on either side so content can be added there easily
