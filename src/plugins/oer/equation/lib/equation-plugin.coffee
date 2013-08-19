@@ -28,7 +28,9 @@ define [
         $body.removeClass('aloha-empty')
         # if there is no math in the element, then we need to add some on click
         if $body.html().trim().length == 0
+          console.log('asdf')
           Aloha.require ['math/math-plugin'], (MathPlugin) ->
+            console.log('qwer')
             MathPlugin.insertMathInto($body)
     deactivate: ($element) ->
       # pull the math out of the paragraph on save
