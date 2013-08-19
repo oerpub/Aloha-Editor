@@ -124,9 +124,14 @@ define [
       $body = $element.children('.body')
       # The body div could just contain text children.
       # If so, we need to wrap them in a `p` element
-      hasTextChildren = $body.children().length != $body.contents().length
+      for element in $body.contents()
+        if element.nodeName == '#text'
+          if element.data.trim().length
+            $(element).wrap('<p></p>')
+          else
+            element.remove()
       $body = $body.contents()
-      $body = $body.wrap('<p></p>').parent() if hasTextChildren
+      #$body = $body.wrap('<p></p>').parent() if hasTextChildren
 
       $element.children('.body').remove()
       
