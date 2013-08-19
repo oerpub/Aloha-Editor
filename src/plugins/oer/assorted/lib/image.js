@@ -406,7 +406,6 @@
       selector: 'figure',
       init: function() {
         var plugin;
-        console.log('asdf');
         plugin = this;
         UI.adopt('insertImage-oer', null, {
           click: function(e) {

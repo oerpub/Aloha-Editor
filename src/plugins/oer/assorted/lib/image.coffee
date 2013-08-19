@@ -528,7 +528,6 @@ define [
     deactivate: deactivate
     selector: 'figure'
     init: () ->
-      console.log('asdf')
       plugin = @
       UI.adopt 'insertImage-oer', null,
         click: (e) -> insertImage.bind(plugin)(e)
