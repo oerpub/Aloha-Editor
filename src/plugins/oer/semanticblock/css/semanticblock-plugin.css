@@ -227,4 +227,6 @@
     color: #369;
 }
 
-
+.aloha-oer-ephemera-if-empty:empty {
+    height: 1px; 
+}

@@ -148,8 +148,14 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
   activate = ($element) ->
     unless $element.is('.semantic-container')
       $element.addClass 'aloha-oer-block'
+
+      #add some paragraphs on either side so content can be added there easily
+      $('<p class="aloha-oer-ephemera-if-empty"></p>').insertBefore($element)
+      $('<p class="aloha-oer-ephemera-if-empty"></p>').insertAfter($element)
+
       $element.wrap(blockTemplate).parent().append(blockControls.clone()).alohaBlock()
-      
+
+ 
       for type in registeredTypes
         if $element.is(type.selector)
           type.activate $element
@@ -213,6 +219,14 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       else
         ids[id] = element
 
+  cleanWhitespace = (content) ->
+    content.find('.aloha-oer-ephemera-if-empty').each ->
+      $el = jQuery(@)
+      if $el.text().trim().length
+        $el.removeClass 'aloha-oer-ephemera-if-empty'
+      else
+        $el.remove()
+
   Aloha.ready ->
     bindEvents jQuery(document)
 
@@ -231,6 +245,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
         deactivate jQuery(this)
 
       cleanIds(content)
+      cleanWhitespace(content)
 
     init: ->
       Aloha.bind 'aloha-editable-created', (e, params) =>

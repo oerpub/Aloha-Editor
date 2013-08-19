@@ -2,7 +2,7 @@
 (function() {
 
   define(['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'jquery', 'aloha/ephemera', 'ui/ui', 'ui/button', 'copy/copy-plugin', 'css!semanticblock/css/semanticblock-plugin.css'], function(Aloha, BlockManager, Plugin, pluginManager, jQuery, Ephemera, UI, Button, Copy) {
-    var DIALOG_HTML, activate, bindEvents, blockControls, blockDragHelper, blockTemplate, cleanIds, copyBuffer, deactivate, getLabel, insertElement, pluginEvents, registeredTypes;
+    var DIALOG_HTML, activate, bindEvents, blockControls, blockDragHelper, blockTemplate, cleanIds, cleanWhitespace, copyBuffer, deactivate, getLabel, insertElement, pluginEvents, registeredTypes;
     if (pluginManager.plugins.semanticblock) {
       return pluginManager.plugins.semanticblock;
     }
@@ -152,6 +152,8 @@
       var $contents, $title, matched, type, _i, _len;
       if (!$element.is('.semantic-container')) {
         $element.addClass('aloha-oer-block');
+        $('<p class="aloha-oer-ephemera-if-empty"></p>').insertBefore($element);
+        $('<p class="aloha-oer-ephemera-if-empty"></p>').insertAfter($element);
         $element.wrap(blockTemplate).parent().append(blockControls.clone()).alohaBlock();
         for (_i = 0, _len = registeredTypes.length; _i < _len; _i++) {
           type = registeredTypes[_i];
@@ -225,6 +227,17 @@
       }
       return _results;
     };
+    cleanWhitespace = function(content) {
+      return content.find('.aloha-oer-ephemera-if-empty').each(function() {
+        var $el;
+        $el = jQuery(this);
+        if ($el.text().trim().length) {
+          return $el.removeClass('aloha-oer-ephemera-if-empty');
+        } else {
+          return $el.remove();
+        }
+      });
+    };
     Aloha.ready(function() {
       return bindEvents(jQuery(document));
     });
@@ -241,7 +254,8 @@
         content.find(".aloha-oer-block").each(function() {
           return deactivate(jQuery(this));
         });
-        return cleanIds(content);
+        cleanIds(content);
+        return cleanWhitespace(content);
       },
       init: function() {
         var _this = this;
