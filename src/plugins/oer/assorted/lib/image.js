@@ -314,7 +314,7 @@
     insertImage = function() {
       var $dialog, $figure, $img, blob, newEl, promise, source_this_image_dialog, template,
         _this = this;
-      template = $('<figure class="figure aloha-ephemera"><div class="title" /><img /><figcaption /></figuren>');
+      template = $('<figure class="figure aloha-ephemera"><div class="title" /><img /><figcaption /></figure>');
       semanticBlock.insertAtCursor(template);
       newEl = template.find('img');
       blob = showModalDialog(newEl);
@@ -389,6 +389,12 @@
       wrapper = $('<div class="image-wrapper aloha-ephemera-wrapper">').css('width', element.css('width'));
       edit = $('<div class="image-edit aloha-ephemera">');
       element.find('img').wrap(wrapper);
+      if (!element.find('.title').length) {
+        element.prepend('<div class="title"></div>');
+      }
+      if (!element.find('figcaption').length) {
+        element.append('<figcaption></figcaption>');
+      }
       setEditText(element.children('.image-wrapper').prepend(edit));
       return element.find('img').load(function() {
         return setWidth($(this));
