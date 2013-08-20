@@ -154,7 +154,6 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       $('<p class="aloha-oer-ephemera-if-empty"></p>').insertAfter($element)
 
       $element.wrap(blockTemplate).parent().append(blockControls.clone()).alohaBlock()
-
  
       for type in registeredTypes
         if $element.is(type.selector)
@@ -263,7 +262,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
           # setting up these drag sources may break if there is more than one top level editable on the page
           jQuery('.semantic-drag-source').children().each ->
             element = jQuery(this)
-            elementLabel = element.attr('class').split(' ')[0]
+            elementLabel = (element.data('type') or element.attr('class')).split(' ')[0]
             element.draggable
               connectToSortable: $root
               appendTo: jQuery('body')
