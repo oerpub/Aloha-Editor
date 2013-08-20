@@ -1,17 +1,33 @@
-.semantic-drag-source .example:before {
-    content: "Example";
+.semantic-drag-source dl.definition:before {
+    content: "Definition";
 }
 
-.example.aloha-oer-block {
-    min-height: 50px;
-    background-color: #f3f3f3;
-    border-left: 0;
-    border-right: 0;
-    border-top: 1px solid #ccc;
-    border-bottom: 1px solid #ccc;
-    margin: 0 25px 0 10px;
+dl.definition.aloha-oer-block {
+    display: block;
+}
+dl.definition.aloha-oer-block {
+  margin: 10px;
+  background-color: inherit;
+  padding: 20px 10px 5px 20px;
+  min-height: 50px;
+  margin: 0 30px 0 30px;
+  border: 1px solid #333;
+  border-top-color: #ccc;
+  border-left-color: #ccc;
 }
 
-.example .body {
+.aloha-oer-block.definition .term-wrapper:before {
+    content: "\25A0 Definition";
+    font-weight: bold;
+    margin: 5px 10px 0 5px;
+    color: #369;
+}
+.aloha-oer-block.definition .term:before {
+    font-weight: bold;
+    margin: 5px 10px 0 5px;
+    color: #369;
+    text-decoration: none;
+}
+dl.definition .body {
   margin: 10px;
 }

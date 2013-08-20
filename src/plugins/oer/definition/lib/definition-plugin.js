@@ -13,12 +13,12 @@
         term = $element.children('dt').text();
         $definition = $element.children('dd').contents();
         $element.empty();
-        $('<div>').text(term).addClass('title').attr('placeholder', 'Enter the term to be defined here').appendTo($element).aloha();
+        $('<div>').text(term).addClass('term').attr('placeholder', 'Enter the term to be defined here').appendTo($element).wrap('<div class="term-wrapper"></div>').aloha();
         return $('<div>').addClass('body').html($definition).attr('placeholder', "Type the definition here.").appendTo($element).aloha();
       },
       deactivate: function($element) {
         var $definition, term;
-        term = $element.children('.title').text();
+        term = $element.children('.term').text();
         $definition = $element.children('.body').contents();
         $element.empty();
         $('<dt>').text(term).appendTo($element);

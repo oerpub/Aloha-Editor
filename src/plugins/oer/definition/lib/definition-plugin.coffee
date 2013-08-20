@@ -22,9 +22,10 @@ define [
 
       $('<div>')
         .text(term)
-        .addClass('title')
+        .addClass('term')
         .attr('placeholder', 'Enter the term to be defined here')
         .appendTo($element)
+        .wrap('<div class="term-wrapper"></div>')
         .aloha()
       
       $('<div>')
@@ -35,7 +36,7 @@ define [
         .aloha()
      
     deactivate: ($element) ->
-      term = $element.children('.title').text()
+      term = $element.children('.term').text()
       $definition = $element.children('.body').contents()
 
       $element.empty()
