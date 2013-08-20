@@ -227,13 +227,13 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
     else
       # Assume the user highlighted ASCIIMath (by putting the text in backticks)
       formula = range.getText()
-      $el.find('.mathjax-wrapper').text(LANGUAGES['math/asciimath'].open +
+      $el.find('.mathjax-wrapper').text(LANGUAGES['math/tex'].open +
                                         formula +
-                                        LANGUAGES['math/asciimath'].close)
+                                        LANGUAGES['math/tex'].close)
       GENTICS.Utils.Dom.removeRange range
       GENTICS.Utils.Dom.insertIntoDOM $el, range, Aloha.activeEditable.obj
       triggerMathJax $el, ->
-        addAnnotation $el, formula, 'math/asciimath'
+        addAnnotation $el, formula, 'math/tex'
         makeCloseIcon($el)
         Aloha.Selection.preventSelectionChanged()
         placeCursorAfter($el)

@@ -154,11 +154,11 @@
         return makeCloseIcon($el);
       } else {
         formula = range.getText();
-        $el.find('.mathjax-wrapper').text(LANGUAGES['math/asciimath'].open + formula + LANGUAGES['math/asciimath'].close);
+        $el.find('.mathjax-wrapper').text(LANGUAGES['math/tex'].open + formula + LANGUAGES['math/tex'].close);
         GENTICS.Utils.Dom.removeRange(range);
         GENTICS.Utils.Dom.insertIntoDOM($el, range, Aloha.activeEditable.obj);
         return triggerMathJax($el, function() {
-          addAnnotation($el, formula, 'math/asciimath');
+          addAnnotation($el, formula, 'math/tex');
           makeCloseIcon($el);
           Aloha.Selection.preventSelectionChanged();
           placeCursorAfter($el);
