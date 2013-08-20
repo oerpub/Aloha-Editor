@@ -279,7 +279,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
     # Set the formula in jQuery data if it hasn't been set before
     #$span.data('math-formula', $span.data('math-formula') or $span.attr('data-math-formula') or $span.text())
 
-    mimeType = $span.find('script[type]').attr('type') or 'math/asciimath'
+    mimeType = $span.find('script[type]').attr('type') or 'math/tex'
     # tex could be "math/tex; mode=display" so split in the semicolon
     mimeType = mimeType.split(';')[0]
 
