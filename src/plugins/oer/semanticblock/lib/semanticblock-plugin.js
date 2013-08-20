@@ -273,11 +273,11 @@
               return activate(jQuery(element));
             }
           });
-          if ($root.is('.aloha-block-blocklevel-sortable') && !$root.parents('.aloha-editable').length) {
+          if (!$root.parents('.aloha-editable').length) {
             jQuery('.semantic-drag-source').children().each(function() {
               var element, elementLabel;
               element = jQuery(this);
-              elementLabel = element.attr('class').split(' ')[0];
+              elementLabel = (element.data('type') || element.attr('class')).split(' ')[0];
               return element.draggable({
                 connectToSortable: $root,
                 appendTo: jQuery('body'),
