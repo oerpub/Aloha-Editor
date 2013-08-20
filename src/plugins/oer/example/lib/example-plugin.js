@@ -9,6 +9,21 @@
     return Plugin.create('example', {
       defaults: [
         {
+          label: 'Activity',
+          cls: 'example',
+          hasTitle: true,
+          type: 'activity'
+        }, {
+          label: 'Practical',
+          cls: 'example',
+          hasTitle: true,
+          type: 'practical'
+        }, {
+          label: 'Demonstration',
+          cls: 'example',
+          hasTitle: true,
+          type: 'demonstration'
+        }, {
           label: 'Example',
           cls: 'example',
           hasTitle: true
@@ -22,11 +37,6 @@
           cls: 'example',
           hasTitle: true,
           type: 'case-study'
-        }, {
-          label: 'Demonstration',
-          cls: 'example',
-          hasTitle: true,
-          type: 'demonstration'
         }, {
           label: 'Illustration',
           cls: 'example',
