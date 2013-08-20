@@ -510,30 +510,15 @@ define [
     wrapper = $('<div class="image-wrapper">').css('width', element.css('width'))
     edit = $('<div class="image-edit">')
 
-    $title   = element.find('.title')
-    $img     = element.find('img')
-    $caption = element.find('figcaption')
-
-    element.children().remove()
-
-    $title.appendTo(element)
-    $img.appendTo(element).wrap(wrapper)
-    $caption.appendTo(element)
+    element.find('img').wrap(wrapper)
 
     setEditText element.children('.image-wrapper').prepend(edit)
     element.find('img').load ->
       setWidth $(this)
 
   deactivate = (element) ->
-    # removeClass('figure')
-    $figure = element
-    $title = $figure.find('div.title')
-    $img = $figure.find('img')
-    $caption = $figure.find('figcaption')
-    $figure.children().remove()
-    $figure.append($title)
-    $figure.append($img)
-    $figure.append($caption)
+    
+    element.find('img').unwrap()
     return
 
   # Return config
@@ -541,7 +526,7 @@ define [
     getLabel: -> 'Image'
     activate: activate
     deactivate: deactivate
-    selector: '.figure'
+    selector: 'figure'
     init: () ->
       plugin = @
       UI.adopt 'insertImage-oer', null,

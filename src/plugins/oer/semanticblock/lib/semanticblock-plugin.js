@@ -150,7 +150,7 @@
     };
     activate = function($element) {
       var $contents, $title, matched, type, _i, _len;
-      if (!$element.is('.semantic-container')) {
+      if (!($element.is('.semantic-container') || ($element.is('.alternates') && $element.parents('figure').length))) {
         $element.addClass('aloha-oer-block');
         $('<p class="aloha-oer-ephemera-if-empty"></p>').insertBefore($element);
         $('<p class="aloha-oer-ephemera-if-empty"></p>').insertAfter($element);
