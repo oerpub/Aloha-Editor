@@ -18,7 +18,7 @@
       },
       deactivate: function($element) {
         var $definition, term;
-        term = $element.children('.term').text();
+        term = $element.find('.term').text();
         $definition = $element.children('.body').contents();
         $element.empty();
         $('<dt>').text(term).appendTo($element);
