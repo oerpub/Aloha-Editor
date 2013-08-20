@@ -257,7 +257,8 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
         $root.find(selector).each (i, element) ->
           activate jQuery(element) if not jQuery(element).parents('.semantic-drag-source').length
 
-        if not $root.parents('.aloha-editable').length
+        # this needs to be configurable, it is currently broken outside of github-book
+        if $root.parent().is('#layout-body')
 
           # setting up these drag sources may break if there is more than one top level editable on the page
           jQuery('.semantic-drag-source').children().each ->
@@ -278,15 +279,15 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
          
               refreshPositions: true
 
-        # theres no really good way to do this. editables get made into sortables
-        # on `aloha-editable-created` and there is no event following that, so we 
-        # just have to wait
-        setTimeout ->
-          $root.sortable 'option', 'stop', (e, ui) ->
-            $root = jQuery(ui.item)
-            activate $root if $root.is(selector)
-          $root.sortable 'option', 'placeholder', 'aloha-oer-block-placeholder aloha-ephemera',
-          500
+          # theres no really good way to do this. editables get made into sortables
+          # on `aloha-editable-created` and there is no event following that, so we 
+          # just have to wait
+          setTimeout ->
+            $root.sortable 'option', 'stop', (e, ui) ->
+              $root = jQuery(ui.item)
+              activate $root if $root.is(selector)
+            $root.sortable 'option', 'placeholder', 'aloha-oer-block-placeholder aloha-ephemera',
+            500
 
     insertAtCursor: (template) ->
       $element = jQuery(template)
