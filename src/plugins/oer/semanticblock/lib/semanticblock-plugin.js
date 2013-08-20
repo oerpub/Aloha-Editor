@@ -273,7 +273,7 @@
               return activate(jQuery(element));
             }
           });
-          if ($root.is('.aloha-block-blocklevel-sortable') && !$root.parents('.aloha-editable').length) {
+          if (!$root.parents('.aloha-editable').length) {
             jQuery('.semantic-drag-source').children().each(function() {
               var element, elementLabel;
               element = jQuery(this);
