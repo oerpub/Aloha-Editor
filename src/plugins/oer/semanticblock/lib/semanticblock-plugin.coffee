@@ -197,7 +197,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       .mahalo()
       .removeClass('aloha-editable aloha-block-blocklevel-sortable ui-sortable')
       .removeAttr('hover-placeholder')
-    $element.find('.body').children().unwrap()
+    $element.children('.body').children().unwrap()
     $element.attr('data-unknown', 'true')
 
   bindEvents = (element) ->

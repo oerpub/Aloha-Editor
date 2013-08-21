@@ -57,13 +57,11 @@
         }
       });
       $typeContainer.prependTo($element);
-      return jQuery('<div>').addClass('body').appendTo($element).aloha().append($body).addClass('aloha-block-dropzone');
+      return jQuery('<div>').addClass('body').addClass('aloha-block-dropzone').appendTo($element).aloha().append($body);
     };
     deactivateSolution = function($element) {
-      var content;
-      content = $element.children('.body').html();
-      $element.children().remove();
-      return jQuery('<p>').append(content).appendTo($element);
+      $element.children(':not(.body)').remove();
+      return $element.children('.body').contents().unwrap();
     };
     return Plugin.create('exercise', {
       getLabel: function($element) {

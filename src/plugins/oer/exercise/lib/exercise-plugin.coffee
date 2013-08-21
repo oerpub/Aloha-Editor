@@ -114,16 +114,14 @@ define [
 
       jQuery('<div>')
         .addClass('body')
+        .addClass('aloha-block-dropzone')
         .appendTo($element)
         .aloha()
         .append($body)
-        .addClass('aloha-block-dropzone')
 
     deactivateSolution = ($element) ->
-      content = $element.children('.body').html()
-      $element.children().remove()
-      jQuery('<p>').append(content).appendTo($element)
-    
+      $element.children(':not(.body)').remove()
+      $element.children('.body').contents().unwrap()
 
     Plugin.create('exercise', {
       getLabel: ($element) ->
