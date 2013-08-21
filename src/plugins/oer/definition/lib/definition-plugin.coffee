@@ -30,10 +30,11 @@ define [
       
       $('<div>')
         .addClass('body')
-        .html($definition)
+        .addClass('aloha-block-dropzone')
         .attr('placeholder', "Type the definition here.")
         .appendTo($element)
         .aloha()
+        .append($definition)
      
     deactivate: ($element) ->
       term = $element.find('.term').text()

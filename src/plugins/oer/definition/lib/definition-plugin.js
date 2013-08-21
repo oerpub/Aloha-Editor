@@ -14,7 +14,7 @@
         $definition = $element.children('dd').contents();
         $element.empty();
         $('<div>').text(term).addClass('term').attr('placeholder', 'Enter the term to be defined here').appendTo($element).wrap('<div class="term-wrapper"></div>').aloha();
-        return $('<div>').addClass('body').html($definition).attr('placeholder', "Type the definition here.").appendTo($element).aloha();
+        return $('<div>').addClass('body').addClass('aloha-block-dropzone').attr('placeholder', "Type the definition here.").appendTo($element).aloha().append($definition);
       },
       deactivate: function($element) {
         var $definition, term;
