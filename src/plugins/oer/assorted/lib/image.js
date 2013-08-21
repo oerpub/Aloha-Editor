@@ -395,7 +395,7 @@
       if (!element.find('figcaption').length) {
         element.append('<figcaption></figcaption>');
       }
-      setEditText(element.children('.image-wrapper').prepend(edit));
+      setEditText(element.find('.image-wrapper').prepend(edit));
       return element.find('img').load(function() {
         return setWidth($(this));
       });

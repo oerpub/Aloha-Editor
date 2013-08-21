@@ -515,7 +515,7 @@ define [
     element.prepend('<div class="title"></div>') if not element.find('.title').length
     element.append('<figcaption></figcaption>') if not element.find('figcaption').length
 
-    setEditText element.children('.image-wrapper').prepend(edit)
+    setEditText element.find('.image-wrapper').prepend(edit)
     element.find('img').load ->
       setWidth $(this)
 
