@@ -44,7 +44,11 @@
       var $body, $typeContainer, type,
         _this = this;
       type = $element.attr('data-type') || 'solution';
-      $body = $element.children();
+      $body = '';
+      if ($element.text().trim().length) {
+        $body = $element.children();
+      }
+      console.log($body, $element.text());
       $element.children().remove();
       $typeContainer = jQuery(SOLUTION_TYPE_CONTAINER);
       $typeContainer.find('.type').text(type.charAt(0).toUpperCase() + type.slice(1));

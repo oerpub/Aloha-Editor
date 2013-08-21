@@ -130,6 +130,7 @@ define([
 	 *                                       is to be directed to.
 	 */
 	function redirect(range, $target) {
+        console.log('thingything')
 		// Because moving the target element to the current scroll position
 		// avoids jittering the viewport when the pasted content moves between
 		// where the range is and target.
