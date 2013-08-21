@@ -295,16 +295,19 @@
                 refreshPositions: true
               });
             });
-            return setTimeout(function() {
+          }
+          return setTimeout(function() {
+            if ($root.is('.ui-sortable')) {
               $root.sortable('option', 'stop', function(e, ui) {
                 $root = jQuery(ui.item);
                 if ($root.is(selector)) {
                   return activate($root);
                 }
               });
-              return $root.sortable('option', 'placeholder', 'aloha-oer-block-placeholder aloha-ephemera', 500);
-            });
-          }
+              $root.sortable('option', 'placeholder', 'aloha-oer-block-placeholder aloha-ephemera');
+            }
+            return 500;
+          });
         });
       },
       insertAtCursor: function(template) {
