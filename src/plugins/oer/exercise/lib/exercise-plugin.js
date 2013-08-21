@@ -29,17 +29,7 @@
         return $element.children('.solution-controls').children('.solution-toggle').hide();
       }
     };
-    deactivateExercise = function($element) {
-      var $problem, $solutions;
-      $problem = $element.children('.problem');
-      $solutions = $element.children('.solution');
-      if ($problem.html() === '' || $problem.html() === '<p></p>') {
-        $problem.html('&nbsp;');
-      }
-      $element.children().remove();
-      jQuery("<div>").addClass('problem').html(jQuery('<p>').append($problem.html())).appendTo($element);
-      return $element.append($solutions);
-    };
+    deactivateExercise = function($element) {};
     activateSolution = function($element) {
       var $body, $typeContainer, type,
         _this = this;

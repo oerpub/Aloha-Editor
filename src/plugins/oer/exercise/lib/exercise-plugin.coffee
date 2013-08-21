@@ -82,19 +82,7 @@ define [
         $element.children('.solution-controls').children('.solution-toggle').hide()
 
     deactivateExercise = ($element) ->
-      $problem = $element.children('.problem')
-      $solutions = $element.children('.solution')
-      
-      if $problem.html() == '' or $problem.html() == '<p></p>'
-        $problem.html('&nbsp;')
-
-      $element.children().remove()
-
-      jQuery("<div>").addClass('problem').html(
-        jQuery('<p>').append($problem.html())
-      ).appendTo($element)
-
-      $element.append($solutions)
+      return
 
     activateSolution = ($element) ->
       type = $element.attr('data-type') or 'solution'
