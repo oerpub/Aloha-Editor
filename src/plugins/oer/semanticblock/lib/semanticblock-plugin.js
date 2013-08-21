@@ -149,7 +149,7 @@
       }
     };
     activate = function($element) {
-      var $contents, $title, matched, type, _i, _len;
+      var $body, $title, matched, type, _i, _len;
       if (!($element.is('.semantic-container') || ($element.is('.alternates') && $element.parents('figure').length))) {
         $element.addClass('aloha-oer-block');
         $('<p class="aloha-oer-ephemera-if-empty"></p>').insertBefore($element);
@@ -174,9 +174,8 @@
         $title = $element.children('.title').first();
         $title.attr('hover-placeholder', 'Add a title');
         $title.aloha();
-        $contents = $element.children().not($title);
-        $contents.wrap(jQuery('<div class="body"></body>'));
-        return $element.children('.body').aloha();
+        $body = $element.children().not($title);
+        return jQuery('<div>').addClass('body').addClass('aloha-block-dropzone').appendTo($element).aloha().append($body);
       }
     };
     deactivate = function($element) {

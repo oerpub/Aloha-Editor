@@ -174,9 +174,14 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       $title.attr('hover-placeholder', 'Add a title')
       $title.aloha()
 
-      $contents = $element.children().not($title)
-      $contents.wrap(jQuery('<div class="body"></body>'))
-      $element.children('.body').aloha()
+      $body = $element.children().not($title)
+
+      jQuery('<div>')
+        .addClass('body')
+        .addClass('aloha-block-dropzone')
+        .appendTo($element)
+        .aloha()
+        .append($body)
 
   deactivate = ($element) ->
     $element.removeClass 'aloha-oer-block ui-draggable'
