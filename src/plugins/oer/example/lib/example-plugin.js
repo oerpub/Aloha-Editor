@@ -117,7 +117,7 @@
             return typeContainer.prependTo($element);
           }
         });
-        return $('<div>').addClass('body').attr('placeholder', "Type the text of your " + (label.toLowerCase()) + " here.").append($body).appendTo($element).aloha();
+        return $('<div>').addClass('body').addClass('aloha-block-dropzone').attr('placeholder', "Type the text of your " + (label.toLowerCase()) + " here.").appendTo($element).aloha().append($body);
       },
       deactivate: function($element) {
         var $body, $title, $titleElement, hasTextChildren, hasTitle, isEmpty, titleTag,

@@ -110,11 +110,13 @@ define [
           typeContainer.prependTo($element)
       
       # Create the body and add some placeholder text
-      $('<div>').addClass('body')
-      .attr('placeholder', "Type the text of your #{label.toLowerCase()} here.")
-      .append($body)
-      .appendTo($element)
-      .aloha()
+      $('<div>')
+        .addClass('body')
+        .addClass('aloha-block-dropzone')
+        .attr('placeholder', "Type the text of your #{label.toLowerCase()} here.")
+        .appendTo($element)
+        .aloha()
+        .append($body)
      
     deactivate: ($element) ->
       $body = $element.children('.body')
