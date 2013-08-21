@@ -48,7 +48,6 @@
       if ($element.text().trim().length) {
         $body = $element.children();
       }
-      console.log($body, $element.text());
       $element.children().remove();
       $typeContainer = jQuery(SOLUTION_TYPE_CONTAINER);
       $typeContainer.find('.type').text(type.charAt(0).toUpperCase() + type.slice(1));

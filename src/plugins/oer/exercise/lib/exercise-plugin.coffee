@@ -101,7 +101,6 @@ define [
 
       $body = ''
       $body = $element.children() if $element.text().trim().length
-      console.log $body, $element.text()
       $element.children().remove()
 
       $typeContainer = jQuery(SOLUTION_TYPE_CONTAINER)
