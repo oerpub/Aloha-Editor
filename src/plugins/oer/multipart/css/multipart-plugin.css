@@ -1,0 +1,37 @@
+.semantic-drag-source .multipart:before {
+    content: "Multipart";
+}
+
+.multipart > .semantic-container > .exercise > .type-container,
+.problemset > .semantic-container > .exercise > .type-container {
+    display: none !important; 
+}
+
+.multipart, .problemset {
+    min-height: 50px;
+    counter-reset: problems;
+}
+
+.multipart .exercise-controls,
+.problemset .exercise-controls {
+    text-align: center;
+}
+.multipart .exercise-controls a,
+.problemset .exercise-controls a {
+    text-decoration: none;
+    color: blue !important;
+}
+
+.multipart > .type-container > .type:after,
+.problemset > .type-container > .type:after {
+    content: "Multipart";
+    margin-left: 5px;
+}
+
+.multipart > .semantic-container > .exercise > .problem:before,
+.problemset > .semantic-container > .exercise > .problem:before {
+    counter-increment: problems;
+    content: counter(problems, upper-latin) ')';
+    margin-right: 5px;
+    float: left;
+}
