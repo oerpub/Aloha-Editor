@@ -87,8 +87,10 @@ define [
     activateSolution = ($element) ->
       type = $element.attr('data-type') or 'solution'
 
+      $element.wrapInner('<p>') if not $element.children().length and $element.text().length
       $body = ''
       $body = $element.children() if $element.text().trim().length
+      
       $element.children().remove()
 
       $typeContainer = jQuery(SOLUTION_TYPE_CONTAINER)
@@ -110,6 +112,7 @@ define [
     deactivateSolution = ($element) ->
       $element.children(':not(.body)').remove()
       $element.children('.body').contents().unwrap()
+      $element.children('.body').remove()
 
     Plugin.create('exercise', {
       getLabel: ($element) ->
@@ -129,6 +132,10 @@ define [
           deactivateExercise($element)
         else if $element.is('.solution')
           deactivateSolution($element)
+    
+      appendTo: (target) ->
+        semanticBlock.appendElement($(TEMPLATE), target)
+        
 
       selector: '.exercise,.solution' #this plugin handles both exercises and solutions
       ignore: '.problem'

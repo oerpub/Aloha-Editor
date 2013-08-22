@@ -34,6 +34,9 @@
       var $body, $typeContainer, type,
         _this = this;
       type = $element.attr('data-type') || 'solution';
+      if (!$element.children().length && $element.text().length) {
+        $element.wrapInner('<p>');
+      }
       $body = '';
       if ($element.text().trim().length) {
         $body = $element.children();
@@ -51,7 +54,8 @@
     };
     deactivateSolution = function($element) {
       $element.children(':not(.body)').remove();
-      return $element.children('.body').contents().unwrap();
+      $element.children('.body').contents().unwrap();
+      return $element.children('.body').remove();
     };
     return Plugin.create('exercise', {
       getLabel: function($element) {
@@ -74,6 +78,9 @@
         } else if ($element.is('.solution')) {
           return deactivateSolution($element);
         }
+      },
+      appendTo: function(target) {
+        return semanticBlock.appendElement($(TEMPLATE), target);
       },
       selector: '.exercise,.solution',
       ignore: '.problem',
