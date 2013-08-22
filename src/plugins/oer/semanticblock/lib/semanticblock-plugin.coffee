@@ -50,7 +50,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
     name: 'mouseenter'
     selector: '.semantic-delete'
     callback: ->
-      jQuery(this).parents('.semantic-container').addClass 'delete-hover'
+      jQuery(this).parents('.semantic-container').first().addClass 'delete-hover'
   ,
     name: 'mouseleave'
     selector: '.semantic-delete'

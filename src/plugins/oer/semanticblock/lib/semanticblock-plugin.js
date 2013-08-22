@@ -32,7 +32,7 @@
         name: 'mouseenter',
         selector: '.semantic-delete',
         callback: function() {
-          return jQuery(this).parents('.semantic-container').addClass('delete-hover');
+          return jQuery(this).parents('.semantic-container').first().addClass('delete-hover');
         }
       }, {
         name: 'mouseleave',
