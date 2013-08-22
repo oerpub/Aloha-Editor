@@ -230,3 +230,7 @@
 .aloha-oer-ephemera-if-empty:empty {
     height: 1px; 
 }
+
+.aloha-oer-block .aloha-editable {
+    min-height: 20px;
+}

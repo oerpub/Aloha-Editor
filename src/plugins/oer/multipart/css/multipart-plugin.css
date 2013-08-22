@@ -28,10 +28,12 @@
     margin-left: 5px;
 }
 
-.multipart > .semantic-container > .exercise > .problem:before,
-.problemset > .semantic-container > .exercise > .problem:before {
+.multipart > .semantic-container > .exercise > .problem:not(:empty):before,
+.problemset > .semantic-container > .exercise > .problem:not(:empty):before {
     counter-increment: problems;
     content: counter(problems, upper-latin) ')';
     margin-right: 5px;
     float: left;
+    font-weight: bold;
+    color: #369;
 }
