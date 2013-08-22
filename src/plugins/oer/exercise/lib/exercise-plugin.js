@@ -31,10 +31,17 @@
     };
     deactivateExercise = function($element) {};
     activateSolution = function($element) {
-      var $body, $typeContainer, type,
+      var $body, $typeContainer, child, hasTextChildren, type, _i, _len, _ref,
         _this = this;
       type = $element.attr('data-type') || 'solution';
-      if (!$element.children().length && $element.text().length) {
+      _ref = $element.get(0).childNodes;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        child = _ref[_i];
+        if (child.nodeName === '#text') {
+          hasTextChildren = true;
+        }
+      }
+      if (hasTextChildren) {
         $element.wrapInner('<p>');
       }
       $body = '';

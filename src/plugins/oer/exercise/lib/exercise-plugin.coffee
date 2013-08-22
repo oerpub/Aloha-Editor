@@ -87,7 +87,10 @@ define [
     activateSolution = ($element) ->
       type = $element.attr('data-type') or 'solution'
 
-      $element.wrapInner('<p>') if not $element.children().length and $element.text().length
+      for child in $element.get(0).childNodes
+        hasTextChildren = true if child.nodeName is '#text'
+        
+      $element.wrapInner('<p>') if hasTextChildren
       $body = ''
       $body = $element.children() if $element.text().trim().length
       
