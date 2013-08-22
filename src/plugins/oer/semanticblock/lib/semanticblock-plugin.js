@@ -258,6 +258,9 @@
       },
       init: function() {
         var _this = this;
+        Ephemera.ephemera().pruneFns.push(function(node) {
+          return $(node).removeClass('aloha-block-dropzone aloha-editable aloha-block-blocklevel-sortable ui-sortable').removeAttr('contenteditable placeholder').get(0);
+        });
         return Aloha.bind('aloha-editable-created', function(e, params) {
           var $root, classes, selector, type, _i, _len;
           $root = params.obj;

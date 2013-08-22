@@ -252,6 +252,13 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       cleanWhitespace(content)
 
     init: ->
+
+      Ephemera.ephemera().pruneFns.push (node) ->
+        $(node)
+          .removeClass('aloha-block-dropzone aloha-editable aloha-block-blocklevel-sortable ui-sortable')
+          .removeAttr('contenteditable placeholder')
+          .get(0)
+
       Aloha.bind 'aloha-editable-created', (e, params) =>
         $root = params.obj
 
