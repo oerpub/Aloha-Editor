@@ -4,7 +4,7 @@
   define(['aloha', 'aloha/plugin', 'jquery', 'aloha/ephemera', 'ui/ui', 'ui/button', 'exercise/exercise-plugin', 'semanticblock/semanticblock-plugin', 'css!multipart/css/multipart-plugin.css'], function(Aloha, Plugin, jQuery, Ephemera, UI, Button, Exercise, semanticBlock) {
     var TEMPLATE, TYPE_CONTAINER, activate, deactivate;
     TEMPLATE = '<div class="multipart">\n    <div class="body"></div>\n</div>';
-    TYPE_CONTAINER = '<div class="type-container dropdown aloha-ephemera">\n    <span class="type btn-link" data-toggle="dropdown"></span>\n    <ul class="dropdown-menu">\n        <li><span class="btn-link" data-type="Worked Example">Worked Example</span></li>\n        <li><span class="btn-link" data-type="homework">Homework</span></li>\n        <li><span class="btn-link" data-type="problem">Problem</span></li>\n    </ul>\n</div>';
+    TYPE_CONTAINER = '<div class="type-container dropdown aloha-ephemera">\n    <span class="type btn-link" data-toggle="dropdown"></span>\n    <ul class="dropdown-menu">\n        <li><span class="btn-link" data-type="Worked Example">Worked Example</span></li>\n        <li><span class="btn-link" data-type="homework">Homework</span></li>\n        <li><span class="btn-link" data-type="exercise">Exercise</span></li>\n    </ul>\n</div>';
     activate = function($element) {
       var $body, $contents, $header, $typeContainer, type,
         _this = this;

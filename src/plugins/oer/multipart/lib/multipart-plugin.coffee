@@ -20,7 +20,7 @@ define [
             <ul class="dropdown-menu">
                 <li><span class="btn-link" data-type="Worked Example">Worked Example</span></li>
                 <li><span class="btn-link" data-type="homework">Homework</span></li>
-                <li><span class="btn-link" data-type="problem">Problem</span></li>
+                <li><span class="btn-link" data-type="exercise">Exercise</span></li>
             </ul>
         </div>
     '''
