@@ -21,11 +21,12 @@ define [
         <div class="type-container dropdown aloha-ephemera">
             <span class="type btn-link" data-toggle="dropdown"></span>
             <ul class="dropdown-menu">
-                <li><span class="btn-link">Exercise</span></li>
-                <li><span class="btn-link">Homework</span></li>
-                <li><span class="btn-link">Problem</span></li>
-                <li><span class="btn-link">Question</span></li>
-                <li><span class="btn-link">Task</span></li>
+                <li><span class="btn-link" data-type="">Exercise</span></li>
+                <li><span class="btn-link" data-type="homework">Homework</span></li>
+                <li><span class="btn-link" data-type="problem">Problem</span></li>
+                <li><span class="btn-link" data-type="question">Question</span></li>
+                <li><span class="btn-link" data-type="task">Task</span></li>
+                <li><span class="btn-link" data-type="Worked Example">Worked Example</span></li>
             </ul>
         </div>
     '''
@@ -51,7 +52,7 @@ define [
       $typeContainer.find('.type').text(type.charAt(0).toUpperCase() + type.slice(1) )
 
       $typeContainer.find('.dropdown-menu li').each (i, li) =>
-        if jQuery(li).children('a').text().toLowerCase() == type
+        if jQuery(li).children('span').data('type') == type
           jQuery(li).addClass('checked')
 
       $typeContainer.prependTo($element)
@@ -81,24 +82,18 @@ define [
         $element.children('.solution-controls').children('.solution-toggle').hide()
 
     deactivateExercise = ($element) ->
-      $problem = $element.children('.problem')
-      $solutions = $element.children('.solution')
-      
-      if $problem.html() == '' or $problem.html() == '<p></p>'
-        $problem.html('&nbsp;')
-
-      $element.children().remove()
-
-      jQuery("<div>").addClass('problem').html(
-        jQuery('<p>').append($problem.html())
-      ).appendTo($element)
-
-      $element.append($solutions)
+      return
 
     activateSolution = ($element) ->
       type = $element.attr('data-type') or 'solution'
 
-      $body = $element.children()
+      for child in $element.get(0).childNodes
+        hasTextChildren = true if child.nodeName is '#text'
+        
+      $element.wrapInner('<p>') if hasTextChildren
+      $body = ''
+      $body = $element.children() if $element.text().trim().length
+      
       $element.children().remove()
 
       $typeContainer = jQuery(SOLUTION_TYPE_CONTAINER)
@@ -112,16 +107,15 @@ define [
 
       jQuery('<div>')
         .addClass('body')
+        .addClass('aloha-block-dropzone')
         .appendTo($element)
         .aloha()
         .append($body)
-        .addClass('aloha-block-dropzone')
 
     deactivateSolution = ($element) ->
-      content = $element.children('.body').html()
-      $element.children().remove()
-      jQuery('<p>').append(content).appendTo($element)
-    
+      $element.children(':not(.body)').remove()
+      $element.children('.body').contents().unwrap()
+      $element.children('.body').remove()
 
     Plugin.create('exercise', {
       getLabel: ($element) ->
@@ -141,6 +135,10 @@ define [
           deactivateExercise($element)
         else if $element.is('.solution')
           deactivateSolution($element)
+    
+      appendTo: (target) ->
+        semanticBlock.appendElement($(TEMPLATE), target)
+        
 
       selector: '.exercise,.solution' #this plugin handles both exercises and solutions
       ignore: '.problem'
@@ -182,11 +180,10 @@ define [
                                               .aloha-oer-block.exercise > .type-container > ul > li > *', (e) ->
           $el = jQuery(@)
           $el.parents('.type-container').first().children('.type').text $el.text()
-          $el.parents('.aloha-oer-block').first().attr 'data-type', $el.text().toLowerCase()
+          $el.parents('.aloha-oer-block').first().attr 'data-type', $el.data('type')
 
           $el.parents('.type-container').find('.dropdown-menu li').each (i, li) =>
             jQuery(li).removeClass('checked')
-            if jQuery(li).children('a').text() == $el.text()
-              jQuery(li).addClass('checked')
+          $el.parents('li').first().addclass('checked')
         )
     })

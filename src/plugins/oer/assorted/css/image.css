@@ -33,18 +33,24 @@ form#linkModal:focus {
     outline: none;
 }
 
-.media.aloha-oer-block {
+figure.aloha-oer-block {
     display: block;
     border: 0;
 }
 
-.media.aloha-oer-block .image-wrapper {
+figure.aloha-oer-block > .title, 
+figure.aloha-oer-block > figcaption {
+    display: block;
+    text-align: center
+}
+
+figure.aloha-oer-block .image-wrapper {
     position: relative;
     display: block;
     margin: 0 auto;
 }
 
-.media.aloha-oer-block .image-wrapper .image-edit {
+figure.aloha-oer-block .image-wrapper .image-edit {
     position: absolute;
     cursor: pointer;
     left: 100%;
@@ -54,11 +60,11 @@ form#linkModal:focus {
     word-wrap: break-word;
 }
 
-.media.aloha-oer-block .image-wrapper .image-edit:hover{
+figure.aloha-oer-block .image-wrapper .image-edit:hover {
   cursor: pointer;
 }
 
-.media.aloha-oer-block .image-wrapper .image-edit:not(.passive):hover{
+figure.aloha-oer-block .image-wrapper .image-edit:not(.passive):hover {
   border: 1px dotted #1B86D2;
   background-color: #D9E7F1;
   z-index: 400;
@@ -70,7 +76,7 @@ form#linkModal:focus {
    http://stackoverflow.com/questions/9450733/css-triangle-custom-border-color 
    adds clever sidewise triangle to the warning rectangle
 */
-.media.aloha-oer-block .image-wrapper .image-edit:not(.passive):hover:before{
+figure.aloha-oer-block .image-wrapper .image-edit:not(.passive):hover:before {
   content: '';
   display: block;
   position: absolute;
@@ -86,24 +92,24 @@ form#linkModal:focus {
   -webkit-transform:rotate(45deg);
 }
 
-.media.aloha-oer-block .image-wrapper .image-edit .warning-text{
+figure.aloha-oer-block .image-wrapper .image-edit .warning-text{
   color: #555;
   font-style: italic;
   background-color: #fff;
 }
 
-.media.aloha-oer-block .image-wrapper .image-edit:hover .warning-text{
+figure.aloha-oer-block .image-wrapper .image-edit:hover .warning-text{
   color: black;
   font-style: normal;
   font-size: .85em;
   background-color: transparent;
 }
 
-.media.aloha-oer-block .image-wrapper .image-edit.passive {
+figure.aloha-oer-block .image-wrapper .image-edit.passive {
     display: none;
 }
 
-.semantic-container.focused .media.aloha-oer-block .image-wrapper .image-edit {
+.semantic-container.focused figure.aloha-oer-block .image-wrapper .image-edit {
     display: block;
 }
 

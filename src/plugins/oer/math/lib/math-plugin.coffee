@@ -214,7 +214,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
   insertMathInto = ($container) ->
     $math = jQuery('<span class="math-element aloha-ephemera-wrapper"><span class="mathjax-wrapper aloha-ephemera"></span></span>')
     $container.html($math)
-    $math.trigger 'show'
+    $math.trigger 'show-popover'
     
   insertMath = () ->
     $el = jQuery('<span class="math-element aloha-ephemera-wrapper"><span class="mathjax-wrapper aloha-ephemera">&#160;</span></span>') # nbsp
@@ -227,13 +227,13 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
     else
       # Assume the user highlighted ASCIIMath (by putting the text in backticks)
       formula = range.getText()
-      $el.find('.mathjax-wrapper').text(LANGUAGES['math/asciimath'].open +
+      $el.find('.mathjax-wrapper').text(LANGUAGES['math/tex'].open +
                                         formula +
-                                        LANGUAGES['math/asciimath'].close)
+                                        LANGUAGES['math/tex'].close)
       GENTICS.Utils.Dom.removeRange range
       GENTICS.Utils.Dom.insertIntoDOM $el, range, Aloha.activeEditable.obj
       triggerMathJax $el, ->
-        addAnnotation $el, formula, 'math/asciimath'
+        addAnnotation $el, formula, 'math/tex'
         makeCloseIcon($el)
         Aloha.Selection.preventSelectionChanged()
         placeCursorAfter($el)
@@ -279,7 +279,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
     # Set the formula in jQuery data if it hasn't been set before
     #$span.data('math-formula', $span.data('math-formula') or $span.attr('data-math-formula') or $span.text())
 
-    mimeType = $span.find('script[type]').attr('type') or 'math/asciimath'
+    mimeType = $span.find('script[type]').attr('type') or 'math/tex'
     # tex could be "math/tex; mode=display" so split in the semicolon
     mimeType = mimeType.split(';')[0]
 

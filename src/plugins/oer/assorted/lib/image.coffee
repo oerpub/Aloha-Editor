@@ -178,7 +178,7 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
             dialog.modal 'show'
 
   insertImage = () ->
-    template = $('<span class="media aloha-ephemera"><img /></span>')
+    template = $('<figure class="figure aloha-ephemera"><div class="title" /><img /><figcaption /></figure>')
     semanticBlock.insertAtCursor(template)
     newEl = template.find('img')
     promise = showModalDialog(newEl)
@@ -225,36 +225,16 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
     wrapper = $('<div class="image-wrapper aloha-ephemera-wrapper">').css('width', element.css('width'))
     edit = $('<div class="image-edit aloha-ephemera">')
 
-    img = element.find('img')
-    element.children().remove()
+    element.find('img').wrap(wrapper)
 
-    img.appendTo(element).wrap(wrapper)
+    element.prepend('<div class="title"></div>') if not element.find('.title').length
+    element.append('<figcaption></figcaption>') if not element.find('figcaption').length
 
-    setEditText element.children('.image-wrapper').prepend(edit)
+    setEditText element.find('.image-wrapper').prepend(edit)
     element.find('img').load ->
       setWidth $(this)
 
   deactivate = (element) ->
-    img = element.find('img')
-    element.children().remove()
-    element.append(img)
-    element.attr('data-alt', img.attr('alt') || '')
-
-    # image must be contained within a media element
-    $mediaset = element.closest('.media')
-    if $mediaset.length > 0
-      $media = jQuery($mediaset[0])
-      # media must be contained in :
-      # preformat (media must be block display), para, title, label, cite, cite-title, 
-      # link, emphasis, term, sub, sup, quote (media must be block display), foreign, 
-      # footnote, equation, note (media must be block display), item, code (media must be block display), 
-      # figure, subfigure, caption, commentary, meaning, entry, statement, proof, problem, 
-      # solution, content (media must be block display), section (media must be block display)
-      legalparents = $media.parents("figure, .para, .equation, .note, .quote")
-      if legalparents.length == 0
-        # media/image appears to be orphaned (via either user editing or block moving)
-        # add a p container to keep html canonical
-        element.parents('.semantic-container').wrap('<p class="para">')
     return
 
   # Return config
@@ -262,7 +242,7 @@ define ['aloha', 'jquery', 'aloha/plugin', 'image/image-plugin', 'ui/ui', 'seman
     getLabel: -> 'Image'
     activate: activate
     deactivate: deactivate
-    selector: '.media'
+    selector: 'figure'
     init: () ->
       plugin = @
       UI.adopt 'insertImage-oer', null,

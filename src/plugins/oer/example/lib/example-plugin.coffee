@@ -34,10 +34,12 @@ define [
     # Then, when the user selects "Warning" from the dropdown the element's
     # class and type will be changed and its `> .title` will be removed.
     defaults: [
+      { label: 'Activity', cls: 'example', hasTitle: true, type: 'activity' },
+      { label: 'Practical', cls: 'example', hasTitle: true, type: 'practical' },
+      { label: 'Demonstration', cls: 'example', hasTitle: true, type: 'demonstration' },
       { label: 'Example', cls: 'example', hasTitle: true },
       { label: 'Case in point', cls: 'example', hasTitle: true, type: 'case-in-point' },
       { label: 'Case study', cls: 'example', hasTitle: true, type: 'case-study' },
-      { label: 'Demonstration', cls: 'example', hasTitle: true, type: 'demonstration' },
       { label: 'Illustration', cls: 'example', hasTitle: true, type: 'illustration' },
     ]
     getLabel: ($element) ->
@@ -108,11 +110,13 @@ define [
           typeContainer.prependTo($element)
       
       # Create the body and add some placeholder text
-      $('<div>').addClass('body')
-      .attr('placeholder', "Type the text of your #{label.toLowerCase()} here.")
-      .append($body)
-      .appendTo($element)
-      .aloha()
+      $('<div>')
+        .addClass('body')
+        .addClass('aloha-block-dropzone')
+        .attr('placeholder', "Type the text of your #{label.toLowerCase()} here.")
+        .appendTo($element)
+        .aloha()
+        .append($body)
      
     deactivate: ($element) ->
       $body = $element.children('.body')
