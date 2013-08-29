@@ -1,4 +1,4 @@
-define ['aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button'], (Aloha, Plugin, jQuery, UI, Button) ->
+define ['aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', 'PubSub'], (Aloha, Plugin, jQuery, UI, Button, PubSub) ->
    
   buffer = ''
  
