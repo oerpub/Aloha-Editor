@@ -53,7 +53,12 @@ define ['aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', 'PubSub'], (Alo
           e.preventDefault()
           $element = focusHeading
           selector = "h1,h2,h3".substr(0, "h1,h2,h3".indexOf($element[0].nodeName.toLowerCase())+2)
-          $elements = $element.nextUntil(selector).addBack()
+          if $element.addBack
+            # Jquery >= 1.8
+            $elements = $element.nextUntil(selector).addBack()
+          else
+            # Jquery < 1.8
+            $elements = $element.nextUntil(selector).andSelf()
           html = ''
           html += jQuery(element).outerHtml() for element in $elements
           plugin.buffer html

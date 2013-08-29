@@ -55,7 +55,11 @@
             e.preventDefault();
             $element = focusHeading;
             selector = "h1,h2,h3".substr(0, "h1,h2,h3".indexOf($element[0].nodeName.toLowerCase()) + 2);
-            $elements = $element.nextUntil(selector).addBack();
+            if ($element.addBack) {
+              $elements = $element.nextUntil(selector).addBack();
+            } else {
+              $elements = $element.nextUntil(selector).andSelf();
+            }
             html = '';
             for (_i = 0, _len = $elements.length; _i < _len; _i++) {
               element = $elements[_i];
