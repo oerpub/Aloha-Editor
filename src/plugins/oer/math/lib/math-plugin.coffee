@@ -114,21 +114,23 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
     el.parents('.aloha-editable').first().focus()
 
 
-  getMathFor = (id) ->
-    jax = MathJax?.Hub.getJaxFor id
+  getMathFor = (el) ->
+    jax = MathJax.Hub.getJaxFor el
     if jax
-      mathStr = jax.root.toMathML()
-      jQuery(mathStr)
+      return jQuery(jax.root.toMathML())
+    return null
 
   squirrelMath = ($el) ->
     # `$el` is the `.math-element`
 
-    $mml = getMathFor $el.find('script').attr('id')
-
-    # STEP3
-    $el.find('.mathml-wrapper').remove()
-    $mml.wrap '<span class="mathml-wrapper aloha-ephemera-wrapper"></span>'
-    $el.append $mml.parent()
+    $mml = getMathFor $el.find('script')[0]
+    if $mml != null
+      # STEP3
+      $el.find('.mathml-wrapper').remove()
+      $mml.wrap '<span class="mathml-wrapper aloha-ephemera-wrapper"></span>'
+      $el.append $mml.parent()
+    else
+      console?.warn($el, 'has no associated Jax. Does this happen too often?')
 
   Aloha.bind 'aloha-editable-created', (evt, editable) ->
     # Bind ctrl+m to math insert/mathify
@@ -181,7 +183,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
       # child.
       evt.stopPropagation()
 
-    editable.obj.on('click.matheditor', '.math-element-destroy', () ->
+    editable.obj.on('click.matheditor', '.math-element-destroy', (e) ->
       jQuery(e.target).tooltip('destroy')
       $el = jQuery(e.target).closest('.math-element')
       # Though the tooltip was bound to the editor and delegates

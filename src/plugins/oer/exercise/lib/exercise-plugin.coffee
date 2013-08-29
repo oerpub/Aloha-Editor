@@ -18,7 +18,7 @@ define [
         </div>
 	'''
     TYPE_CONTAINER = '''
-        <div class="type-container dropdown">
+        <div class="type-container dropdown aloha-ephemera">
             <span class="type btn-link" data-toggle="dropdown"></span>
             <ul class="dropdown-menu">
                 <li><span class="btn-link">Exercise</span></li>
@@ -30,7 +30,7 @@ define [
         </div>
     '''
     SOLUTION_TYPE_CONTAINER = '''
-        <div class="type-container dropdown">
+        <div class="type-container dropdown aloha-ephemera">
             <span class="type btn-link" data-toggle="dropdown"></span>
             <ul class="dropdown-menu">
                 <li><span class="btn-link">Answer</span></li>
@@ -66,13 +66,15 @@ define [
 
       jQuery('<div>')
         .addClass('solutions')
+        .addClass('aloha-ephemera-wrapper')
         .appendTo($element)
         .append($solutions)
 
       jQuery('<div>')
         .addClass('solution-controls')
+        .addClass('aloha-ephemera')
         .append('<span class="add-solution btn-link">Click here to add an answer/solution</span>')
-        .append('<span class="solution-toggle"></span>')
+        .append('<span class="solution-toggle">hide solution</span>')
         .appendTo($element)
 
       if not $solutions.length
@@ -80,7 +82,7 @@ define [
 
     deactivateExercise = ($element) ->
       $problem = $element.children('.problem')
-      $solutions = $element.children('.solutions').children()
+      $solutions = $element.children('.solution')
       
       if $problem.html() == '' or $problem.html() == '<p></p>'
         $problem.html('&nbsp;')
@@ -141,6 +143,8 @@ define [
           deactivateSolution($element)
 
       selector: '.exercise,.solution' #this plugin handles both exercises and solutions
+      ignore: '.problem'
+
       init: () ->
 
         semanticBlock.register(this)

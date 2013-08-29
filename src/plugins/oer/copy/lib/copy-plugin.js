@@ -21,18 +21,21 @@
         return jQuery('.action.paste').fadeIn('fast');
       },
       init: function() {
-        var plugin;
+        var plugin,
+          _this = this;
         plugin = this;
-        if (localStorage && localStorage.alohaOerCopyBuffer) {
-          jQuery('.action.paste').fadeIn('fast');
-        }
-        return UI.adopt("paste", Button, {
-          click: function(e) {
-            var range;
-            e.preventDefault();
-            range = Aloha.Selection.getRangeObject();
-            return GENTICS.Utils.Dom.insertIntoDOM(jQuery(plugin.getBuffer()), range, Aloha.activeEditable.obj);
+        return Aloha.bind('aloha-editable-created', function(e, params) {
+          if (localStorage && localStorage.alohaOerCopyBuffer) {
+            jQuery('.action.paste').fadeIn('fast');
           }
+          return UI.adopt("paste", Button, {
+            click: function(e) {
+              var range;
+              e.preventDefault();
+              range = Aloha.Selection.getRangeObject();
+              return GENTICS.Utils.Dom.insertIntoDOM(jQuery(plugin.getBuffer()), range, Aloha.activeEditable.obj);
+            }
+          });
         });
       }
     });

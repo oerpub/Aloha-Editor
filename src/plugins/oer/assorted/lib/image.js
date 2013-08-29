@@ -386,8 +386,8 @@
     };
     activate = function(element) {
       var $caption, $img, $title, edit, wrapper;
-      wrapper = $('<div class="image-wrapper">').css('width', element.css('width'));
-      edit = $('<div class="image-edit">');
+      wrapper = $('<div class="image-wrapper aloha-ephemera-wrapper">').css('width', element.css('width'));
+      edit = $('<div class="image-edit aloha-ephemera">');
       $title = element.find('.title');
       $img = element.find('img');
       $caption = element.find('figcaption');
