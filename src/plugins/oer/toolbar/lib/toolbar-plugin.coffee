@@ -16,14 +16,26 @@ define [ 'jquery', 'aloha', 'aloha/plugin', 'PubSub', 'ui/button' ], (
         $ROOT.find(".action.#{slot}").addClass('active') if bool
       setState: (bool) -> @setActive bool
       enable: (bool=true) ->
+        btn = $ROOT.find(".action.#{slot}")
+
+        # Fire an enable event on btn, allow enable/disable to be customised
+        evt = $.Event(bool and 'enable-action' or 'disable-action')
+        btn.trigger(evt)
+        if evt.isDefaultPrevented()
+          return
+
         # If it is a button, set the disabled attribute, otherwise find the
         # parent list item and set disabled on that.
-        if $ROOT.find(".action.#{slot}").is('.btn')
-          $ROOT.find(".action.#{slot}").attr('disabled', 'disabled') if !bool
-          $ROOT.find(".action.#{slot}").removeAttr('disabled') if bool
+        if btn.is('.btn')
+          if bool
+            btn.removeAttr('disabled')
+          else
+            btn.attr('disabled', 'disabled')
         else
-          $ROOT.find(".action.#{slot}").parent().addClass('disabled') if !bool
-          $ROOT.find(".action.#{slot}").parent().removeClass('disabled') if bool
+          if bool
+            btn.parent().removeClass('disabled')
+          else
+            btn.parent().addClass('disabled')
       disable: () -> @enable(false)
       setActiveButton: (a, b) ->
         console && console.log "#{slot} TODO:SETACTIVEBUTTON:", a, b
@@ -106,27 +118,6 @@ define [ 'jquery', 'aloha', 'aloha/plugin', 'PubSub', 'ui/button' ], (
         
         # $newEl.attr('id', $oldEl.attr('id))
         # Setting the id is commented because otherwise collaboration wouldn't register a change in the document
-
-      #### start temporary copy paste code
-      focusHeading = null
-      Aloha.bind 'aloha-selection-changed', (e, params) =>
-        if params.startOffset == params.endOffset and jQuery(params.startContainer).parents('h1,h2,h3').length
-          focusHeading = jQuery(params.startContainer).parents('h1,h2,h3').first()
-          jQuery('.action.copy').fadeIn('fast')
-        else
-          jQuery('.action.copy').fadeOut('fast')
-        
-      toolbar.adopt "copy", Button,
-        click: (e) ->
-          e.preventDefault()
-          $element = focusHeading
-          selector = "h1,h2,h3".substr(0, "h1,h2,h3".indexOf($element[0].nodeName.toLowerCase())+2)
-          $elements = $element.nextUntil(selector).addBack()
-          html = ''
-          html += jQuery(element).outerHtml() for element in $elements
-          Aloha.require ['copy/copy-plugin'], (Copy) ->
-            Copy.buffer html
-      #### end temporary copy paste code
 
       $ROOT.on 'click', '.action.changeHeading', changeHeading
 
