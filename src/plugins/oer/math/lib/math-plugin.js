@@ -87,7 +87,7 @@
       $maths.wrap('<span class="math-element aloha-ephemera-wrapper"><span class="mathjax-wrapper aloha-ephemera"></span></span>');
       maths = $maths.toArray();
       processSomeMath = function() {
-        var $mathElement, $mml, i, mathParts, _i, _results;
+        var $mathElement, $mml, i, mathParts, _i, _ref, _results;
         if (!maths.length) {
           return console.log("DEBUG: End: Typesetting math in editable");
         }
@@ -97,9 +97,12 @@
             $mml = $(maths.shift());
             $mathElement = $mml.parent().parent();
             mathParts = findFormula($mml);
+            if (_ref = mathParts.mimeType, __indexOf.call(MATHML_ANNOTATION_MIME_ENCODINGS, _ref) >= 0) {
+              $mathElement.find('.mathjax-wrapper').text(LANGUAGES[mathParts.mimeType].open + mathParts.formula + LANGUAGES[mathParts.mimeType].close);
+            }
             triggerMathJax($mathElement, false, function() {
-              var _ref;
-              if (_ref = mathParts.mimeType, __indexOf.call(MATHML_ANNOTATION_MIME_ENCODINGS, _ref) >= 0) {
+              var _ref1;
+              if (_ref1 = mathParts.mimeType, __indexOf.call(MATHML_ANNOTATION_MIME_ENCODINGS, _ref1) >= 0) {
                 addAnnotation($mathElement, mathParts.formula, mathParts.mimeType);
               }
               return makeCloseIcon($mathElement);
