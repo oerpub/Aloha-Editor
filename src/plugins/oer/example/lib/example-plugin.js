@@ -9,6 +9,21 @@
     return Plugin.create('example', {
       defaults: [
         {
+          label: 'Activity',
+          cls: 'example',
+          hasTitle: true,
+          type: 'activity'
+        }, {
+          label: 'Practical',
+          cls: 'example',
+          hasTitle: true,
+          type: 'practical'
+        }, {
+          label: 'Demonstration',
+          cls: 'example',
+          hasTitle: true,
+          type: 'demonstration'
+        }, {
           label: 'Example',
           cls: 'example',
           hasTitle: true
@@ -22,11 +37,6 @@
           cls: 'example',
           hasTitle: true,
           type: 'case-study'
-        }, {
-          label: 'Demonstration',
-          cls: 'example',
-          hasTitle: true,
-          type: 'demonstration'
         }, {
           label: 'Illustration',
           cls: 'example',
@@ -107,7 +117,7 @@
             return typeContainer.prependTo($element);
           }
         });
-        return $('<div>').addClass('body').attr('placeholder', "Type the text of your " + (label.toLowerCase()) + " here.").append($body).appendTo($element).aloha();
+        return $('<div>').addClass('body').addClass('aloha-block-dropzone').attr('placeholder', "Type the text of your " + (label.toLowerCase()) + " here.").appendTo($element).aloha().append($body);
       },
       deactivate: function($element) {
         var $body, $title, $titleElement, hasTextChildren, hasTitle, isEmpty, titleTag,

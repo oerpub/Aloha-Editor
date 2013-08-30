@@ -25,14 +25,17 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
     </div>'''
 
   blockTemplate = jQuery('<div class="semantic-container aloha-ephemera-wrapper"></div>')
-  blockControls = jQuery('<div class="semantic-controls aloha-ephemera"><button class="semantic-delete" title="Remove this element."><i class="icon-remove"></i></button><button class="semantic-settings" title="advanced options."><i class="icon-cog"></i></button></div>')
   blockControls = jQuery('''
     <div class="semantic-controls aloha-ephemera">
       <button class="semantic-delete" title="Remove this element."><i class="icon-remove"></i></button>
       <button class="semantic-settings" title="advanced options."><i class="icon-cog"></i></button>
       <button class="copy" title="copy"><i class="icon-file"></i></button>
     </div>''')
-  blockDragHelper = jQuery('<div class="semantic-drag-helper aloha-ephemera"><div class="title"></div><div class="body">Drag me to the desired location in the document</div></div>')
+  blockDragHelper = jQuery('''
+    <div class="semantic-drag-helper aloha-ephemera">
+        <div class="title"></div>
+        <div class="body">Drag me to the desired location in the document</div>
+    </div>''')
   registeredTypes = []
   copyBuffer = null
   pluginEvents = [
@@ -50,7 +53,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
     name: 'mouseenter'
     selector: '.semantic-delete'
     callback: ->
-      jQuery(this).parents('.semantic-container').addClass 'delete-hover'
+      jQuery(this).parents('.semantic-container').first().addClass 'delete-hover'
   ,
     name: 'mouseleave'
     selector: '.semantic-delete'
@@ -146,10 +149,15 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
         return type.getLabel $element
 
   activate = ($element) ->
-    unless $element.is('.semantic-container')
+    unless $element.is('.semantic-container') or ($element.is('.alternates') and $element.parents('figure').length)
       $element.addClass 'aloha-oer-block'
+
+      #add some paragraphs on either side so content can be added there easily
+      $('<p class="aloha-oer-ephemera-if-empty"></p>').insertBefore($element)
+      $('<p class="aloha-oer-ephemera-if-empty"></p>').insertAfter($element)
+
       $element.wrap(blockTemplate).parent().append(blockControls.clone()).alohaBlock()
-      
+ 
       for type in registeredTypes
         if $element.is(type.selector)
           type.activate $element
@@ -157,7 +165,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
           break
 
       # this might could be more efficient
-      $element.find('*').andSelf().filter('[placeholder],[hover-placeholder]').each ->
+      $element.children('[placeholder],[hover-placeholder]').andSelf().filter('[placeholder],[hover-placeholder]').each ->
         jQuery(@).empty() if not jQuery(@).text().trim()
 
       return if matched
@@ -169,9 +177,14 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       $title.attr('hover-placeholder', 'Add a title')
       $title.aloha()
 
-      $contents = $element.children().not($title)
-      $contents.wrap(jQuery('<div class="body"></body>'))
-      $element.children('.body').aloha()
+      $body = $element.children().not($title)
+
+      jQuery('<div>')
+        .addClass('body')
+        .addClass('aloha-block-dropzone')
+        .appendTo($element)
+        .aloha()
+        .append($body)
 
   deactivate = ($element) ->
     $element.removeClass 'aloha-oer-block ui-draggable'
@@ -187,7 +200,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       .mahalo()
       .removeClass('aloha-editable aloha-block-blocklevel-sortable ui-sortable')
       .removeAttr('hover-placeholder')
-    $element.find('.body').children().unwrap()
+    $element.children('.body').children().unwrap()
     $element.attr('data-unknown', 'true')
 
   bindEvents = (element) ->
@@ -213,6 +226,14 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       else
         ids[id] = element
 
+  cleanWhitespace = (content) ->
+    content.find('.aloha-oer-ephemera-if-empty').each ->
+      $el = jQuery(@)
+      if $el.text().trim().length
+        $el.removeClass 'aloha-oer-ephemera-if-empty'
+      else
+        $el.remove()
+
   Aloha.ready ->
     bindEvents jQuery(document)
 
@@ -231,24 +252,44 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
         deactivate jQuery(this)
 
       cleanIds(content)
+      cleanWhitespace(content)
 
     init: ->
+
+      Ephemera.ephemera().pruneFns.push (node) ->
+        $(node)
+          .removeClass('aloha-block-dropzone aloha-editable aloha-block-blocklevel-sortable ui-sortable')
+          .removeAttr('contenteditable placeholder')
+          .get(0)
+
       Aloha.bind 'aloha-editable-created', (e, params) =>
         $root = params.obj
 
         classes = []
         classes.push type.selector for type in registeredTypes
+
         selector = @settings.defaultSelector + ',' + classes.join()
 
-        $root.find(selector).each (i, element) ->
-          activate jQuery(element) if not jQuery(element).parents('.semantic-drag-source').length
+        # theres no really good way to do this. editables get made into sortables
+        # on `aloha-editable-created` and there is no event following that, so we 
+        # just have to wait
+        setTimeout ->
+          if $root.is('.ui-sortable')
+            $root.sortable 'option', 'stop', (e, ui) ->
+              $root = jQuery(ui.item)
+              activate $root if $root.is(selector)
+            $root.sortable 'option', 'placeholder', 'aloha-oer-block-placeholder aloha-ephemera',
+          500
 
-        if $root.is('.aloha-block-blocklevel-sortable') and not $root.parents('.aloha-editable').length
+        if $root.is('.aloha-root-editable')
+
+          $root.find(selector).each ->
+            activate jQuery(@) if not jQuery(@).parents('.semantic-drag-source').length
 
           # setting up these drag sources may break if there is more than one top level editable on the page
           jQuery('.semantic-drag-source').children().each ->
             element = jQuery(this)
-            elementLabel = element.attr('class').split(' ')[0]
+            elementLabel = (element.data('type') or element.attr('class')).split(' ')[0]
             element.draggable
               connectToSortable: $root
               appendTo: jQuery('body')
@@ -263,11 +304,6 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
                 jQuery(ui.helper).addClass 'dragging'
          
               refreshPositions: true
-
-        $root.sortable 'option', 'stop', (e, ui) ->
-          $el = jQuery(ui.item)
-          activate $el if $el.is(selector)
-        $root.sortable 'option', 'placeholder', 'aloha-oer-block-placeholder aloha-ephemera'
 
     insertAtCursor: (template) ->
       $element = jQuery(template)

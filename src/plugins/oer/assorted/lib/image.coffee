@@ -445,7 +445,7 @@ define [
       return deferred.promise()
             
   insertImage = () ->
-    template = $('<figure class="figure aloha-ephemera"><div class="title" /><img /><figcaption /></figuren>')
+    template = $('<figure class="figure aloha-ephemera"><div class="title" /><img /><figcaption /></figure>')
     semanticBlock.insertAtCursor(template)
     newEl = template.find('img')
     blob = showModalDialog(newEl)
@@ -514,26 +514,16 @@ define [
     $img     = element.find('img')
     $caption = element.find('figcaption')
 
-    element.children().remove()
+    element.find('img').wrap(wrapper)
 
-    $title.appendTo(element)
-    $img.appendTo(element).wrap(wrapper)
-    $caption.appendTo(element)
+    element.prepend('<div class="title"></div>') if not element.find('.title').length
+    element.append('<figcaption></figcaption>') if not element.find('figcaption').length
 
-    setEditText element.children('.image-wrapper').prepend(edit)
+    setEditText element.find('.image-wrapper').prepend(edit)
     element.find('img').load ->
       setWidth $(this)
 
   deactivate = (element) ->
-    # removeClass('figure')
-    $figure = element
-    $title = $figure.find('div.title')
-    $img = $figure.find('img')
-    $caption = $figure.find('figcaption')
-    $figure.children().remove()
-    $figure.append($title)
-    $figure.append($img)
-    $figure.append($caption)
     return
 
   # Return config
@@ -541,7 +531,7 @@ define [
     getLabel: -> 'Image'
     activate: activate
     deactivate: deactivate
-    selector: '.figure'
+    selector: 'figure'
     init: () ->
       plugin = @
       UI.adopt 'insertImage-oer', null,

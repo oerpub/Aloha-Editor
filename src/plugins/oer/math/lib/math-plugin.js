@@ -156,7 +156,7 @@
       var $math;
       $math = jQuery('<span class="math-element aloha-ephemera-wrapper"><span class="mathjax-wrapper aloha-ephemera"></span></span>');
       $container.html($math);
-      return $math.trigger('show');
+      return $math.trigger('show-popover');
     };
     insertMath = function() {
       var $el, formula, range;
@@ -168,11 +168,11 @@
         return makeCloseIcon($el);
       } else {
         formula = range.getText();
-        $el.find('.mathjax-wrapper').text(LANGUAGES['math/asciimath'].open + formula + LANGUAGES['math/asciimath'].close);
+        $el.find('.mathjax-wrapper').text(LANGUAGES['math/tex'].open + formula + LANGUAGES['math/tex'].close);
         GENTICS.Utils.Dom.removeRange(range);
         GENTICS.Utils.Dom.insertIntoDOM($el, range, Aloha.activeEditable.obj);
         return triggerMathJax($el, function() {
-          addAnnotation($el, formula, 'math/asciimath');
+          addAnnotation($el, formula, 'math/tex');
           makeCloseIcon($el);
           Aloha.Selection.preventSelectionChanged();
           placeCursorAfter($el);
@@ -220,6 +220,8 @@
         return cleanupFormula($editor, $span, true);
       });
       $formula = $editor.find('.formula');
+      mimeType = $span.find('script[type]').attr('type') || 'math/tex';
+      mimeType = mimeType.split(';')[0];
       $mml = $span.children('.mathml-wrapper').children();
       $mmlAnnotation = $mml.find('annotation');
       mimeType = $mmlAnnotation.attr('encoding');

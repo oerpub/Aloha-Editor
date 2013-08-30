@@ -14,6 +14,7 @@ body { counter-reset: equation; }
 .aloha-oer-block.equation:after {
     content: '(' counter(equation) ')';
     float: right;
+    margin-right: 20px;
 }
 
 .aloha-oer-block.equation p {
