@@ -135,7 +135,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
   Aloha.bind 'aloha-editable-created', (evt, editable) ->
 
     # only process math if it is the editor editable that is being created
-    if editable.obj.not('.aloha-root-editable')
+    if editable.obj.is(':not(.aloha-root-editable)')
       return
 
     # Bind ctrl+m to math insert/mathify
