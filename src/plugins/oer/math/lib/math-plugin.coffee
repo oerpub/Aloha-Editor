@@ -133,6 +133,11 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
       console?.warn($el, 'has no associated Jax. Does this happen too often?')
 
   Aloha.bind 'aloha-editable-created', (evt, editable) ->
+
+    # only process math if it is the editor editable that is being created
+    if editable.obj.not('.aloha-root-editable')
+      return
+
     # Bind ctrl+m to math insert/mathify
     editable.obj.bind 'keydown', 'ctrl+m', (evt) ->
       insertMath()
@@ -170,8 +175,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
               addAnnotation $mathElement, mathParts.formula, mathParts.mimeType
             makeCloseIcon $mathElement
 
-
-      setTimeout processSomeMath, 50
+        setTimeout processSomeMath, 50
 
     if maths.length
       console.log("DEBUG: Start: Typesetting math in editable: #{$maths.length }") if $maths.length > 0

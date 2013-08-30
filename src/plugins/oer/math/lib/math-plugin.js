@@ -74,6 +74,9 @@
     };
     Aloha.bind('aloha-editable-created', function(evt, editable) {
       var $maths, $mathsAlreadyHandled, maths, processSomeMath;
+      if (editable.obj.not('.aloha-root-editable')) {
+        return;
+      }
       editable.obj.bind('keydown', 'ctrl+m', function(evt) {
         insertMath();
         return evt.preventDefault();
@@ -84,10 +87,11 @@
       $maths.wrap('<span class="math-element aloha-ephemera-wrapper"><span class="mathjax-wrapper aloha-ephemera"></span></span>');
       maths = $maths.toArray();
       processSomeMath = function() {
-        var $mathElement, $mml, i, mathParts, _i;
+        var $mathElement, $mml, i, mathParts, _i, _results;
         if (!maths.length) {
           return console.log("DEBUG: End: Typesetting math in editable");
         }
+        _results = [];
         for (i = _i = 0; _i <= 20; i = ++_i) {
           if (maths.length) {
             $mml = $(maths.shift());
@@ -101,8 +105,9 @@
               return makeCloseIcon($mathElement);
             });
           }
+          _results.push(setTimeout(processSomeMath, 50));
         }
-        return setTimeout(processSomeMath, 50);
+        return _results;
       };
       if (maths.length) {
         if ($maths.length > 0) {
