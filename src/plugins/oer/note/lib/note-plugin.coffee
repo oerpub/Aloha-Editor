@@ -131,7 +131,6 @@ define [
           else
             element.remove()
       $body = $body.contents()
-      #$body = $body.wrap('<p></p>').parent() if hasTextChildren
 
       $element.children('.body').remove()
       
