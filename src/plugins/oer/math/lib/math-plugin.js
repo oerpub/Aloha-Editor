@@ -74,7 +74,7 @@
     };
     Aloha.bind('aloha-editable-created', function(evt, editable) {
       var $maths, $mathsAlreadyHandled, maths, processSomeMath;
-      if (editable.obj.not('.aloha-root-editable')) {
+      if (editable.obj.is(':not(.aloha-root-editable)')) {
         return;
       }
       editable.obj.bind('keydown', 'ctrl+m', function(evt) {
