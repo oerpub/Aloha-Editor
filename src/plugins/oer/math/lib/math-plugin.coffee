@@ -166,10 +166,10 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
           $mathElement = $mml.parent().parent()
           # replace the MathML with ASCII/LaTeX formula if possible
           mathParts = findFormula $mml
-          # if mathParts.mimeType in MATHML_ANNOTATION_MIME_ENCODINGS
-          #   $mathElement.find('.mathjax-wrapper').text(LANGUAGES[mathParts.mimeType].open +
-          #                                              mathParts.formula +
-          #                                              LANGUAGES[mathParts.mimeType].close)
+          if mathParts.mimeType in MATHML_ANNOTATION_MIME_ENCODINGS
+            $mathElement.find('.mathjax-wrapper').text(LANGUAGES[mathParts.mimeType].open +
+                                                       mathParts.formula +
+                                                       LANGUAGES[mathParts.mimeType].close)
           triggerMathJax $mathElement, false, ->
             if mathParts.mimeType in MATHML_ANNOTATION_MIME_ENCODINGS
               addAnnotation $mathElement, mathParts.formula, mathParts.mimeType
@@ -180,20 +180,6 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
     if maths.length
       console.log("DEBUG: Start: Typesetting math in editable: #{$maths.length }") if $maths.length > 0
       processSomeMath()
-
-    # jQuery.each $maths, (i, mml) ->
-    #   $mml = jQuery(mml)
-    #   $mathElement = $mml.parent().parent()
-    #   # replace the MathML with ASCII/LaTeX formula if possible
-    #   mathParts = findFormula $mml
-    #   # if mathParts.mimeType in MATHML_ANNOTATION_MIME_ENCODINGS
-    #   #   $mathElement.find('.mathjax-wrapper').text(LANGUAGES[mathParts.mimeType].open +
-    #   #                                              mathParts.formula +
-    #   #                                              LANGUAGES[mathParts.mimeType].close)
-    #   triggerMathJax $mathElement, false, ->
-    #     if mathParts.mimeType in MATHML_ANNOTATION_MIME_ENCODINGS
-    #       addAnnotation $mathElement, mathParts.formula, mathParts.mimeType
-    #     makeCloseIcon $mathElement
 
     # What to when user clicks on math
     jQuery(editable.obj).on 'click.matheditor', '.math-element, .math-element *', (evt) ->
