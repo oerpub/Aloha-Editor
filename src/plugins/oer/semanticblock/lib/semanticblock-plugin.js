@@ -150,8 +150,10 @@
       var $body, $title, matched, type, _i, _len;
       if (!($element.is('.semantic-container') || ($element.is('.alternates') && $element.parents('figure').length))) {
         $element.addClass('aloha-oer-block');
-        $('<p class="aloha-oer-ephemera-if-empty"></p>').insertBefore($element);
-        $('<p class="aloha-oer-ephemera-if-empty"></p>').insertAfter($element);
+        if ($element.parent().is('aloha-editable')) {
+          $('<p class="aloha-oer-ephemera-if-empty"></p>').insertBefore($element);
+          $('<p class="aloha-oer-ephemera-if-empty"></p>').insertAfter($element);
+        }
         $element.wrap(blockTemplate).parent().append(blockControls.clone()).alohaBlock();
         for (_i = 0, _len = registeredTypes.length; _i < _len; _i++) {
           type = registeredTypes[_i];
