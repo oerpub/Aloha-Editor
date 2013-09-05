@@ -52,7 +52,7 @@ define [
       jQuery('<div>')
         .addClass('exercise-controls')
         .addClass('aloha-ephemera')
-        .append('<span class="add-exercise btn-link">Click here to add an exercise</span>')
+        .append('<span class="add-exercise btn-link">Click here to add a part</span>')
         .appendTo($element)
 
     deactivate = ($element) ->

@@ -7,9 +7,21 @@
     display: none !important; 
 }
 
-.multipart, .problemset {
+.multipart > .header,
+.problemset > .header {
+    margin-left: 20px;
+}
+
+.multipart,
+.problemset {
     min-height: 50px;
     counter-reset: problems;
+}
+
+.multipart > .semantic-container,
+.problemset > .semantic-container {
+    margin: 0;
+    padding: 0;
 }
 
 .multipart .exercise-controls,
@@ -31,9 +43,15 @@
 .multipart > .semantic-container > .exercise > .problem:not(:empty):before,
 .problemset > .semantic-container > .exercise > .problem:not(:empty):before {
     counter-increment: problems;
-    content: counter(problems, upper-latin) ')';
+    content: counter(problems, lower-latin) ')';
     margin-right: 5px;
     float: left;
     font-weight: bold;
     color: #369;
 }
+
+.multipart > .semantic-container > .exercise > .solutions > .semantic-container,
+.problemset > .semantic-container > .exercise > .solutions > .semantic-container {
+    border: 0px;
+}
+

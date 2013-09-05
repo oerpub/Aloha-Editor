@@ -21,7 +21,7 @@
       $header.empty().remove();
       $body = $('<div>').addClass('header').addClass('aloha-block-dropzone').attr('placeholder', "Type the text of your header here.").prependTo($element).aloha().append($contents);
       $typeContainer.prependTo($element);
-      return jQuery('<div>').addClass('exercise-controls').addClass('aloha-ephemera').append('<span class="add-exercise btn-link">Click here to add an exercise</span>').appendTo($element);
+      return jQuery('<div>').addClass('exercise-controls').addClass('aloha-ephemera').append('<span class="add-exercise btn-link">Click here to add a part</span>').appendTo($element);
     };
     deactivate = function($element) {};
     return Plugin.create('multipart', {

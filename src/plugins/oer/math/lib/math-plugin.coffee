@@ -133,6 +133,11 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
       console?.warn($el, 'has no associated Jax. Does this happen too often?')
 
   Aloha.bind 'aloha-editable-created', (evt, editable) ->
+
+    # only process math if it is the editor editable that is being created
+    if editable.obj.is(':not(.aloha-root-editable)')
+      return
+
     # Bind ctrl+m to math insert/mathify
     editable.obj.bind 'keydown', 'ctrl+m', (evt) ->
       insertMath()
@@ -140,22 +145,41 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
 
     # STEP1
     $maths = editable.obj.find('math')
+
+    # Remove all math elements in nested editables. They will be handled by the nested editable
+    $mathsAlreadyHandled = editable.obj.find('.math-element.aloha-ephemera-wrapper math')
+
+    $maths = $maths.not($mathsAlreadyHandled)
+
     $maths.wrap '<span class="math-element aloha-ephemera-wrapper"><span class="mathjax-wrapper aloha-ephemera"></span></span>'
 
-    # TODO: Explicitly call Mathjax Typeset
-    jQuery.each $maths, (i, mml) ->
-      $mml = jQuery(mml)
-      $mathElement = $mml.parent().parent()
-      # replace the MathML with ASCII/LaTeX formula if possible
-      mathParts = findFormula $mml
-      if mathParts.mimeType in MATHML_ANNOTATION_MIME_ENCODINGS
-        $mathElement.find('.mathjax-wrapper').text(LANGUAGES[mathParts.mimeType].open +
-                                                   mathParts.formula +
-                                                   LANGUAGES[mathParts.mimeType].close)
-      triggerMathJax $mathElement, ->
-        if mathParts.mimeType in MATHML_ANNOTATION_MIME_ENCODINGS
-          addAnnotation $mathElement, mathParts.formula, mathParts.mimeType
-        makeCloseIcon $mathElement
+    # Trigger Mathjax Typesetting on blocks of the math elements so the page is still responsive
+    maths = $maths.toArray()
+    processSomeMath = () ->
+      return console.log("DEBUG: End: Typesetting math in editable") if not maths.length
+
+      # Pull off the next batch items and typeset them
+      for i in [0..20]
+        if maths.length
+          $mml = $(maths.shift())
+
+          $mathElement = $mml.parent().parent()
+          # replace the MathML with ASCII/LaTeX formula if possible
+          mathParts = findFormula $mml
+          if mathParts.mimeType in MATHML_ANNOTATION_MIME_ENCODINGS
+            $mathElement.find('.mathjax-wrapper').text(LANGUAGES[mathParts.mimeType].open +
+                                                       mathParts.formula +
+                                                       LANGUAGES[mathParts.mimeType].close)
+          triggerMathJax $mathElement, false, ->
+            if mathParts.mimeType in MATHML_ANNOTATION_MIME_ENCODINGS
+              addAnnotation $mathElement, mathParts.formula, mathParts.mimeType
+            makeCloseIcon $mathElement
+
+        setTimeout processSomeMath, 50
+
+    if maths.length
+      console.log("DEBUG: Start: Typesetting math in editable: #{$maths.length }") if $maths.length > 0
+      processSomeMath()
 
     # What to when user clicks on math
     jQuery(editable.obj).on 'click.matheditor', '.math-element, .math-element *', (evt) ->
