@@ -1,4 +1,4 @@
-define ['aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', 'PubSub'], (Aloha, Plugin, jQuery, UI, Button, PubSub) ->
+define ['aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', 'PubSub', './path'], (Aloha, Plugin, jQuery, UI, Button, PubSub, Path) ->
    
   buffer = ''
   srcpath = null
