@@ -1,19 +1,38 @@
 define ['aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', 'PubSub'], (Aloha, Plugin, jQuery, UI, Button, PubSub) ->
    
   buffer = ''
+  srcpath = null
  
   Plugin.create 'copy',
+    getCurrentPath: ->
+      # When copy/pasting html, the images contained therein might have
+      # paths relative to that document. Precisely how the path is represented
+      # will differ between implementations, so this plugin simply assumes that
+      # no path translation needs to be done, unless an alternative is
+      # configured.
+      if @settings.path
+        return @settings.path()
+      return null
+
     getBuffer: ->
       if localStorage
         return localStorage.alohaOerCopyBuffer
       else
         return buffer
 
-    buffer: (content) ->
+    getSrcPath: ->
+      if localStorage
+        return localStorage.alohaOerCopySrcPath
+      else
+        return srcpath
+
+    buffer: (content, path) ->
       buffer = content
       buffer = buffer.replace /id="[^"]+"/, ''
+      srcpath = path
 
       localStorage.alohaOerCopyBuffer = buffer if localStorage
+      localStorage.alohaOerCopySrcPath = srcpath if localStorage
 
       jQuery('.action.paste').fadeIn('fast')
 
@@ -46,6 +65,20 @@ define ['aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', 'PubSub'], (Alo
           e.preventDefault()
           range = Aloha.Selection.getRangeObject()
           $elements = jQuery plugin.getBuffer()
+
+          dstpath = plugin.getCurrentPath()
+          if dstpath != null
+            dstpath = Path.dirname dstpath
+            srcpath = Path.dirname plugin.getSrcPath()
+
+            if srcpath != dstpath
+              $elements.find('img').each (idx, ob) ->
+                imgpath = jQuery(ob).attr('data-src')
+                if not Path.isabs imgpath
+                  uri = Path.normpath srcpath + '/' + imgpath
+                  newuri = Path.relpath(uri, dstpath)
+                  jQuery(ob).attr('data-src', newuri)
+
           GENTICS.Utils.Dom.insertIntoDOM $elements, range, Aloha.activeEditable.obj
 
       @copybutton = UI.adopt "copy", Button,
@@ -61,7 +94,12 @@ define ['aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', 'PubSub'], (Alo
             $elements = $element.nextUntil(selector).andSelf()
           html = ''
           html += jQuery(element).outerHtml() for element in $elements
-          plugin.buffer html
+
+          path = plugin.getCurrentPath()
+          if path != null
+            plugin.buffer html, path
+          else
+            plugin.buffer html
 
       Aloha.bind 'aloha-editable-created', () =>
         # Disable paste button if there is no content to be pasted
