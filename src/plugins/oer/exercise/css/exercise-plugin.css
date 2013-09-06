@@ -1,7 +1,8 @@
 .semantic-drag-source .exercise:before {
     content: "Exercise";
 }
-.exercise {
+
+.exercise.aloha-oer-block {
     min-height: 50px;
     border: 0 !important;
     padding: 0 !important;
