@@ -69,13 +69,19 @@
               dstpath = Path.dirname(dstpath);
               srcpath = Path.dirname(plugin.getSrcPath());
               if (srcpath !== dstpath) {
+                console.log("Rewriting images, src=" + srcpath + ", dst=" + dstpath);
                 $elements.find('img').each(function(idx, ob) {
                   var imgpath, newuri, uri;
                   imgpath = jQuery(ob).attr('data-src');
                   if (!Path.isabs(imgpath)) {
                     uri = Path.normpath(srcpath + '/' + imgpath);
                     newuri = Path.relpath(uri, dstpath);
+                    console.log("Rewriting " + imgpath);
+                    console.log("Absolute location is " + uri);
+                    console.log("Rewritten relative to " + dstpath + " = " + newuri);
                     return jQuery(ob).attr('data-src', newuri);
+                  } else {
+                    return console.log("Image path already absolute: " + imgpath);
                   }
                 });
               }

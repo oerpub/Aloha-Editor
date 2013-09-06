@@ -72,12 +72,18 @@ define ['aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', 'PubSub', './pa
             srcpath = Path.dirname plugin.getSrcPath()
 
             if srcpath != dstpath
+              console.log "Rewriting images, src=#{srcpath}, dst=#{dstpath}"
               $elements.find('img').each (idx, ob) ->
                 imgpath = jQuery(ob).attr('data-src')
                 if not Path.isabs imgpath
                   uri = Path.normpath srcpath + '/' + imgpath
                   newuri = Path.relpath(uri, dstpath)
+                  console.log "Rewriting #{imgpath}"
+                  console.log "Absolute location is #{uri}"
+                  console.log "Rewritten relative to #{dstpath} = #{newuri}"
                   jQuery(ob).attr('data-src', newuri)
+                else
+                  console.log "Image path already absolute: #{imgpath}"
 
           GENTICS.Utils.Dom.insertIntoDOM $elements, range, Aloha.activeEditable.obj
 
