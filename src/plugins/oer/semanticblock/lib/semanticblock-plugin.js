@@ -65,7 +65,7 @@
         callback: function(e) {
           var $element;
           $element = jQuery(this).parents('.semantic-container').first();
-          return Copy.buffer($element.outerHtml());
+          return Copy.buffer($element.outerHtml(), Copy.getCurrentPath());
         }
       }, {
         name: 'click',
