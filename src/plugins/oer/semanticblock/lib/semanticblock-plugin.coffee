@@ -82,7 +82,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
     callback: (e) ->
       # grab the content of the block that was just clicked
       $element = jQuery(this).parents('.semantic-container').first()
-      Copy.buffer $element.outerHtml()
+      Copy.buffer $element.outerHtml(), Copy.getCurrentPath()
   ,
     name: 'click'
     selector: '.semantic-container .semantic-settings'

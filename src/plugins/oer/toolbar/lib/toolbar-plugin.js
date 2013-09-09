@@ -29,22 +29,27 @@
         };
 
         ItemRelay.prototype.enable = function(bool) {
+          var btn, evt;
           if (bool == null) {
             bool = true;
           }
-          if ($ROOT.find(".action." + slot).is('.btn')) {
-            if (!bool) {
-              $ROOT.find(".action." + slot).attr('disabled', 'disabled');
-            }
+          btn = $ROOT.find(".action." + slot);
+          evt = $.Event(bool && 'enable-action' || 'disable-action');
+          btn.trigger(evt);
+          if (evt.isDefaultPrevented()) {
+            return;
+          }
+          if (btn.is('.btn')) {
             if (bool) {
-              return $ROOT.find(".action." + slot).removeAttr('disabled');
+              return btn.removeAttr('disabled');
+            } else {
+              return btn.attr('disabled', 'disabled');
             }
           } else {
-            if (!bool) {
-              $ROOT.find(".action." + slot).parent().addClass('disabled');
-            }
             if (bool) {
-              return $ROOT.find(".action." + slot).parent().removeClass('disabled');
+              return btn.parent().removeClass('disabled');
+            } else {
+              return btn.parent().addClass('disabled');
             }
           }
         };
@@ -131,8 +136,7 @@
         }
       },
       init: function() {
-        var changeHeading, focusHeading, toolbar,
-          _this = this;
+        var changeHeading, toolbar;
         toolbar = this;
         formats = this.settings.formats;
         jQuery.extend(toolbar.settings, this.defaults);
@@ -151,30 +155,6 @@
           $newEl = Aloha.jQuery(Aloha.Selection.getRangeObject().getCommonAncestorContainer());
           return $newEl.addClass($oldEl.attr('class'));
         };
-        focusHeading = null;
-        Aloha.bind('aloha-selection-changed', function(e, params) {
-          if (params.startOffset === params.endOffset && jQuery(params.startContainer).parents('h1,h2,h3').length) {
-            focusHeading = jQuery(params.startContainer).parents('h1,h2,h3').first();
-            return jQuery('.action.copy').fadeIn('fast');
-          } else {
-            return jQuery('.action.copy').fadeOut('fast');
-          }
-        });
-        toolbar.adopt("copy", Button, {
-          click: function(e) {
-            var $element, $elements, element, html, selector, _i, _len;
-            e.preventDefault();
-            $element = focusHeading;
-            selector = "h1,h2,h3".substr(0, "h1,h2,h3".indexOf($element[0].nodeName.toLowerCase()) + 2);
-            $elements = $element.nextUntil(selector).addBack();
-            html = '';
-            for (_i = 0, _len = $elements.length; _i < _len; _i++) {
-              element = $elements[_i];
-              html += jQuery(element).outerHtml();
-            }
-            return Copy.buffer(html);
-          }
-        });
         $ROOT.on('click', '.action.changeHeading', changeHeading);
         $ROOT.on('mousedown', ".action", function(evt) {
           return evt.stopPropagation();
