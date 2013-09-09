@@ -38,14 +38,11 @@ define [
 
       $header = $element.children('.header')
       $contents = $header.contents()
-      $header.empty().remove()
-      $body = $('<div>')
-        .addClass('header')
+
+      $header
         .addClass('aloha-block-dropzone')
         .attr('placeholder', "Type the text of your header here.")
-        .prependTo($element)
         .aloha()
-        .append($contents)
       
       $typeContainer.prependTo($element)
 
