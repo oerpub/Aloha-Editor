@@ -216,7 +216,7 @@ define [ 'aloha', 'jquery', 'css!../../../oer/overlay/css/popover.css' ], (Aloha
 
   Popover =
     MILLISECS: 2000
-    register: (cfg) -> bindHelper(new Helper(cfg))
+    register: (cfg) -> bindHelper(cfg)
 
   class Helper
     constructor: (cfg) ->

@@ -194,7 +194,7 @@ There are 3 variables that are stored on each element;
     Popover = {
       MILLISECS: 2000,
       register: function(cfg) {
-        return bindHelper(new Helper(cfg));
+        return bindHelper(cfg);
       }
     };
     Helper = (function() {
