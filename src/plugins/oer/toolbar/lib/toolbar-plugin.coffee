@@ -91,10 +91,11 @@ define [ 'jquery', 'aloha', 'aloha/plugin', 'PubSub', 'ui/button' ], (
     defaults: {
       defaultFormat: 'p'
       formats:
-        'p':  'Normal Text'
-        'h1': 'Heading'
-        'h2': 'Subheading'
-        'h3': 'SubSubHeading'
+        'p':   'Normal Text'
+        'pre': 'Code'
+        'h1':  'Heading'
+        'h2':  'Subheading'
+        'h3':  'SubSubHeading'
     }
     init: ->
       toolbar = @
