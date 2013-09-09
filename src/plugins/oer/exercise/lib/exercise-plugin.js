@@ -6,7 +6,7 @@
     TEMPLATE = '<div class="exercise">\n    <div class="problem"></div>\n</div>';
     SOLUTION_TEMPLATE = '<div class="solution">\n</div>';
     TYPE_CONTAINER = '<div class="type-container dropdown aloha-ephemera">\n    <span class="type btn-link" data-toggle="dropdown"></span>\n    <ul class="dropdown-menu">\n        <li><span class="btn-link" data-type="">Exercise</span></li>\n        <li><span class="btn-link" data-type="homework">Homework</span></li>\n        <li><span class="btn-link" data-type="problem">Problem</span></li>\n        <li><span class="btn-link" data-type="question">Question</span></li>\n        <li><span class="btn-link" data-type="task">Task</span></li>\n        <li><span class="btn-link" data-type="Worked Example">Worked Example</span></li>\n    </ul>\n</div>';
-    SOLUTION_TYPE_CONTAINER = '<div class="type-container dropdown aloha-ephemera">\n    <span class="type btn-link" data-toggle="dropdown"></span>\n    <ul class="dropdown-menu">\n        <li><span class="btn-link">Answer</span></li>\n        <li><span class="btn-link">Solution</span></li>\n    </ul>\n</div>';
+    SOLUTION_TYPE_CONTAINER = '<div class="type-container dropdown aloha-ephemera">\n    <span class="type btn-link" data-toggle="dropdown"></span>\n    <ul class="dropdown-menu">\n        <li><span class="btn-link" data-type="answer">Answer</span></li>\n        <li><span class="btn-link" data-type="solution">Solution</span></li>\n    </ul>\n</div>';
     activateExercise = function($element) {
       var $content, $problem, $solutions, $typeContainer, type,
         _this = this;
@@ -134,7 +134,7 @@
           $el.parents('.type-container').find('.dropdown-menu li').each(function(i, li) {
             return jQuery(li).removeClass('checked');
           });
-          return $el.parents('li').first().addclass('checked');
+          return $el.parents('li').first().addClass('checked');
         });
       }
     });

@@ -34,8 +34,8 @@ define [
         <div class="type-container dropdown aloha-ephemera">
             <span class="type btn-link" data-toggle="dropdown"></span>
             <ul class="dropdown-menu">
-                <li><span class="btn-link">Answer</span></li>
-                <li><span class="btn-link">Solution</span></li>
+                <li><span class="btn-link" data-type="answer">Answer</span></li>
+                <li><span class="btn-link" data-type="solution">Solution</span></li>
             </ul>
         </div>
     '''
@@ -188,6 +188,6 @@ define [
 
           $el.parents('.type-container').find('.dropdown-menu li').each (i, li) =>
             jQuery(li).removeClass('checked')
-          $el.parents('li').first().addclass('checked')
+          $el.parents('li').first().addClass('checked')
         )
     })
