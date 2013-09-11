@@ -160,7 +160,8 @@ define [
 
           controls.children('.solution-toggle').text('hide solution').show()
 
-          semanticBlock.appendElement($(SOLUTION_TEMPLATE), exercise.children('.solutions'))
+          semanticBlock.appendElement $(SOLUTION_TEMPLATE), exercise.children('.solutions'),
+            buttons: ['settings']
         )
         semanticBlock.registerEvent('click', '.exercise .solution-controls .solution-toggle', () ->
           exercise = $(this).parents('.exercise').first()
