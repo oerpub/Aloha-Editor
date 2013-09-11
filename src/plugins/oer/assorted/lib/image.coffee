@@ -3,19 +3,19 @@
 # * This plugin handles when the insertImage button is clicked and provides a bubble next to an image when it is selected
 #
 define [
-  'aloha', 
-  'jquery', 
-  'aloha/plugin', 
-  'image/image-plugin', 
-  'ui/ui', 
-  'semanticblock/semanticblock-plugin', 
-  'css!assorted/css/image.css'], 
+  'aloha',
+  'jquery',
+  'aloha/plugin',
+  'image/image-plugin',
+  'ui/ui',
+  'semanticblock/semanticblock-plugin',
+  'css!assorted/css/image.css'],
 (
-  Aloha, 
-  jQuery, 
-  AlohaPlugin, 
-  Image, 
-  UI, 
+  Aloha,
+  jQuery,
+  AlohaPlugin,
+  Image,
+  UI,
   semanticBlock) ->
 
   # This will be prefixed with Aloha.settings.baseUrl
@@ -56,16 +56,6 @@ define [
             <strong>Image caption:</strong><input class="image-caption" type="text" placeholder="Shows up below image"></input>
           </div>
         </div>
-        <!-- SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY -->
-        <div class="sprint-only">
-          <div>
-            <strong>Image width:</strong><input class="image-width" type="text" style="width: 465px; height: 16px;"></input>
-          </div>
-          <div>
-            <strong>Image height:</strong><input class="image-height" type="text" style="width: 460px; height: 16px;"></input>
-          </div>
-        </div>
-        <!-- SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY -->
         <div class="image-alt">
           <div class="forminfo">
             <i class="icon-warning"></i><strong>Describe the image for someone who cannot see it.</strong> This description can be read aloud, making it possible for visually impaired learners to understand the content.
@@ -198,25 +188,6 @@ define [
         dialog.find('.figure-options').hide()
         dialog.find('.btn-primary').text('Save')
 
-      # SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY 
-      # SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY 
-      dialog.find('.sprint-only').hide()
-      code_for_spring = true
-      if editing and code_for_spring
-        dialog.find('.figure-options').show()
-        dialog.find('.btn-primary').text('Next')
-        if $title and $title.text()
-          dialog.find('.figure-options input.image-title').val $title.text()
-        if $caption and $caption.text()
-          dialog.find('.figure-options input.image-caption').val $caption.text()
-        dialog.find('.sprint-only').show()
-        if $img.attr('width')
-          dialog.find('.sprint-only input.image-width').val $img.attr('width')
-        if $img.attr('height')
-          dialog.find('.sprint-only input.image-height').val $img.attr('height')
-      # SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY 
-      # SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY 
-
       # Set onerror of preview image
       ((img, baseurl) ->
         img.onerror = ->
@@ -290,22 +261,6 @@ define [
         if dialog.find('input.image-caption').val()
           $caption.html dialog.find('input.image-caption').val()
         # else probably should remove the $caption element
-
-        # SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY 
-        # SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY 
-        if dialog.find('.sprint-only input.image-width').val()
-          $img.attr 'width',  dialog.find('.sprint-only input.image-width').val()
-          $img.css 'width', dialog.find('.sprint-only input.image-width').val()
-        else
-          $img.removeAttr 'width'
-          $img.css 'width', ''
-
-        if dialog.find('.sprint-only input.image-height').val()
-          $img.attr 'height', dialog.find('.sprint-only input.image-height').val()
-        else
-          $img.removeAttr 'height'
-        # SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY 
-        # SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY 
 
         if altAdded
           setThankYou $el.parent()
@@ -458,8 +413,7 @@ define [
     
     source_this_image_dialog = ()=>
       editing = false
-      next_promise = showModalDialog2($figure, $img, $dialog, editing)
-      return next_promise
+      return showModalDialog2($figure, $img, $dialog, editing)
 
     promise.then( (data)=>
       # upload image, if a local file was chosen
@@ -483,10 +437,16 @@ define [
   $('body').bind 'aloha-image-resize', ->
     setWidth Image.imageObj
 
+  getWidth = ($image) ->
+    image = $image.get(0)
+    if image
+      return image.naturalWidth or image.width
+    return 0
+
   setWidth = (image) ->
     wrapper = image.parents('.image-wrapper')
     if wrapper.length
-      wrapper.css('width', image.css('width'))
+      wrapper.width(getWidth(image)+16)
 
   setThankYou = (wrapper) ->
     editDiv = wrapper.children('.image-edit')
@@ -507,15 +467,25 @@ define [
           editDiv.find('.warning-text').text('Description missing')
 
   activate = (element) ->
-    wrapper = $('<div class="image-wrapper aloha-ephemera-wrapper">').css('width', element.css('width'))
+    $img = element.find('img')
+    wrapper = $('<div class="image-wrapper aloha-ephemera-wrapper">')
     edit = $('<div class="image-edit aloha-ephemera">')
 
-    element.find('img').wrap(wrapper)
+    $img.wrap(wrapper)
+    setWidth($img)
 
     element.prepend('<div class="title"></div>') if not element.find('.title').length
     element.append('<figcaption></figcaption>') if not element.find('figcaption').length
 
     setEditText element.find('.image-wrapper').prepend(edit)
+
+    # For images, make sure the load event fires. For images loaded from cache,
+    # this might not happen.
+    $img.one 'load', () ->
+      setWidth $(this)
+    .each () ->
+      $(this).load() if this.complete
+
     element.find('img').load ->
       setWidth $(this)
 
@@ -544,30 +514,10 @@ define [
         $img    = blob.img
 
         promise.show('Edit image')
-        # SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY 
-        # SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY 
-        code_for_spring = true
-        if code_for_spring
-          source_this_image_dialog = ()=>
-            editing = true
-            next_promise = showModalDialog2($figure, $img, $dialog, editing)
-            return next_promise
-          # once we start using jQuery 1.8+, promise.then() will return a new promise and we can rewrite this as :
-          #     when(promise).then(...).then(source_this_image_dialog).then(...)
-          promise.then(  (data)=>
-            promise2 = source_this_image_dialog()
-            promise2.then( ()=>
-              # hide the dialog on the way out
-              $dialog.modal 'hide'
-            )
-          )
-        else
-          promise.then(  (data)=>
-            # hide the dialog on the way out
-            $dialog.modal 'hide'
-          )
-        # SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY 
-        # SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY SPRINT ONLY 
+        promise.then  (data)=>
+          # hide the dialog on the way out
+          $dialog.modal 'hide'
+
         return
       return
 
