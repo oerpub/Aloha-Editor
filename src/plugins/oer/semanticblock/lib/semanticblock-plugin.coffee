@@ -148,7 +148,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       if $element.is(type.selector)
         return type.getLabel $element
 
-  activate = ($element) ->
+  activate = ($element, options) ->
     unless $element.is('.semantic-container') or ($element.is('.alternates') and $element.parents('figure').length)
       $element.addClass 'aloha-oer-block'
 
@@ -156,7 +156,16 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       $('<p class="aloha-oer-ephemera-if-empty"></p>').insertBefore($element)
       $('<p class="aloha-oer-ephemera-if-empty"></p>').insertAfter($element)
 
-      $element.wrap(blockTemplate).parent().append(blockControls.clone()).alohaBlock()
+      # If options were passed, check which buttons are wanted
+      if options and options.buttons
+        controls = blockControls.clone()
+        # We deliberately don't allow people to drop the delete button. At
+        # least until we know whether that is even needed!
+        controls.find('button.semantic-settings').remove() if 'settings' not in options.buttons
+        controls.find('button.copy').remove() if 'copy' not in options.buttons
+        $element.wrap(blockTemplate).parent().append(controls).alohaBlock()
+      else
+        $element.wrap(blockTemplate).parent().append(blockControls.clone()).alohaBlock()
  
       for type in registeredTypes
         if $element.is(type.selector)
@@ -312,11 +321,11 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       $element = Aloha.jQuery('.semantic-temp').removeClass('semantic-temp')
       activate $element
 
-    appendElement: ($element, target) ->
+    appendElement: ($element, target, options) ->
       $element.addClass 'semantic-temp'
       target.append $element
       $element = Aloha.jQuery('.semantic-temp').removeClass('semantic-temp')
-      activate $element
+      activate $element, options
 
     register: (plugin) ->
       registeredTypes.push(plugin)
