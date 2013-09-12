@@ -178,7 +178,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       $title.attr('hover-placeholder', 'Add a title')
       $title.aloha()
 
-      $body = $element.children().not($title)
+      $body = $element.contents().not($title)
 
       jQuery('<div>')
         .addClass('body')
@@ -201,7 +201,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       .mahalo()
       .removeClass('aloha-editable aloha-block-blocklevel-sortable ui-sortable')
       .removeAttr('hover-placeholder')
-    $element.children('.body').children().unwrap()
+    $element.children('.body').contents().unwrap()
     $element.attr('data-unknown', 'true')
 
   bindEvents = (element) ->
@@ -259,7 +259,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
 
       Ephemera.ephemera().pruneFns.push (node) ->
         jQuery(node)
-          .removeClass('aloha-block-dropzone aloha-editable aloha-block-blocklevel-sortable ui-sortable')
+          .removeClass('aloha-block-dropzone aloha-editable-active aloha-editable aloha-block-blocklevel-sortable ui-sortable')
           .removeAttr('contenteditable placeholder')
           .get(0)
 

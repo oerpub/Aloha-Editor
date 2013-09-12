@@ -172,7 +172,7 @@
         $title = $element.children('.title').first();
         $title.attr('hover-placeholder', 'Add a title');
         $title.aloha();
-        $body = $element.children().not($title);
+        $body = $element.contents().not($title);
         return jQuery('<div>').addClass('body').addClass('aloha-block-dropzone').appendTo($element).aloha().append($body);
       }
     };
@@ -188,7 +188,7 @@
         }
       }
       $title = $element.children('.title').first().mahalo().removeClass('aloha-editable aloha-block-blocklevel-sortable ui-sortable').removeAttr('hover-placeholder');
-      $element.children('.body').children().unwrap();
+      $element.children('.body').contents().unwrap();
       return $element.attr('data-unknown', 'true');
     };
     bindEvents = function(element) {
@@ -257,7 +257,7 @@
       init: function() {
         var _this = this;
         Ephemera.ephemera().pruneFns.push(function(node) {
-          return jQuery(node).removeClass('aloha-block-dropzone aloha-editable aloha-block-blocklevel-sortable ui-sortable').removeAttr('contenteditable placeholder').get(0);
+          return jQuery(node).removeClass('aloha-block-dropzone aloha-editable-active aloha-editable aloha-block-blocklevel-sortable ui-sortable').removeAttr('contenteditable placeholder').get(0);
         });
         return Aloha.bind('aloha-editable-created', function(e, params) {
           var $root, classes, selector, type, _i, _len;
