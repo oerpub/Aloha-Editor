@@ -164,6 +164,8 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
           $mml = $(maths.shift())
 
           $mathElement = $mml.parent().parent()
+
+          $mml.clone().wrap('<span class="mathml-wrapper aloha-ephemera-wrapper"></span>').parent().appendTo($mathElement)
           # replace the MathML with ASCII/LaTeX formula if possible
           mathParts = findFormula $mml
           if mathParts.mimeType in MATHML_ANNOTATION_MIME_ENCODINGS

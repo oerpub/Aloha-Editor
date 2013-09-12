@@ -96,6 +96,7 @@
           if (maths.length) {
             $mml = $(maths.shift());
             $mathElement = $mml.parent().parent();
+            $mml.clone().wrap('<span class="mathml-wrapper aloha-ephemera-wrapper"></span>').parent().appendTo($mathElement);
             mathParts = findFormula($mml);
             if (_ref = mathParts.mimeType, __indexOf.call(MATHML_ANNOTATION_MIME_ENCODINGS, _ref) >= 0) {
               $mathElement.find('.mathjax-wrapper').text(LANGUAGES[mathParts.mimeType].open + mathParts.formula + LANGUAGES[mathParts.mimeType].close);
