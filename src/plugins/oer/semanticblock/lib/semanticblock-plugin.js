@@ -112,11 +112,14 @@
         name: 'mouseover',
         selector: '.semantic-container',
         callback: function() {
+          var elementName, wrapped;
           jQuery(this).parents('.semantic-container').removeClass('focused');
           if (!jQuery(this).find('.focused').length) {
             jQuery(this).addClass('focused');
           }
-          return jQuery(this).find('.aloha-block-handle').attr('title', 'Drag this element to another location.');
+          wrapped = jQuery(this).children('.aloha-oer-block').first();
+          elementName = wrapped.length && getLabel(wrapped).toLowerCase() || 'element';
+          return jQuery(this).find('.aloha-block-handle').attr('title', "Drag this " + elementName + " to another location.");
         }
       }, {
         name: 'mouseout',
