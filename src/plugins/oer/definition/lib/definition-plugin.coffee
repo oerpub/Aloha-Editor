@@ -20,7 +20,7 @@ define [
 
       $element.empty()
 
-      $('<div>')
+      jQuery('<div>')
         .text(term)
         .addClass('term')
         .attr('placeholder', 'Enter the term to be defined here')
@@ -28,7 +28,7 @@ define [
         .wrap('<div class="term-wrapper"></div>')
         .aloha()
       
-      $('<div>')
+      jQuery('<div>')
         .addClass('body')
         .addClass('aloha-block-dropzone')
         .attr('placeholder', "Type the definition here.")
@@ -42,11 +42,11 @@ define [
 
       $element.empty()
 
-      $('<dt>')
+      jQuery('<dt>')
         .text(term)
         .appendTo($element)
       
-      $('<dd>')
+      jQuery('<dd>')
         .html($definition)
         .appendTo($element)
 

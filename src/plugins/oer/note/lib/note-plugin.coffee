@@ -112,7 +112,7 @@ define [
           typeContainer.prependTo($element)
  
       # Create the body and add some placeholder text
-      $body = $('<div>')
+      $body = jQuery('<div>')
         .addClass('body')
         .addClass('aloha-block-dropzone')
         .attr('placeholder', "Type the text of your #{label.toLowerCase()} here.")
@@ -127,7 +127,7 @@ define [
       for element in $body.contents()
         if element.nodeName == '#text'
           if element.data.trim().length
-            $(element).wrap('<p></p>')
+            jQuery(element).wrap('<p></p>')
           else
             element.remove()
       $body = $body.contents()

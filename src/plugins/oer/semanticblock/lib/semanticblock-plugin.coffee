@@ -155,8 +155,8 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       $element.addClass 'aloha-oer-block'
 
       #add some paragraphs on either side so content can be added there easily
-      $('<p class="aloha-oer-ephemera-if-empty"></p>').insertBefore($element)
-      $('<p class="aloha-oer-ephemera-if-empty"></p>').insertAfter($element)
+      jQuery('<p class="aloha-oer-ephemera-if-empty"></p>').insertBefore($element)
+      jQuery('<p class="aloha-oer-ephemera-if-empty"></p>').insertAfter($element)
 
       $element.wrap(blockTemplate).parent().append(blockControls.clone()).alohaBlock()
  
@@ -257,7 +257,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
     init: ->
 
       Ephemera.ephemera().pruneFns.push (node) ->
-        $(node)
+        jQuery(node)
           .removeClass('aloha-block-dropzone aloha-editable aloha-block-blocklevel-sortable ui-sortable')
           .removeAttr('contenteditable placeholder')
           .get(0)

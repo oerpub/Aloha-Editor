@@ -76,10 +76,10 @@ define [
         semanticBlock.registerEvent('click', '.multipart .exercise-controls .add-exercise,
                                               .problemset .exercise-controls .add-exercise', ->
 
-          parent = $(@).parents(multipart.selector).first()
+          parent = jQuery(@).parents(multipart.selector).first()
           console.log(multipart.selector, parent)
           Exercise.appendTo(parent)
-          $(this).parents('.exercise-controls').appendTo(parent)
+          jQuery(this).parents('.exercise-controls').appendTo(parent)
         )
         semanticBlock.registerEvent('click', '.multipart > .type-container > ul > li > *,
                                               .problemset > .type-container > ul > li > *', (e) ->

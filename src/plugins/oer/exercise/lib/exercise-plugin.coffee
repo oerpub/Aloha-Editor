@@ -141,7 +141,7 @@ define [
           deactivateSolution($element)
     
       appendTo: (target) ->
-        semanticBlock.appendElement($(TEMPLATE), target)
+        semanticBlock.appendElement(jQuery(TEMPLATE), target)
         
 
       selector: '.exercise,.solution' #this plugin handles both exercises and solutions
@@ -155,15 +155,15 @@ define [
           click: -> semanticBlock.insertAtCursor(TEMPLATE)
 
         semanticBlock.registerEvent('click', '.exercise .solution-controls .add-solution', () ->
-          exercise = $(this).parents('.exercise').first()
+          exercise = jQuery(this).parents('.exercise').first()
           controls = exercise.children('.solution-controls')
 
           controls.children('.solution-toggle').text('hide solution').show()
 
-          semanticBlock.appendElement($(SOLUTION_TEMPLATE), exercise.children('.solutions'))
+          semanticBlock.appendElement(jQuery(SOLUTION_TEMPLATE), exercise.children('.solutions'))
         )
         semanticBlock.registerEvent('click', '.exercise .solution-controls .solution-toggle', () ->
-          exercise = $(this).parents('.exercise').first()
+          exercise = jQuery(this).parents('.exercise').first()
           controls = exercise.children('.solution-controls')
           solutions = exercise.children('.solutions')
 
@@ -175,7 +175,7 @@ define [
 
         )
         semanticBlock.registerEvent('click', '.exercise .semantic-delete', () ->
-          exercise = $(this).parents('.exercise').first()
+          exercise = jQuery(this).parents('.exercise').first()
           controls = exercise.children('.solution-controls')
           controls.children('.add-solution').show()
           controls.children('.solution-toggle').hide() if exercise.children('.solutions').children().length == 1

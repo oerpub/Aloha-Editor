@@ -110,7 +110,7 @@ define [
           typeContainer.prependTo($element)
       
       # Create the body and add some placeholder text
-      $('<div>')
+      jQuery('<div>')
         .addClass('body')
         .addClass('aloha-block-dropzone')
         .attr('placeholder', "Type the text of your #{label.toLowerCase()} here.")

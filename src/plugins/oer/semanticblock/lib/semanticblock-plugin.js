@@ -153,8 +153,8 @@
       var $body, $title, type, _i, _len;
       if (!($element.is('.semantic-container') || ($element.is('.alternates') && $element.parents('figure').length))) {
         $element.addClass('aloha-oer-block');
-        $('<p class="aloha-oer-ephemera-if-empty"></p>').insertBefore($element);
-        $('<p class="aloha-oer-ephemera-if-empty"></p>').insertAfter($element);
+        jQuery('<p class="aloha-oer-ephemera-if-empty"></p>').insertBefore($element);
+        jQuery('<p class="aloha-oer-ephemera-if-empty"></p>').insertAfter($element);
         $element.wrap(blockTemplate).parent().append(blockControls.clone()).alohaBlock();
         for (_i = 0, _len = registeredTypes.length; _i < _len; _i++) {
           type = registeredTypes[_i];
@@ -256,7 +256,7 @@
       init: function() {
         var _this = this;
         Ephemera.ephemera().pruneFns.push(function(node) {
-          return $(node).removeClass('aloha-block-dropzone aloha-editable aloha-block-blocklevel-sortable ui-sortable').removeAttr('contenteditable placeholder').get(0);
+          return jQuery(node).removeClass('aloha-block-dropzone aloha-editable aloha-block-blocklevel-sortable ui-sortable').removeAttr('contenteditable placeholder').get(0);
         });
         return Aloha.bind('aloha-editable-created', function(e, params) {
           var $root, classes, selector, type, _i, _len;
