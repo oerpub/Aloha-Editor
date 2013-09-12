@@ -13,6 +13,7 @@
     is never part of the DOM for serializing.
  */
 .semantic-container       *[placeholder]:empty:before {
+    font-weight: normal;
     content: attr(placeholder);
     color: #AAA;
     font-style: italic;
@@ -31,7 +32,7 @@
 }
 
 /* Make titles inline so they show up next to the type dropdown if there is one */
-.aloha-oer-block > .title { display: inline; }
+.aloha-oer-block > .title { display: inline-block; }
 
 .semantic-drag-helper {
     display: block;

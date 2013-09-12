@@ -6,7 +6,7 @@
     TEMPLATE = '<div class="multipart">\n    <div class="body"></div>\n</div>';
     TYPE_CONTAINER = '<div class="type-container dropdown aloha-ephemera">\n    <span class="type btn-link" data-toggle="dropdown"></span>\n    <ul class="dropdown-menu">\n        <li><span class="btn-link" data-type="Worked Example">Worked Example</span></li>\n        <li><span class="btn-link" data-type="homework">Homework</span></li>\n        <li><span class="btn-link" data-type="exercise">Exercise</span></li>\n    </ul>\n</div>';
     activate = function($element) {
-      var $body, $contents, $header, $typeContainer, type,
+      var $content, $header, $typeContainer, type,
         _this = this;
       type = $element.attr('data-type') || 'Worked Example';
       $typeContainer = jQuery(TYPE_CONTAINER);
@@ -17,9 +17,8 @@
         }
       });
       $header = $element.children('.header');
-      $contents = $header.contents();
-      $header.empty().remove();
-      $body = $('<div>').addClass('header').addClass('aloha-block-dropzone').attr('placeholder', "Type the text of your header here.").prependTo($element).aloha().append($contents);
+      $content = $header.contents();
+      $header.empty().addClass('aloha-block-dropzone').attr('placeholder', "Type the text of your header here.").aloha().append($content);
       $typeContainer.prependTo($element);
       return jQuery('<div>').addClass('exercise-controls').addClass('aloha-ephemera').append('<span class="add-exercise btn-link">Click here to add an exercise</span>').appendTo($element);
     };

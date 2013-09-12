@@ -29,7 +29,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
     <div class="semantic-controls aloha-ephemera">
       <button class="semantic-delete" title="Remove this element."><i class="icon-remove"></i></button>
       <button class="semantic-settings" title="advanced options."><i class="icon-cog"></i></button>
-      <button class="copy" title="copy"><i class="icon-file"></i></button>
+      <button class="copy" title="Copy this element."><i class="icon-copy"></i></button>
     </div>''')
   blockDragHelper = jQuery('''
     <div class="semantic-drag-helper aloha-ephemera">
@@ -82,7 +82,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
     callback: (e) ->
       # grab the content of the block that was just clicked
       $element = jQuery(this).parents('.semantic-container').first()
-      Copy.buffer $element.outerHtml()
+      Copy.buffer $element.outerHtml(), Copy.getCurrentPath()
   ,
     name: 'click'
     selector: '.semantic-container .semantic-settings'

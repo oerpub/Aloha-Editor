@@ -21,12 +21,13 @@ dl.definition.aloha-oer-block {
     font-weight: bold;
     margin: 5px 10px 0 5px;
     color: #369;
+    display: inline-block;
 }
-.aloha-oer-block.definition .term:before {
+.aloha-oer-block.definition .term {
+    display: inline-block;
+}
+.aloha-oer-block.definition .term:not(:empty) {
     font-weight: bold;
-    margin: 5px 10px 0 5px;
-    color: #369;
-    text-decoration: none;
 }
 dl.definition .body {
   margin: 10px;
