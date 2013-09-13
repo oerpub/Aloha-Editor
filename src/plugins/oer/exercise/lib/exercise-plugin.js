@@ -87,6 +87,16 @@
       },
       selector: '.exercise,.solution',
       ignore: '.problem',
+      options: function($el) {
+        if ($el.is('.solution')) {
+          return {
+            buttons: ['settings']
+          };
+        }
+        return {
+          buttons: ['settings', 'copy']
+        };
+      },
       init: function() {
         semanticBlock.register(this);
         UI.adopt('insertExercise', Button, {

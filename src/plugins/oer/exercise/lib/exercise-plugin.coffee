@@ -147,6 +147,11 @@ define [
       selector: '.exercise,.solution' #this plugin handles both exercises and solutions
       ignore: '.problem'
 
+      options: ($el) ->
+        if $el.is('.solution')
+          return buttons: ['settings']
+        return buttons: ['settings', 'copy']
+
       init: () ->
 
         semanticBlock.register(this)
