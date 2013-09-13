@@ -300,7 +300,7 @@
           return jQuery(node).removeClass('aloha-block-dropzone aloha-editable-active aloha-editable aloha-block-blocklevel-sortable ui-sortable').removeAttr('contenteditable placeholder').get(0);
         });
         return Aloha.bind('aloha-editable-created', function(e, params) {
-          var $root, classes, selector, type, _i, _len;
+          var $root, classes, selector, sortableInterval, type, _i, _len;
           $root = params.obj;
           classes = [];
           for (_i = 0, _len = registeredTypes.length; _i < _len; _i++) {
@@ -308,8 +308,9 @@
             classes.push(type.selector);
           }
           selector = _this.settings.defaultSelector + ',' + classes.join();
-          setTimeout(function() {
-            if ($root.is('.ui-sortable')) {
+          sortableInterval = setInterval(function() {
+            if ($root.data('sortable')) {
+              clearInterval(sortableInterval);
               $root.sortable('option', 'stop', function(e, ui) {
                 $root = jQuery(ui.item);
                 if ($root.is(selector)) {
@@ -318,7 +319,7 @@
               });
               $root.sortable('option', 'placeholder', 'aloha-oer-block-placeholder aloha-ephemera');
             }
-            return 500;
+            return 100;
           });
           if ($root.is('.aloha-root-editable')) {
             $root.find(selector).each(function() {

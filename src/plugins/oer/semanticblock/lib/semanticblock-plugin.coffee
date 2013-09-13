@@ -299,13 +299,14 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
         # theres no really good way to do this. editables get made into sortables
         # on `aloha-editable-created` and there is no event following that, so we 
         # just have to wait
-        setTimeout ->
-          if $root.is('.ui-sortable')
+        sortableInterval = setInterval ->
+          if $root.data 'sortable'
+            clearInterval(sortableInterval)
             $root.sortable 'option', 'stop', (e, ui) ->
               $root = jQuery(ui.item)
               activate $root if $root.is(selector)
             $root.sortable 'option', 'placeholder', 'aloha-oer-block-placeholder aloha-ephemera',
-          500
+          100
 
         if $root.is('.aloha-root-editable')
 
