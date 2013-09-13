@@ -542,6 +542,14 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, CreateLayer) {
         clickTable: function(e){
             this.currentCell.length && this.currentCell.removeClass('aloha-current-cell');
             this.currentRow.length && this.currentRow.removeClass('aloha-current-row');
+
+            if (this.currentCell.attr('class') == '') {
+              this.currentCell.removeAttr('class')
+            }
+            if (this.currentRow.attr('class') == '') {
+              this.currentRow.removeAttr('class')
+            }
+
             this.currentCell = $(e.target).closest('td,th');
             this.currentRow = $(e.target).closest('tr');
             this.currentTable = $(e.target).closest('table');
