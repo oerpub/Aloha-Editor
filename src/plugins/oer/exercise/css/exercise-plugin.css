@@ -1,16 +1,33 @@
 .semantic-drag-source .exercise:before {
     content: "Exercise";
 }
-.exercise {
+
+.exercise.aloha-oer-block {
     min-height: 50px;
+    border: 0 !important;
+    padding: 0 !important;
+    margin: 0 0 0 10px !important;
 }
 
 .exercise .problem {
   background-color: inherit;
   margin: 10px;
 }
+
+.exercise .solution {
+  border: 0;
+  margin: 0 0 0 25px;
+  padding: 0;
+}
+
 .exercise .solution .body {
   background-color: inherit;
+  margin: 0 0 0 20px;
+}
+
+.exercise > .solutions > .semantic-container {
+    margin: 0;
+    padding: 0;
 }
 
 .semantic-container .exercise .solution-placeholder {
@@ -24,8 +41,24 @@
 }
 
 .exercise .solution-controls {
-    text-align: center;
+    opacity: 0;
+    -webkit-transition: opacity .15s ease-in-out;
+    -moz-transition: opacity .15s ease-in-out;
+    -ms-transition: opacity .15s ease-in-out;
+    -o-transition: opacity .15s ease-in-out;
+    transition: opacity .15s ease-in-out;
+    margin-left: 45px;
+    height: 20px;
 }
+.semantic-container:hover > .exercise > .solution-controls {
+    opacity: 1;
+    -webkit-transition: opacity .15s ease-in-out;
+    -moz-transition: opacity .15s ease-in-out;
+    -ms-transition: opacity .15s ease-in-out;
+    -o-transition: opacity .15s ease-in-out;
+    transition: opacity .15s ease-in-out;
+}
+
 .exercise .solution-controls a {
     text-decoration: none;
     color: blue !important;
