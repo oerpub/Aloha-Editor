@@ -125,7 +125,12 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       jQuery(this).addClass('focused') unless jQuery(this).find('.focused').length
       wrapped = jQuery(this).children('.aloha-oer-block').first()
       label = wrapped.length and getLabel(wrapped)
-      elementName = label and label.toLowerCase() or 'element'
+      if label
+        elementName = label.toLowerCase()
+      else
+        # Show the classes involved, filter out the aloha ones
+        classes = (c for c in wrapped.attr('class').split(/\s+/) when not /^aloha/.test(c))
+        elementName = classes.length and "element (class='#{classes.join(' ')}')" or 'element'
       jQuery(this).find('.aloha-block-handle').attr('title', "Drag this #{elementName} to another location.")
   ,
     name: 'mouseout'
