@@ -133,6 +133,11 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
       console?.warn($el, 'has no associated Jax. Does this happen too often?')
 
   Aloha.bind 'aloha-editable-created', (evt, editable) ->
+
+    # only process math if it is the editor editable that is being created
+    if editable.obj.is(':not(.aloha-root-editable)')
+      return
+
     # Bind ctrl+m to math insert/mathify
     editable.obj.bind 'keydown', 'ctrl+m', (evt) ->
       insertMath()
