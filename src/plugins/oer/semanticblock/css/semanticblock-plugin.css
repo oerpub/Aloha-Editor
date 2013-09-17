@@ -47,7 +47,7 @@
     background: #F0F0F0;
 }
 .semantic-container.delete-hover > .aloha-oer-block {
-    opacity: 0.3; 
+    opacity: 0.3;
 }
 
 .semantic-container {
@@ -55,6 +55,7 @@
     position: relative;
     padding: 10px 0 10px;
     margin: 10px 0 10px 0;
+    border: 1px solid transparent;
 }
 .semantic-container.focused {
     border: 1px solid #ccc;
@@ -229,7 +230,7 @@
 }
 
 .aloha-oer-ephemera-if-empty:empty {
-    height: 1px; 
+    height: 1px;
 }
 
 .aloha-oer-block .aloha-editable {
