@@ -4,19 +4,22 @@
     background-repeat: no-repeat;
     border: 2px dashed #999999;
     margin: 0.5em 0;
-    padding: 5em;
+    padding: 5px;
     position: relative;
     text-align: center;
-    height: 176px;
+    height: 175px;
     overflow: hidden;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    padding-left: 10px;
-    padding-right: 10px;
 }
 
 .image-options .placeholder.preview img {
     max-height: 156px;
+}
+
+.source-selection-allowed {
+    margin: 5px 0 5px 20px;
+}
+.source-selection-allowed input[type="text"] {
+    width: 500px;
 }
 
 form.plugin.image textarea {
@@ -24,9 +27,10 @@ form.plugin.image textarea {
     padding: 0.25em;
 }
 
-form.plugin.image .upload-url-input,
-form.plugin.image .upload-image-input {
-    width: 98%;
+form.plugin.image .upload-url-input {
+    width: 400px;
+    display: block;
+    margin: 10px auto;
 }
 
 form#linkModal:focus {
