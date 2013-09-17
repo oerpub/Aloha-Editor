@@ -253,11 +253,11 @@ define [
 
         $el.attr 'src', imageSource
         $el.attr 'alt', dialog.find('[name=alt]').val()
-        
+
         if dialog.find('input.image-title').val()
           $title.html dialog.find('input.image-title').val()
         # else probably should remove the $title element
-        
+
         if dialog.find('input.image-caption').val()
           $caption.html dialog.find('input.image-caption').val()
         # else probably should remove the $caption element
@@ -297,7 +297,7 @@ define [
   showModalDialog2 = ($figure, $img, $dialog, editing) ->
       $dialog.children().remove()
       $dialog.append(jQuery(DIALOG_HTML2))
-      
+
       src = $img.attr('src')
       if src and /^http/.test(src)
         $dialog.find('input#reuse-url').val src
@@ -329,7 +329,7 @@ define [
         $current_target = jQuery(evt.currentTarget)
         $cb = $current_target.find 'input[name="image-source-selection"]'
         $cb.click() if $cb
-        return 
+        return
 
       deferred = $.Deferred()
       $dialog.off('submit').on 'submit', (evt) =>
@@ -398,7 +398,7 @@ define [
         $dialog.modal('hide')
 
       return deferred.promise()
-            
+
   insertImage = () ->
     template = $('<figure class="figure aloha-ephemera"><div class="title" /><img /><figcaption /></figure>')
     semanticBlock.insertAtCursor(template)
@@ -410,7 +410,7 @@ define [
     $dialog = blob.dialog
     # show the dialog
     promise.show()
-    
+
     source_this_image_dialog = ()=>
       editing = false
       return showModalDialog2($figure, $img, $dialog, editing)
@@ -538,7 +538,12 @@ define [
 
         xhr.open("POST", settings.image.uploadurl, true)
         xhr.setRequestHeader("Cache-Control", "no-cache")
-        f = new FormData()
-        f.append(settings.image.uploadfield or 'upload', file, file.name)
-        xhr.send(f)
+        if settings.image.uploadSinglepart
+          xhr.setRequestHeader "Content-Type", ""
+          xhr.setRequestHeader "X-File-Name", file.name
+          xhr.send file
+        else
+          f = new FormData()
+          f.append settings.image.uploadfield or 'upload', file, file.name
+          xhr.send f
   })

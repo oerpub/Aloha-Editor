@@ -16,7 +16,7 @@ function(Aloha, plugin, jQuery, Ui, Button, PubSub ) {
                     var ob = Ui.adopt(button.id, Button, {
                         tooltip: button.title,
                         icon: button.icon || null,
-                        class: 'button-' + button.id,
+                        'class': 'button-' + button.id,
                         scope: button.scope || 'Aloha.continuoustext',
                         click: function(){
                             PubSub.pub(button.event, button);
