@@ -172,7 +172,7 @@
       var $body, $title, controls, options, plugin, type, _i, _len;
       if (!($element.is('.semantic-container') || ($element.is('.alternates') && $element.parents('figure').length))) {
         $element.addClass('aloha-oer-block');
-        if ($element.parent().is('aloha-editable')) {
+        if ($element.parent().is('.aloha-editable')) {
           jQuery('<p class="aloha-oer-ephemera-if-empty"></p>').insertBefore($element);
           jQuery('<p class="aloha-oer-ephemera-if-empty"></p>').insertAfter($element);
         }

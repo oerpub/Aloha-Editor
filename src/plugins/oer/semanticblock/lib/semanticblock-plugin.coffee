@@ -160,7 +160,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
     unless $element.is('.semantic-container') or ($element.is('.alternates') and $element.parents('figure').length)
       $element.addClass 'aloha-oer-block'
 
-      if $element.parent().is('aloha-editable')
+      if $element.parent().is('.aloha-editable')
         #add some paragraphs on either side so content can be added there easily
         jQuery('<p class="aloha-oer-ephemera-if-empty"></p>').insertBefore($element)
         jQuery('<p class="aloha-oer-ephemera-if-empty"></p>').insertAfter($element)
