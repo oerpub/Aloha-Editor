@@ -208,8 +208,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       $body = $element.contents().not($title)
 
       jQuery('<div>')
-        .addClass('body')
-        .addClass('aloha-block-dropzone')
+        .addClass('body aloha-block-dropzone')
         .appendTo($element)
         .aloha()
         .append($body)
@@ -228,7 +227,11 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       .mahalo()
       .removeClass('aloha-editable aloha-block-blocklevel-sortable ui-sortable')
       .removeAttr('hover-placeholder')
-    $element.children('.body').contents().unwrap()
+    content = $element.children('.body')
+    if content.is(':empty')
+      content.remove()
+    else
+      $element.children('.body').contents().unwrap()
     $element.attr('data-unknown', 'true')
 
   bindEvents = (element) ->
