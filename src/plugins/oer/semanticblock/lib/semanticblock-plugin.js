@@ -214,6 +214,7 @@
         });
         $title = $element.children('.title').first();
         $title.attr('hover-placeholder', 'Add a title');
+        $title.attr('keep-id', Boolean($title.attr('id')));
         $title.aloha();
         $body = $element.contents().not($title);
         return jQuery('<div>').addClass('body').addClass('aloha-block-dropzone').appendTo($element).aloha().append($body);
@@ -230,8 +231,13 @@
           return;
         }
       }
-      $title = $element.children('.title').first().mahalo().removeClass('aloha-editable aloha-block-blocklevel-sortable ui-sortable').removeAttr('hover-placeholder');
+      $title = $element.children('.title').first();
+      if (!$title.attr('keep-id')) {
+        $title.removeAttr('id');
+      }
+      $title.mahalo().removeClass('aloha-editable aloha-block-blocklevel-sortable ui-sortable').removeAttr('hover-placeholder').removeAttr('keep-id');
       $element.children('.body').contents().unwrap();
+      $element.children('.body').remove();
       return $element.attr('data-unknown', 'true');
     };
     bindEvents = function(element) {

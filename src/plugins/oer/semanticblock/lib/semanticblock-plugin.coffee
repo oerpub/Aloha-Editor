@@ -203,6 +203,9 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       # if there is a title, give it a placeholder and make it editable
       $title = $element.children('.title').first()
       $title.attr('hover-placeholder', 'Add a title')
+
+      # hack so we can not add ids to titles on save
+      $title.attr('keep-id', Boolean($title.attr('id')))
       $title.aloha()
 
       $body = $element.contents().not($title)
@@ -225,10 +228,18 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
 
     # if we make it this far none of the deactivators have run
     $title = $element.children('.title').first()
+
+    # hack to accomodate existing content without marking all files as dirty on load
+    $title.removeAttr('id') if not $title.attr('keep-id')
+
+    $title
       .mahalo()
       .removeClass('aloha-editable aloha-block-blocklevel-sortable ui-sortable')
       .removeAttr('hover-placeholder')
+      # hack to accomodate existing content without marking all files as dirty on load
+      .removeAttr('keep-id')
     $element.children('.body').contents().unwrap()
+    $element.children('.body').remove()
     $element.attr('data-unknown', 'true')
 
   bindEvents = (element) ->
