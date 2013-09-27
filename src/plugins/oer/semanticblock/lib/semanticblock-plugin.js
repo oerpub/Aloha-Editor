@@ -214,7 +214,9 @@
         });
         $title = $element.children('.title').first();
         $title.attr('hover-placeholder', 'Add a title');
-        $title.attr('keep-id', Boolean($title.attr('id')));
+        if ($title.attr('id')) {
+          $title.attr('keep-id', $title.attr('id'));
+        }
         $title.aloha();
         $body = $element.contents().not($title);
         return jQuery('<div>').addClass('body').addClass('aloha-block-dropzone').appendTo($element).aloha().append($body);

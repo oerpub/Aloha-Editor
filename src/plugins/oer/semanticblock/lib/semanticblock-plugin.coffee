@@ -205,7 +205,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       $title.attr('hover-placeholder', 'Add a title')
 
       # hack so we can not add ids to titles on save
-      $title.attr('keep-id', Boolean($title.attr('id')))
+      $title.attr('keep-id', $title.attr('id')) if $title.attr('id')
       $title.aloha()
 
       $body = $element.contents().not($title)
