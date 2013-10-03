@@ -44,10 +44,10 @@ define ['aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', 'PubSub', './pa
       # handlers will be lost.
       jQuery('body').on 'enable-action', '.action.paste,.action.copy', (e) ->
         e.preventDefault()
-        jQuery(@).fadeIn('fast')
+        jQuery(@).prop('disabled', false)
       .on 'disable-action', '.action.paste,.action.copy', (e) ->
         e.preventDefault()
-        jQuery(@).fadeOut('fast')
+        jQuery(@).prop('disabled', true)
 
       # Copy becomes available when context is a heading
       focusHeading = null

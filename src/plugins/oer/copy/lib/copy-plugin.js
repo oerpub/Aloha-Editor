@@ -43,10 +43,10 @@
         plugin = this;
         jQuery('body').on('enable-action', '.action.paste,.action.copy', function(e) {
           e.preventDefault();
-          return jQuery(this).fadeIn('fast');
+          return jQuery(this).prop('disabled', false);
         }).on('disable-action', '.action.paste,.action.copy', function(e) {
           e.preventDefault();
-          return jQuery(this).fadeOut('fast');
+          return jQuery(this).prop('disabled', true);
         });
         focusHeading = null;
         PubSub.sub('aloha.selection.context-change', function(m) {
