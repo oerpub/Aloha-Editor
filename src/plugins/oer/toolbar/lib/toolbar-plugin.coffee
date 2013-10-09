@@ -129,6 +129,12 @@ define [ 'jquery', 'aloha', 'aloha/plugin', 'PubSub', 'ui/button' ], (
         $oldEl = Aloha.jQuery(rangeObject.getCommonAncestorContainer())
         $newEl = Aloha.jQuery(Aloha.Selection.getRangeObject().getCommonAncestorContainer())
         $newEl.addClass($oldEl.attr('class'))
+
+        # Generate an event, so others can act on heading changes
+        e2 = $.Event()
+        e2.type = 'change-heading'
+        e2.target = $newEl[0]
+        $newEl.trigger(e2)
         
         # $newEl.attr('id', $oldEl.attr('id))
         # Setting the id is commented because otherwise collaboration wouldn't register a change in the document

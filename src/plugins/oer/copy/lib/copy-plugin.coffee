@@ -1,4 +1,4 @@
-define ['aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', 'PubSub', './path'], (Aloha, Plugin, jQuery, UI, Button, PubSub, Path) ->
+define ['aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', 'PubSub', './path', 'css!copy/css/copy.css'], (Aloha, Plugin, jQuery, UI, Button, PubSub, Path) ->
    
   buffer = ''
   srcpath = null
@@ -40,6 +40,27 @@ define ['aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', 'PubSub', './pa
       @copybutton.disable()
       @pastebutton.enable()
       @pastebutton.flash?()
+
+    copySection: ($el) ->
+      headings = ['h1', 'h2', 'h3']
+      level = headings.indexOf $el[0].nodeName.toLowerCase()
+      # Pick up all elements until the next heading of the same level or higher
+      selector = headings.slice(0, level+1).join(',')
+
+      if $el.addBack
+        # Jquery >= 1.8
+        $el = $el.nextUntil(selector).addBack()
+      else
+        # Jquery < 1.8
+        $el = $el.nextUntil(selector).andSelf()
+      html = ''
+      html += jQuery(e).outerHtml() for e in $el
+
+      path = @getCurrentPath()
+      if path != null
+        @buffer html, path
+      else
+        @buffer html
 
     init: ->
       plugin = @
@@ -95,26 +116,29 @@ define ['aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', 'PubSub', './pa
       @copybutton = UI.adopt "copy", Button,
         click: (e) ->
           e.preventDefault()
-          $element = focusHeading
-          selector = "h1,h2,h3".substr(0, "h1,h2,h3".indexOf($element[0].nodeName.toLowerCase())+2)
-          if $element.addBack
-            # Jquery >= 1.8
-            $elements = $element.nextUntil(selector).addBack()
-          else
-            # Jquery < 1.8
-            $elements = $element.nextUntil(selector).andSelf()
-          html = ''
-          html += jQuery(element).outerHtml() for element in $elements
+          plugin.copySection focusHeading
 
-          path = plugin.getCurrentPath()
-          if path != null
-            plugin.buffer html, path
-          else
-            plugin.buffer html
+      addCopyUi = ($ob) ->
+        $ob = $ob.filter () -> not jQuery(this).has('.copy-section-controls').length
+        $ob.append('''
+          <div class="aloha-ephemera copy-section-controls"
+               contenteditable="false">
+            <span href="#" title="Copy section" class="copy-section"><i class="icon-copy"></i> Copy section</span>
+          </div>
+        ''')
 
-      Aloha.bind 'aloha-editable-created', () =>
+
+      Aloha.bind 'aloha-editable-created', (evt, editable) =>
         # Disable paste button if there is no content to be pasted
         if localStorage and localStorage.alohaOerCopyBuffer
           @pastebutton.enable()
         else
           @pastebutton.disable()
+
+        # Scan editor for sections, add discoverability ui
+        addCopyUi editable.obj.find('h1,h2,h3')
+        editable.obj.on 'change-heading', (e) -> addCopyUi(jQuery(e.target))
+
+        # When one of these buttons are clicked, copy that section.
+        editable.obj.on 'click', '.copy-section-controls .copy-section', (e) ->
+          plugin.copySection jQuery(e.target).parent().parent()

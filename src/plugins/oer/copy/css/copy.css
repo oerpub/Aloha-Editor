@@ -1,0 +1,22 @@
+div.copy-section-controls {
+    display: none;
+    float: right;
+}
+
+div.copy-section-controls span.copy-section {
+    color: #666666;
+    font-size: 75%;
+    margin: 0 0.5em;
+    cursor: pointer;
+}
+
+h1:hover div.copy-section-controls,
+h2:hover div.copy-section-controls,
+h3:hover div.copy-section-controls {
+    display: inline-block;
+}
+
+div.copy-section-controls span.copy-section:hover {
+    text-decoration: underline;
+    background-color: #F2F2F2;
+}

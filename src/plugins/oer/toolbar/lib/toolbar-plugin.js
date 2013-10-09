@@ -159,7 +159,7 @@
         formats = this.settings.formats;
         jQuery.extend(toolbar.settings, this.defaults);
         changeHeading = function(evt) {
-          var $el, $newEl, $oldEl, hTag, rangeObject;
+          var $el, $newEl, $oldEl, e2, hTag, rangeObject;
           evt.preventDefault();
           $el = jQuery(this);
           hTag = $el.attr('data-tagname');
@@ -171,7 +171,11 @@
           jQuery('.currentHeading')[0].innerHTML = $el[0].innerHTML;
           $oldEl = Aloha.jQuery(rangeObject.getCommonAncestorContainer());
           $newEl = Aloha.jQuery(Aloha.Selection.getRangeObject().getCommonAncestorContainer());
-          return $newEl.addClass($oldEl.attr('class'));
+          $newEl.addClass($oldEl.attr('class'));
+          e2 = $.Event();
+          e2.type = 'change-heading';
+          e2.target = $newEl[0];
+          return $newEl.trigger(e2);
         };
         $ROOT.on('click', '.action.changeHeading', changeHeading);
         $ROOT.on('mousedown', ".action", function(evt) {
