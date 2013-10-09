@@ -25,11 +25,15 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
     </div>'''
 
   blockTemplate = jQuery('<div class="semantic-container aloha-ephemera-wrapper"></div>')
+  topControls = jQuery('''
+    <div class="semantic-controls-top aloha-ephemera">
+      <a class="copy" title="Copy this element."><i class="icon-copy"></i> Copy element</button>
+    </div>
+  ''')
   blockControls = jQuery('''
     <div class="semantic-controls aloha-ephemera">
       <button class="semantic-delete" title="Remove this element."><i class="icon-remove"></i></button>
       <button class="semantic-settings" title="advanced options."><i class="icon-cog"></i></button>
-      <button class="copy" title="Copy this element."><i class="icon-copy"></i></button>
     </div>''')
   blockDragHelper = jQuery('''
     <div class="semantic-drag-helper aloha-ephemera">
@@ -78,11 +82,23 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
         jQuery(this).remove()
   ,
     name: 'click'
-    selector: '.semantic-container .semantic-controls .copy'
+    selector: '.semantic-container .semantic-controls-top .copy'
     callback: (e) ->
       # grab the content of the block that was just clicked
       $element = jQuery(this).parents('.semantic-container').first()
       Copy.buffer $element.outerHtml(), Copy.getCurrentPath()
+  ,
+    name: 'mouseover'
+    selector: '.semantic-container .semantic-controls-top .copy'
+    callback: (e) ->
+      # grab the content of the block that was just clicked
+      $elements = jQuery(this).parents('.semantic-container')
+      $elements.removeClass('copy-preview').first().addClass('copy-preview')
+  ,
+    name: 'mouseout'
+    selector: '.semantic-container .semantic-controls-top .copy'
+    callback: (e) ->
+      jQuery(this).parents('.semantic-container').removeClass('copy-preview')
   ,
     name: 'click'
     selector: '.semantic-container .semantic-settings'
@@ -124,14 +140,8 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       jQuery(this).parents('.semantic-container').removeClass('focused')
       jQuery(this).addClass('focused') unless jQuery(this).find('.focused').length
       wrapped = jQuery(this).children('.aloha-oer-block').first()
-      label = wrapped.length and getLabel(wrapped)
-      if label
-        elementName = label.toLowerCase()
-      else
-        # Show the classes involved, filter out the aloha ones
-        classes = (c for c in wrapped.attr('class').split(/\s+/) when not /^aloha/.test(c))
-        elementName = classes.length and "element (class='#{classes.join(' ')}')" or 'element'
-      jQuery(this).find('.aloha-block-handle').attr('title', "Drag this #{elementName} to another location.")
+      label = wrapped.length and blockIdentifier(wrapped)
+      jQuery(this).find('.aloha-block-handle').attr('title', "Drag this #{label} to another location.")
   ,
     name: 'mouseout'
     selector: '.semantic-container'
@@ -156,6 +166,15 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       if $element.is(type.selector)
         return type.getLabel $element
 
+  blockIdentifier = ($element) ->
+    label = getLabel($element)
+    if label
+      elementName = label.toLowerCase()
+    else
+      # Show the classes involved, filter out the aloha ones
+      classes = (c for c in $element.attr('class').split(/\s+/) when not /^aloha/.test(c))
+      elementName = classes.length and "element (class='#{classes.join(' ')}')" or 'element'
+
   activate = ($element) ->
     unless $element.is('.semantic-container') or ($element.is('.alternates') and $element.parents('figure').length)
       $element.addClass 'aloha-oer-block'
@@ -172,10 +191,14 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
           type = plugin
           break
 
+      controls = blockControls.clone()
+      top = topControls.clone()
+      label = blockIdentifier($element)
+      controls.find('.semantic-delete').attr('title', "Remove this #{label}.")
+      top.find('.copy').attr('title', "Copy #{label}.")
       if type == null
-        $element.wrap(blockTemplate).parent().append(blockControls.clone()).alohaBlock()
+        $element.wrap(blockTemplate).parent().append(controls).prepend(top).alohaBlock()
       else
-        controls = blockControls.clone()
         # Ask `type` plugin about the controls it wants
         if type.options
           if typeof type.options == 'function'
@@ -187,9 +210,9 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
             # We deliberately don't allow people to drop the delete button. At
             # least until we know whether that is even needed!
             controls.find('button.semantic-settings').remove() if 'settings' not in options.buttons
-            controls.find('button.copy').remove() if 'copy' not in options.buttons
+            top.find('a.copy').remove() if 'copy' not in options.buttons
 
-        $element.wrap(blockTemplate).parent().append(controls).alohaBlock()
+        $element.wrap(blockTemplate).parent().append(controls).prepend(top).alohaBlock()
         type.activate $element
         return
  

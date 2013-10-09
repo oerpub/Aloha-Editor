@@ -2,7 +2,7 @@ define ['aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', 'PubSub', './pa
    
   buffer = ''
   srcpath = null
- 
+
   Plugin.create 'copy',
     getCurrentPath: ->
       # When copy/pasting html, the images contained therein might have
@@ -34,7 +34,12 @@ define ['aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', 'PubSub', './pa
       localStorage.alohaOerCopyBuffer = buffer if localStorage
       localStorage.alohaOerCopySrcPath = srcpath if localStorage
 
-      jQuery('.action.paste').fadeIn('fast')
+      # Disable copy button, it will re-enable when you move the cursor. This
+      # gives visual feedback and prevents you from copying the same thing
+      # twice.  Enable the paste button explicitly.
+      @copybutton.disable()
+      @pastebutton.enable()
+      @pastebutton.flash?()
 
     init: ->
       plugin = @
@@ -44,10 +49,10 @@ define ['aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', 'PubSub', './pa
       # handlers will be lost.
       jQuery('body').on 'enable-action', '.action.paste,.action.copy', (e) ->
         e.preventDefault()
-        jQuery(@).fadeIn('fast')
+        jQuery(@).prop('disabled', false)
       .on 'disable-action', '.action.paste,.action.copy', (e) ->
         e.preventDefault()
-        jQuery(@).fadeOut('fast')
+        jQuery(@).prop('disabled', true)
 
       # Copy becomes available when context is a heading
       focusHeading = null

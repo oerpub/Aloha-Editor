@@ -43,6 +43,19 @@ define [ 'jquery', 'aloha', 'aloha/plugin', 'PubSub', 'ui/button' ], (
         console && console.log "#{slot} TODO:FOCUS:", a
       foreground: (a) ->
         console && console.log "#{slot} TODO:FOREGROUND:", a
+      flash: () ->
+        # Allows a plugin to flash a button, thereby grabbing the user's
+        # attention.
+        el = $ROOT.find(".action.#{slot}")
+
+        # Fire a flash event on el, allow flashing to be customised
+        evt = $.Event('flash-action')
+        el.trigger(evt)
+        if evt.isDefaultPrevented()
+          return
+
+        for i in [1..6] by 1
+          setTimeout (() -> el.toggleClass('ui-flash')), 200*i
     return new ItemRelay()
 
 

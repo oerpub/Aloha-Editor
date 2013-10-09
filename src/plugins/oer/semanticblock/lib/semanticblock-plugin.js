@@ -3,13 +3,14 @@
   var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   define(['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'jquery', 'aloha/ephemera', 'ui/ui', 'ui/button', 'copy/copy-plugin', 'css!semanticblock/css/semanticblock-plugin.css'], function(Aloha, BlockManager, Plugin, pluginManager, jQuery, Ephemera, UI, Button, Copy) {
-    var DIALOG_HTML, activate, bindEvents, blockControls, blockDragHelper, blockTemplate, cleanIds, cleanWhitespace, copyBuffer, deactivate, getLabel, insertElement, pluginEvents, registeredTypes;
+    var DIALOG_HTML, activate, bindEvents, blockControls, blockDragHelper, blockIdentifier, blockTemplate, cleanIds, cleanWhitespace, copyBuffer, deactivate, getLabel, insertElement, pluginEvents, registeredTypes, topControls;
     if (pluginManager.plugins.semanticblock) {
       return pluginManager.plugins.semanticblock;
     }
     DIALOG_HTML = '<div class="semantic-settings modal hide" id="linkModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="false">\n  <div class="modal-header">\n    <h3></h3>\n  </div>\n  <div class="modal-body">\n    <div style="margin: 20px 10px 20px 10px; padding: 10px; border: 1px solid grey;">\n        <strong>Custom class</strong>\n        <p>\n            Give this element a custom "class". Nothing obvious will change in your document.\n            This is for advanced book styling and requires support from the publishing system.\n        </p> \n        <input type="text" placeholder="custom element class" name="custom_class">\n    </div>\n  </div>\n  <div class="modal-footer">\n    <button class="btn btn-primary action submit">Save changes</button>\n    <button class="btn action cancel">Cancel</button>\n  </div>\n</div>';
     blockTemplate = jQuery('<div class="semantic-container aloha-ephemera-wrapper"></div>');
-    blockControls = jQuery('<div class="semantic-controls aloha-ephemera">\n  <button class="semantic-delete" title="Remove this element."><i class="icon-remove"></i></button>\n  <button class="semantic-settings" title="advanced options."><i class="icon-cog"></i></button>\n  <button class="copy" title="Copy this element."><i class="icon-copy"></i></button>\n</div>');
+    topControls = jQuery('<div class="semantic-controls-top aloha-ephemera">\n  <a class="copy" title="Copy this element."><i class="icon-copy"></i> Copy element</button>\n</div>');
+    blockControls = jQuery('<div class="semantic-controls aloha-ephemera">\n  <button class="semantic-delete" title="Remove this element."><i class="icon-remove"></i></button>\n  <button class="semantic-settings" title="advanced options."><i class="icon-cog"></i></button>\n</div>');
     blockDragHelper = jQuery('<div class="semantic-drag-helper aloha-ephemera">\n    <div class="title"></div>\n    <div class="body">Drag me to the desired location in the document</div>\n</div>');
     registeredTypes = [];
     copyBuffer = null;
@@ -63,11 +64,25 @@
         }
       }, {
         name: 'click',
-        selector: '.semantic-container .semantic-controls .copy',
+        selector: '.semantic-container .semantic-controls-top .copy',
         callback: function(e) {
           var $element;
           $element = jQuery(this).parents('.semantic-container').first();
           return Copy.buffer($element.outerHtml(), Copy.getCurrentPath());
+        }
+      }, {
+        name: 'mouseover',
+        selector: '.semantic-container .semantic-controls-top .copy',
+        callback: function(e) {
+          var $elements;
+          $elements = jQuery(this).parents('.semantic-container');
+          return $elements.removeClass('copy-preview').first().addClass('copy-preview');
+        }
+      }, {
+        name: 'mouseout',
+        selector: '.semantic-container .semantic-controls-top .copy',
+        callback: function(e) {
+          return jQuery(this).parents('.semantic-container').removeClass('copy-preview');
         }
       }, {
         name: 'click',
@@ -114,31 +129,14 @@
         name: 'mouseover',
         selector: '.semantic-container',
         callback: function() {
-          var c, classes, elementName, label, wrapped;
+          var label, wrapped;
           jQuery(this).parents('.semantic-container').removeClass('focused');
           if (!jQuery(this).find('.focused').length) {
             jQuery(this).addClass('focused');
           }
           wrapped = jQuery(this).children('.aloha-oer-block').first();
-          label = wrapped.length && getLabel(wrapped);
-          if (label) {
-            elementName = label.toLowerCase();
-          } else {
-            classes = (function() {
-              var _i, _len, _ref, _results;
-              _ref = wrapped.attr('class').split(/\s+/);
-              _results = [];
-              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                c = _ref[_i];
-                if (!/^aloha/.test(c)) {
-                  _results.push(c);
-                }
-              }
-              return _results;
-            })();
-            elementName = classes.length && ("element (class='" + (classes.join(' ')) + "')") || 'element';
-          }
-          return jQuery(this).find('.aloha-block-handle').attr('title', "Drag this " + elementName + " to another location.");
+          label = wrapped.length && blockIdentifier(wrapped);
+          return jQuery(this).find('.aloha-block-handle').attr('title', "Drag this " + label + " to another location.");
         }
       }, {
         name: 'mouseout',
@@ -168,8 +166,29 @@
         }
       }
     };
+    blockIdentifier = function($element) {
+      var c, classes, elementName, label;
+      label = getLabel($element);
+      if (label) {
+        return elementName = label.toLowerCase();
+      } else {
+        classes = (function() {
+          var _i, _len, _ref, _results;
+          _ref = $element.attr('class').split(/\s+/);
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            c = _ref[_i];
+            if (!/^aloha/.test(c)) {
+              _results.push(c);
+            }
+          }
+          return _results;
+        })();
+        return elementName = classes.length && ("element (class='" + (classes.join(' ')) + "')") || 'element';
+      }
+    };
     activate = function($element) {
-      var $body, $title, controls, options, plugin, type, _i, _len;
+      var $body, $title, controls, label, options, plugin, top, type, _i, _len;
       if (!($element.is('.semantic-container') || ($element.is('.alternates') && $element.parents('figure').length))) {
         $element.addClass('aloha-oer-block');
         if ($element.parent().is('.aloha-editable')) {
@@ -184,10 +203,14 @@
             break;
           }
         }
+        controls = blockControls.clone();
+        top = topControls.clone();
+        label = blockIdentifier($element);
+        controls.find('.semantic-delete').attr('title', "Remove this " + label + ".");
+        top.find('.copy').attr('title', "Copy " + label + ".");
         if (type === null) {
-          $element.wrap(blockTemplate).parent().append(blockControls.clone()).alohaBlock();
+          $element.wrap(blockTemplate).parent().append(controls).prepend(top).alohaBlock();
         } else {
-          controls = blockControls.clone();
           if (type.options) {
             if (typeof type.options === 'function') {
               options = type.options($element);
@@ -199,11 +222,11 @@
                 controls.find('button.semantic-settings').remove();
               }
               if (__indexOf.call(options.buttons, 'copy') < 0) {
-                controls.find('button.copy').remove();
+                top.find('a.copy').remove();
               }
             }
           }
-          $element.wrap(blockTemplate).parent().append(controls).alohaBlock();
+          $element.wrap(blockTemplate).parent().append(controls).prepend(top).alohaBlock();
           type.activate($element);
           return;
         }

@@ -26,6 +26,7 @@
         }
       },
       buffer: function(content, path) {
+        var _base;
         buffer = content;
         buffer = buffer.replace(/id="[^"]+"/, '');
         srcpath = path;
@@ -35,7 +36,9 @@
         if (localStorage) {
           localStorage.alohaOerCopySrcPath = srcpath;
         }
-        return jQuery('.action.paste').fadeIn('fast');
+        this.copybutton.disable();
+        this.pastebutton.enable();
+        return typeof (_base = this.pastebutton).flash === "function" ? _base.flash() : void 0;
       },
       init: function() {
         var focusHeading, plugin,
@@ -43,10 +46,10 @@
         plugin = this;
         jQuery('body').on('enable-action', '.action.paste,.action.copy', function(e) {
           e.preventDefault();
-          return jQuery(this).fadeIn('fast');
+          return jQuery(this).prop('disabled', false);
         }).on('disable-action', '.action.paste,.action.copy', function(e) {
           e.preventDefault();
-          return jQuery(this).fadeOut('fast');
+          return jQuery(this).prop('disabled', true);
         });
         focusHeading = null;
         PubSub.sub('aloha.selection.context-change', function(m) {

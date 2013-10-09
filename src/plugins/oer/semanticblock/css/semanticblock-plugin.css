@@ -60,6 +60,9 @@
 .semantic-container.focused {
     border: 1px solid #ccc;
 }
+.semantic-container.copy-preview {
+    background-color: #F2F2F2;
+}
 
 .semantic-container .aloha-block-handle {
     background-image:
@@ -123,6 +126,22 @@
     background: #F5F5F5;
     margin: 0;
     padding: 0;
+}
+
+.semantic-controls-top {
+    position: absolute;
+    right: 3em;
+    white-space: nowrap;
+    display: none;
+}
+
+.semantic-controls-top a {
+    color: #666666 !important;
+    cursor: pointer;
+}
+
+.semantic-container.focused > .semantic-controls-top {
+    display: block;
 }
 
 .aloha-oer-block {
