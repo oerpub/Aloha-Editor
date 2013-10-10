@@ -60,7 +60,7 @@
           $el.parents('.type-container').find('.dropdown-menu li').each(function(i, li) {
             return jQuery(li).removeClass('checked');
           });
-          return $el.parents('li').first().addclass('checked');
+          return $el.parents('li').first().addClass('checked');
         });
       }
     });
