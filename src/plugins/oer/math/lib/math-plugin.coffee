@@ -138,6 +138,31 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
     if editable.obj.is(':not(.aloha-root-editable)')
       return
 
+    # Bind copy and paste handlers. When a user copies content with math, place
+    # it on the clipboard with a different content type. This will prevent the
+    # cleanup that the browser does on namespaces. Use this alternative content
+    # type again when pasting. Prevent the browser default. This will only work
+    # in browsers that support event.clipboardData, chrome and safari to date.
+    editable.obj.on 'copy', (e) ->
+      content = Aloha.getSelection().getRangeAt(0).cloneContents()
+      $content = $('<div />').append(content)
+      # If there is math among the content we're copying, treat it specially.
+      # Check that we also have a script tag in our selection, that occurs
+      # towards the end of the math and ensures we have the whole of it.
+      # The idea is to only do custom copy/paste if we need it, and let the
+      # browser handle other content.
+      if $content.has('span.math-element').length and $content.has('script').length
+        e.preventDefault()
+        e.originalEvent.clipboardData.setData 'text/oerpub-content', $content.html()
+
+    editable.obj.on 'paste', (e) ->
+      content = e.originalEvent.clipboardData.getData('text/oerpub-content')
+      if content
+        e.preventDefault()
+        # Using insertHTML here allows pasted content to be cleaned up by the
+        # contenthandler plugin.
+        Aloha.execCommand('insertHTML', false, content)
+
     # Bind ctrl+m to math insert/mathify
     editable.obj.bind 'keydown', 'ctrl+m', (evt) ->
       insertMath()
