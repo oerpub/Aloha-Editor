@@ -92,6 +92,6 @@ define [
 
           $el.parents('.type-container').find('.dropdown-menu li').each (i, li) =>
             jQuery(li).removeClass('checked')
-          $el.parents('li').first().addclass('checked')
+          $el.parents('li').first().addClass('checked')
         )
     })

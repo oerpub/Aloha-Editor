@@ -71,7 +71,7 @@ define [
               $option = jQuery('<li><span class="btn-link"></span></li>')
               $option.appendTo(typeContainer.find('.dropdown-menu'))
               $option = $option.children('span')
-              $option.text(dropType.label.toUpperCase())
+              $option.text(dropType.label)
               typeContainer.find('.type').on 'click', =>
                 jQuery.each types, (i, dropType) =>
                   if $element.attr('data-type') == dropType.type

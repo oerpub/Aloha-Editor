@@ -17,7 +17,7 @@ dl.definition.aloha-oer-block {
 }
 
 .aloha-oer-block.definition .term-wrapper:before {
-    content: "\25A0 Definition";
+    content: "\25A0  Definition";
     font-weight: bold;
     margin: 5px 10px 0 5px;
     color: #369;
