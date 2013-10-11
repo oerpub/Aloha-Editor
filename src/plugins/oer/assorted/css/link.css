@@ -45,6 +45,7 @@ ul.nav.nav-tabs {
 .link-popover {
   width: auto;
   min-width: 236px; /* bootstrap's default popover width */
+  max-width: none; /* override bootstrap default so that the link options don't wrap */
 }
 
 .link-popover-details .edit-link,
@@ -53,17 +54,14 @@ ul.nav.nav-tabs {
   white-space: nowrap;
 }
 
-
-.edit-link,
-.delete-link,
-.visit-link {
+.aloha.popover .link-popover-details button, .visit-link{
   padding: 0 10px;
 }
 
-/* Add a border (separator) only around the 1st 2 buttons */
-.edit-link,
-.delete-link {
-  border-right: 1px solid black;
+/* Add a separator after the 1st 2 buttons */
+.aloha.popover button.edit-link,
+.aloha.popover button.delete-link {
+  border-right: 1px solid #bbb;
 }
 
 i.icon-edit-link {
@@ -76,8 +74,9 @@ i.icon-delete-link {
   background-image: url(../img/delete-link.png);
   background-position: 0 0;
 }
-
 i.icon-external-link {
+/* commenting out for now since it's conflicting with .icon-external-link:before's image
   background-image: url(../img/external-link.png);
   background-position: 0 0;
+*/
 }
