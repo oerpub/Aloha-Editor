@@ -167,9 +167,9 @@
     /* Change to arrow when hovering block */
     content: "\25BE";
     /* Make adjustments so that arrow feels like same size/positioning as square */
-    font-size: 1.5em;
-    margin-left: -2px;
-    margin-right: 2px;
+    font-size: 1.1em;
+    margin-left: -1px;
+    margin-right: 1px;
 }
 
 .semantic-container .type-container {
