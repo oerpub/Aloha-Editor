@@ -69,8 +69,7 @@ define [
         </button>
         <a class="visit-link" target="_blank" title="Visit the link in a new window or tab">
           <i class="icon-external-link"></i>
-          <span class="title"></span>
-        </a>
+          <span class="title"></span></a>
       </span>
       <br/>
   '''
