@@ -37,7 +37,7 @@
 #    </span>
 
 
-define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', 'css!../../../oer/math/css/math.css' ], (Aloha, Plugin, jQuery, Popover, UI) ->
+define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', 'copy/copy-plugin', 'css!../../../oer/math/css/math.css' ], (Aloha, Plugin, jQuery, Popover, UI, Copy) ->
 
   EDITOR_HTML = '''
     <div class="math-editor-dialog">
@@ -154,6 +154,9 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
       if $content.has('span.math-element').length and $content.has('script').length
         e.preventDefault()
         e.originalEvent.clipboardData.setData 'text/oerpub-content', $content.html()
+
+      # Also buffer it in our local copy buffer
+      Copy.buffer $content.html(), Copy.getCurrentPath()
 
     editable.obj.on 'paste', (e) ->
       content = e.originalEvent.clipboardData.getData('text/oerpub-content')
@@ -483,6 +486,13 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
   # Register the button with an action
   UI.adopt 'insertMath', null,
     click: () -> insertMath()
+
+  # Add a copy option to the mathjax menu
+  MathJax.Callback.Queue MathJax.Hub.Register.StartupHook "MathMenu Ready", () ->
+    copyCommand = MathJax.Menu.ITEM.COMMAND "Copy Math", (e,f,g) ->
+      $script = jQuery(document.getElementById(MathJax.Menu.jax.inputID))
+      Copy.buffer $script.parent().parent().outerHtml()
+    MathJax.Menu.menu.items.unshift copyCommand
 
   ob =
     selector: '.math-element'
