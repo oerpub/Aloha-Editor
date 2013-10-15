@@ -102,13 +102,14 @@
 .semantic-container .semantic-controls {
     border-left: 1px solid #ccc;
     background: #F5F5F5;
-    padding-left: 1px;
     position: absolute;
     top: 0;
     right: 0;
     width: 15px;
     height: 100%;
     display: none;
+    text-align: center;
+    line-height: normal;
 }
 .semantic-container.focused > .semantic-controls {
     display: block;
@@ -117,15 +118,22 @@
     display: none;
 }
 
-.semantic-controls button:hover {
-    background: #CCC;
+.semantic-delete:hover{
+    background-color: #000;
+    color: #fff;
 }
+.semantic-settings:hover{
+    color: #000;
+}
+
 .semantic-controls button {
     outline: 0;
     border: 0;
     background: #F5F5F5;
     margin: 0;
     padding: 0;
+    color: #888;
+    width: 15px;
 }
 
 .semantic-controls-top {
