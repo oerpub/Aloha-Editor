@@ -27,13 +27,13 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
   blockTemplate = jQuery('<div class="semantic-container aloha-ephemera-wrapper"></div>')
   topControls = jQuery('''
     <div class="semantic-controls-top aloha-ephemera">
-      <a class="copy" title="Copy this element."><i class="icon-copy"></i> Copy element</button>
+      <a class="copy" title="Copy this element"><i class="icon-copy"></i> Copy element</button>
     </div>
   ''')
   blockControls = jQuery('''
     <div class="semantic-controls aloha-ephemera">
-      <button class="semantic-delete" title="Remove this element."><i class="icon-remove"></i></button>
-      <button class="semantic-settings" title="advanced options."><i class="icon-cog"></i></button>
+      <button class="semantic-delete" title="Remove this element"><i class="icon-remove"></i></button>
+      <button class="semantic-settings" title="Advanced options for this element"><i class="icon-cog"></i></button>
     </div>''')
   blockDragHelper = jQuery('''
     <div class="semantic-drag-helper aloha-ephemera">
@@ -194,8 +194,10 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       controls = blockControls.clone()
       top = topControls.clone()
       label = blockIdentifier($element)
-      controls.find('.semantic-delete').attr('title', "Remove this #{label}.")
-      top.find('.copy').attr('title', "Copy #{label}.")
+      controls.find('.semantic-delete').attr('title', "Remove this #{label}")
+      controls.find('.semantic-settings').attr('title', "Advanced options for this #{label}")
+      top.find('.copy').attr('title', "Copy this #{label}")
+      top.find('.copy').contents().last().replaceWith(" Copy #{label}")
       if type == null
         $element.wrap(blockTemplate).parent().append(controls).prepend(top).alohaBlock()
       else
