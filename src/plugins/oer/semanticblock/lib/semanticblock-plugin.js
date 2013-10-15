@@ -9,8 +9,8 @@
     }
     DIALOG_HTML = '<div class="semantic-settings modal hide" id="linkModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="false">\n  <div class="modal-header">\n    <h3></h3>\n  </div>\n  <div class="modal-body">\n    <div style="margin: 20px 10px 20px 10px; padding: 10px; border: 1px solid grey;">\n        <strong>Custom class</strong>\n        <p>\n            Give this element a custom "class". Nothing obvious will change in your document.\n            This is for advanced book styling and requires support from the publishing system.\n        </p> \n        <input type="text" placeholder="custom element class" name="custom_class">\n    </div>\n  </div>\n  <div class="modal-footer">\n    <button class="btn btn-primary action submit">Save changes</button>\n    <button class="btn action cancel">Cancel</button>\n  </div>\n</div>';
     blockTemplate = jQuery('<div class="semantic-container aloha-ephemera-wrapper"></div>');
-    topControls = jQuery('<div class="semantic-controls-top aloha-ephemera">\n  <a class="copy" title="Copy this element."><i class="icon-copy"></i> Copy element</button>\n</div>');
-    blockControls = jQuery('<div class="semantic-controls aloha-ephemera">\n  <button class="semantic-delete" title="Remove this element."><i class="icon-remove"></i></button>\n  <button class="semantic-settings" title="advanced options."><i class="icon-cog"></i></button>\n</div>');
+    topControls = jQuery('<div class="semantic-controls-top aloha-ephemera">\n  <a class="copy" title="Copy this element"><i class="icon-copy"></i> Copy element</button>\n</div>');
+    blockControls = jQuery('<div class="semantic-controls aloha-ephemera">\n  <button class="semantic-delete" title="Remove this element"><i class="icon-remove"></i></button>\n  <button class="semantic-settings" title="Advanced options for this element"><i class="icon-cog"></i></button>\n</div>');
     blockDragHelper = jQuery('<div class="semantic-drag-helper aloha-ephemera">\n    <div class="title"></div>\n    <div class="body">Drag me to the desired location in the document</div>\n</div>');
     registeredTypes = [];
     copyBuffer = null;
@@ -206,8 +206,10 @@
         controls = blockControls.clone();
         top = topControls.clone();
         label = blockIdentifier($element);
-        controls.find('.semantic-delete').attr('title', "Remove this " + label + ".");
-        top.find('.copy').attr('title', "Copy " + label + ".");
+        controls.find('.semantic-delete').attr('title', "Remove this " + label);
+        controls.find('.semantic-settings').attr('title', "Advanced options for this " + label);
+        top.find('.copy').attr('title', "Copy this " + label);
+        top.find('.copy').contents().last().replaceWith(" Copy " + label);
         if (type === null) {
           $element.wrap(blockTemplate).parent().append(controls).prepend(top).alohaBlock();
         } else {
