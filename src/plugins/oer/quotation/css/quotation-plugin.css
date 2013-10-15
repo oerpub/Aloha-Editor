@@ -4,4 +4,9 @@
 }
 .quote.aloha-oer-block {
     background-color: inherit;
+    margin: 10px 32px 10px 15px !important;
+    padding: 0 25px;
+    border: 0;
+    position: relative;
+    background: url(../img/quote-left.png) no-repeat 0 2px, url(../img/quote-right.png) no-repeat right 2px;
 }
