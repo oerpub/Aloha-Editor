@@ -144,27 +144,48 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
     # type again when pasting. Prevent the browser default. This will only work
     # in browsers that support event.clipboardData, chrome and safari to date.
     editable.obj.on 'copy', (e) ->
-      content = Aloha.getSelection().getRangeAt(0).cloneContents()
+      content = e.oerContent or Aloha.getSelection().getRangeAt(0).cloneContents()
       $content = $('<div />').append(content)
       # If there is math among the content we're copying, treat it specially.
       # Check that we also have a script tag in our selection, that occurs
       # towards the end of the math and ensures we have the whole of it.
       # The idea is to only do custom copy/paste if we need it, and let the
-      # browser handle other content.
+      # browser handle other content. Also buffer it in our local copy buffer.
       if $content.has('span.math-element').length and $content.has('script').length
         e.preventDefault()
-        e.originalEvent.clipboardData.setData 'text/oerpub-content', $content.html()
-
-      # Also buffer it in our local copy buffer
-      Copy.buffer $content.html(), Copy.getCurrentPath()
+        clipboard = e.clipboardData or e.originalEvent.clipboardData
+        clipboard.setData 'text/oerpub-content', $content.html()
+      else
+        Copy.buffer $content.html()
 
     editable.obj.on 'paste', (e) ->
-      content = e.originalEvent.clipboardData.getData('text/oerpub-content')
+      clipboard = e.clipboardData or e.originalEvent.clipboardData
+      content = clipboard.getData('text/oerpub-content')
       if content
         e.preventDefault()
-        # Using insertHTML here allows pasted content to be cleaned up by the
-        # contenthandler plugin.
-        Aloha.execCommand('insertHTML', false, content)
+        $content = jQuery(
+          '<div class="aloha-ephemera-wrapper newly-pasted-content" />')
+          .append(content).hide()
+
+        # Remove ids, new ones will be assigned
+        $content.find('*[id]').removeAttr('id')
+
+        # Paste content into editor
+        range = Aloha.getSelection().getRangeAt(0)
+        range.insertNode($content.get(0))
+
+        # Re-typeset math, because we need our context menu back
+        math = []
+        $content.find('.math-element').each (idx, el) ->
+          deferred = $.Deferred()
+          math.push(deferred)
+          triggerMathJax jQuery(el), () -> deferred.resolve()
+
+        # When we're done typesetting, show the content and unwrap it.
+        $.when.apply($content, math).done ->
+          $content.each () ->
+            $$$ = jQuery(@)
+            $$$.replaceWith $$$.contents()
 
     # Bind ctrl+m to math insert/mathify
     editable.obj.bind 'keydown', 'ctrl+m', (evt) ->
@@ -491,7 +512,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
   MathJax.Callback.Queue MathJax.Hub.Register.StartupHook "MathMenu Ready", () ->
     copyCommand = MathJax.Menu.ITEM.COMMAND "Copy Math", (e,f,g) ->
       $script = jQuery(document.getElementById(MathJax.Menu.jax.inputID))
-      Copy.buffer $script.parent().parent().outerHtml()
+      Copy.buffer $script.parent().parent().outerHtml(), 'text/oerpub-content'
     MathJax.Menu.menu.items.unshift copyCommand
 
   ob =

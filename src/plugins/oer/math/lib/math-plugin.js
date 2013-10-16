@@ -78,21 +78,43 @@
         return;
       }
       editable.obj.on('copy', function(e) {
-        var $content, content;
-        content = Aloha.getSelection().getRangeAt(0).cloneContents();
+        var $content, clipboard, content;
+        content = e.oerContent || Aloha.getSelection().getRangeAt(0).cloneContents();
         $content = $('<div />').append(content);
         if ($content.has('span.math-element').length && $content.has('script').length) {
           e.preventDefault();
-          e.originalEvent.clipboardData.setData('text/oerpub-content', $content.html());
+          clipboard = e.clipboardData || e.originalEvent.clipboardData;
+          return clipboard.setData('text/oerpub-content', $content.html());
+        } else {
+          return Copy.buffer($content.html());
         }
-        return Copy.buffer($content.html(), Copy.getCurrentPath());
       });
       editable.obj.on('paste', function(e) {
-        var content;
-        content = e.originalEvent.clipboardData.getData('text/oerpub-content');
+        var $content, clipboard, content, math, range;
+        clipboard = e.clipboardData || e.originalEvent.clipboardData;
+        content = clipboard.getData('text/oerpub-content');
         if (content) {
           e.preventDefault();
-          return Aloha.execCommand('insertHTML', false, content);
+          $content = jQuery('<div class="aloha-ephemera-wrapper newly-pasted-content" />').append(content).hide();
+          $content.find('*[id]').removeAttr('id');
+          range = Aloha.getSelection().getRangeAt(0);
+          range.insertNode($content.get(0));
+          math = [];
+          $content.find('.math-element').each(function(idx, el) {
+            var deferred;
+            deferred = $.Deferred();
+            math.push(deferred);
+            return triggerMathJax(jQuery(el), function() {
+              return deferred.resolve();
+            });
+          });
+          return $.when.apply($content, math).done(function() {
+            return $content.each(function() {
+              var $$$;
+              $$$ = jQuery(this);
+              return $$$.replaceWith($$$.contents());
+            });
+          });
         }
       });
       editable.obj.bind('keydown', 'ctrl+m', function(evt) {
@@ -407,7 +429,7 @@
       copyCommand = MathJax.Menu.ITEM.COMMAND("Copy Math", function(e, f, g) {
         var $script;
         $script = jQuery(document.getElementById(MathJax.Menu.jax.inputID));
-        return Copy.buffer($script.parent().parent().outerHtml());
+        return Copy.buffer($script.parent().parent().outerHtml(), 'text/oerpub-content');
       });
       return MathJax.Menu.menu.items.unshift(copyCommand);
     }));
