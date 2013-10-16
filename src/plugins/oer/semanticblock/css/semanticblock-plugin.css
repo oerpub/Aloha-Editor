@@ -28,7 +28,8 @@
 .aloha-oer-block-placeholder {
     background: #C5DAE9;
     border: 1px dashed #1b86d2;
-    min-height: 100px;
+    min-height: 50px;
+    margin: 10px 0;
 }
 
 /* Make titles inline so they show up next to the type dropdown if there is one */
@@ -56,6 +57,7 @@
     padding: 10px 0 10px;
     margin: 10px 0 10px 0;
     border: 1px solid transparent;
+    min-height: 15px;
 }
 .semantic-container.focused {
     border: 1px solid #ccc;
@@ -163,7 +165,6 @@
 
 .aloha-oer-block {
   padding: 20px 10px 5px 20px;
-  min-height: 50px;
   margin: 0 30px 0 30px;
   border: 1px solid #333;
   border-top-color: #ccc;
