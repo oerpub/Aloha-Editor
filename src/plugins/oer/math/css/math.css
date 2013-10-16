@@ -102,6 +102,6 @@ math,
     background-image: url(../img/remove-02.png);
 }
 
-button.done {
+button.done, button.copy {
     float: right;
 }

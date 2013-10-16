@@ -61,6 +61,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
               <input type="radio" name="mime-type" value="text/plain"> Plain text
           </label>
           <button class="btn btn-primary done">Done</button>
+          <button class="btn copy">Copy</button>
         </div>
     </div>
   '''
@@ -329,6 +330,8 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
     $editor.find('.remove').on 'click', =>
       $span.trigger 'hide-popover'
       cleanupFormula($editor, $span, true)
+    $editor.find('.copy').on 'click', =>
+      Copy.buffer $span.outerHtml(), 'text/oerpub-content'
 
     $formula = $editor.find('.formula')
 
