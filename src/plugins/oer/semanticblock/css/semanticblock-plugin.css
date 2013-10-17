@@ -92,10 +92,10 @@
     border: 1px solid #ccc;
     height: 12px;
     width: 50px;
-    margin: 5px 0 0 0;
+    margin-left: -25px; /* This will better center the handle, since "left: 50%" starts at the handle's left edge */
     position: absolute;
     left: 50%;
-    top: -13px;
+    top: -8px;
     display: none !important; /* override the default aloha display logic for handles */
     cursor: -moz-grab !important;
     cursor: -webkit-grab !important;
