@@ -366,7 +366,7 @@
               elementLabel = (element.data('type') || element.attr('class')).split(' ')[0];
               return element.draggable({
                 connectToSortable: $root,
-                appendTo: jQuery('body'),
+                appendTo: jQuery('#content'),
                 revert: 'invalid',
                 helper: function() {
                   var helper;
