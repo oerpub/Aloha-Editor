@@ -6,14 +6,9 @@ dl.definition.aloha-oer-block {
     display: block;
 }
 dl.definition.aloha-oer-block {
-  margin: 10px;
-  background-color: inherit;
-  padding: 20px 10px 5px 20px;
-  min-height: 50px;
-  margin: 0 30px 0 30px;
-  border: 1px solid #333;
-  border-top-color: #ccc;
-  border-left-color: #ccc;
+  padding: 0;
+  margin: 0 0 0 10px;
+  border: 0;
 }
 
 .aloha-oer-block.definition .term-wrapper:before {
@@ -30,5 +25,5 @@ dl.definition.aloha-oer-block {
     font-weight: bold;
 }
 dl.definition .body {
-  margin: 10px;
+  margin: 10px 0 10px 25px;
 }

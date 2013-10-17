@@ -3,7 +3,6 @@
 }
 
 .exercise.aloha-oer-block {
-    min-height: 50px;
     border: 0 !important;
     padding: 0 !important;
     margin: 0 0 0 10px !important;
@@ -41,22 +40,24 @@
 }
 
 .exercise .solution-controls {
+    overflow: hidden;
+    height: 0;
     opacity: 0;
-    -webkit-transition: opacity .15s ease-in-out;
-    -moz-transition: opacity .15s ease-in-out;
-    -ms-transition: opacity .15s ease-in-out;
-    -o-transition: opacity .15s ease-in-out;
-    transition: opacity .15s ease-in-out;
+    -webkit-transition: opacity .15s ease-in-out, height .15s ease-in-out;
+    -moz-transition: opacity .15s ease-in-out, height .15s ease-in-out;
+    -ms-transition: opacity .15s ease-in-out, height .15s ease-in-out;
+    -o-transition: opacity .15s ease-in-out, height .15s ease-in-out;
+    transition: opacity .15s ease-in-out, height .15s ease-in-out;
     margin-left: 45px;
-    height: 20px;
 }
 .semantic-container:hover > .exercise > .solution-controls {
+    height: 20px;
     opacity: 1;
-    -webkit-transition: opacity .15s ease-in-out;
-    -moz-transition: opacity .15s ease-in-out;
-    -ms-transition: opacity .15s ease-in-out;
-    -o-transition: opacity .15s ease-in-out;
-    transition: opacity .15s ease-in-out;
+    -webkit-transition: opacity .15s ease-in-out, height .15s ease-in-out;
+    -moz-transition: opacity .15s ease-in-out, height .15s ease-in-out;
+    -ms-transition: opacity .15s ease-in-out, height .15s ease-in-out;
+    -o-transition: opacity .15s ease-in-out, height .15s ease-in-out;
+    transition: opacity .15s ease-in-out, height .15s ease-in-out;
 }
 
 .exercise .solution-controls a {

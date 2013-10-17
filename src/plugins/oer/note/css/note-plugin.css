@@ -2,10 +2,6 @@
     content: "Note to reader";
 }
 
-.note {
-    min-height: 50px;
-}
-
 .note .body {
   margin: 10px;
   background-color: inherit;

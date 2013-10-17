@@ -40,6 +40,9 @@ form#linkModal:focus {
 figure.aloha-oer-block {
     display: block;
     border: 0;
+    padding-top: 0; 
+    padding-bottom: 0;
+    margin: 0 32px 0 15px !important; /* !important in order to override ID-based selector from oerpub-content.less */
 }
 
 figure.aloha-oer-block > .title, 
