@@ -5,9 +5,14 @@ div.copy-section-controls {
 
 div.copy-section-controls span.copy-section {
     color: #666666;
-    font-size: 75%;
+    font-size: 11px;
     margin: 0 0.5em;
     cursor: pointer;
+    font-weight: normal;
+    letter-spacing: normal;
+}
+div.copy-section-controls span.copy-section .icon-copy:before {
+    font-size: 12px;
 }
 
 h1:hover div.copy-section-controls,
