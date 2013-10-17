@@ -305,6 +305,9 @@
       $closer = $el.find('.math-element-destroy');
       if ($closer[0] == null) {
         $closer = jQuery('<span class="math-element-destroy aloha-ephemera" title="Delete\u00A0math">&nbsp;</span>');
+        $closer.on('hidden', function(e) {
+          return e.stopPropagation();
+        });
         if (jQuery.ui && jQuery.ui.tooltip) {
           $closer.tooltip();
         } else {

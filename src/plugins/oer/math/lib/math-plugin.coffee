@@ -386,6 +386,11 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
     $closer = $el.find '.math-element-destroy'
     if not $closer[0]?
       $closer = jQuery('<span class="math-element-destroy aloha-ephemera" title="Delete\u00A0math">&nbsp;</span>')
+      # The hidden event on the closeIcon should not propagate, otherwise it
+      # triggers cleanupFormula repeatedly on an empty math element, causing
+      # infinite recursion.
+      $closer.on 'hidden', (e) -> e.stopPropagation()
+
       if jQuery.ui and jQuery.ui.tooltip
         $closer.tooltip()
       else
