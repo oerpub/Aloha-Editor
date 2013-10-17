@@ -2,9 +2,9 @@
 (function() {
   var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-  define(['aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', 'css!../../../oer/math/css/math.css'], function(Aloha, Plugin, jQuery, Popover, UI) {
+  define(['aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', 'copy/copy-plugin', 'css!../../../oer/math/css/math.css'], function(Aloha, Plugin, jQuery, Popover, UI, Copy) {
     var $_editor, EDITOR_HTML, LANGUAGES, MATHML_ANNOTATION_MIME_ENCODINGS, MATHML_ANNOTATION_NONMIME_ENCODINGS, TOOLTIP_TEMPLATE, addAnnotation, buildEditor, cleanupFormula, findFormula, getEncoding, getMathFor, insertMath, insertMathInto, makeCloseIcon, ob, placeCursorAfter, squirrelMath, triggerMathJax;
-    EDITOR_HTML = '<div class="math-editor-dialog">\n    <div class="math-container">\n        <pre><span></span><br></pre>\n        <textarea type="text" class="formula" rows="1"\n                  placeholder="Insert your math notation here"></textarea>\n    </div>\n    <div class="footer">\n      <span>This is:</span>\n      <label class="radio inline">\n          <input type="radio" name="mime-type" value="math/asciimath"> ASCIIMath\n      </label>\n      <label class="radio inline">\n          <input type="radio" name="mime-type" value="math/tex"> LaTeX\n      </label>\n      <label class="radio inline mime-type-mathml">\n          <input type="radio" name="mime-type" value="math/mml"> MathML\n      </label>\n      <label class="plaintext-label radio inline">\n          <input type="radio" name="mime-type" value="text/plain"> Plain text\n      </label>\n      <button class="btn btn-primary done">Done</button>\n    </div>\n</div>';
+    EDITOR_HTML = '<div class="math-editor-dialog">\n    <div class="math-container">\n        <pre><span></span><br></pre>\n        <textarea type="text" class="formula" rows="1"\n                  placeholder="Insert your math notation here"></textarea>\n    </div>\n    <div class="footer">\n      <span>This is:</span>\n      <label class="radio inline">\n          <input type="radio" name="mime-type" value="math/asciimath"> ASCIIMath\n      </label>\n      <label class="radio inline">\n          <input type="radio" name="mime-type" value="math/tex"> LaTeX\n      </label>\n      <label class="radio inline mime-type-mathml">\n          <input type="radio" name="mime-type" value="math/mml"> MathML\n      </label>\n      <label class="plaintext-label radio inline">\n          <input type="radio" name="mime-type" value="text/plain"> Plain text\n      </label>\n      <button class="btn btn-primary done">Done</button>\n      <button class="btn copy">Copy</button>\n    </div>\n</div>';
     $_editor = jQuery(EDITOR_HTML);
     LANGUAGES = {
       'math/asciimath': {
@@ -77,6 +77,46 @@
       if (editable.obj.is(':not(.aloha-root-editable)')) {
         return;
       }
+      editable.obj.on('copy', function(e) {
+        var $content, clipboard, content;
+        content = e.oerContent || Aloha.getSelection().getRangeAt(0).cloneContents();
+        $content = $('<div />').append(content);
+        if ($content.has('span.math-element').length && $content.has('script').length) {
+          e.preventDefault();
+          clipboard = e.clipboardData || e.originalEvent.clipboardData;
+          return clipboard.setData('text/oerpub-content', $content.html());
+        } else {
+          return Copy.buffer($content.html());
+        }
+      });
+      editable.obj.on('paste', function(e) {
+        var $content, clipboard, content, math, range;
+        clipboard = e.clipboardData || e.originalEvent.clipboardData;
+        content = clipboard.getData('text/oerpub-content');
+        if (content) {
+          e.preventDefault();
+          $content = jQuery('<div class="aloha-ephemera-wrapper newly-pasted-content" />').append(content).hide();
+          $content.find('*[id]').removeAttr('id');
+          range = Aloha.getSelection().getRangeAt(0);
+          range.insertNode($content.get(0));
+          math = [];
+          $content.find('.math-element').each(function(idx, el) {
+            var deferred;
+            deferred = $.Deferred();
+            math.push(deferred);
+            return triggerMathJax(jQuery(el), function() {
+              return deferred.resolve();
+            });
+          });
+          return $.when.apply($content, math).done(function() {
+            return $content.each(function() {
+              var $$$;
+              $$$ = jQuery(this);
+              return $$$.replaceWith($$$.contents());
+            });
+          });
+        }
+      });
       editable.obj.bind('keydown', 'ctrl+m', function(evt) {
         insertMath();
         return evt.preventDefault();
@@ -208,6 +248,9 @@
       $editor.find('.remove').on('click', function() {
         $span.trigger('hide-popover');
         return cleanupFormula($editor, $span, true);
+      });
+      $editor.find('.copy').on('click', function() {
+        return Copy.buffer($span.outerHtml(), 'text/oerpub-content');
       });
       $formula = $editor.find('.formula');
       mimeType = $span.find('script[type]').attr('type') || 'math/tex';
@@ -384,6 +427,15 @@
         return insertMath();
       }
     });
+    MathJax.Callback.Queue(MathJax.Hub.Register.StartupHook("MathMenu Ready", function() {
+      var copyCommand;
+      copyCommand = MathJax.Menu.ITEM.COMMAND("Copy Math", function(e, f, g) {
+        var $script;
+        $script = jQuery(document.getElementById(MathJax.Menu.jax.inputID));
+        return Copy.buffer($script.parent().parent().outerHtml(), 'text/oerpub-content');
+      });
+      return MathJax.Menu.menu.items.unshift(copyCommand);
+    }));
     ob = {
       selector: '.math-element',
       populator: buildEditor,

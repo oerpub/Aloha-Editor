@@ -68,7 +68,7 @@
         callback: function(e) {
           var $element;
           $element = jQuery(this).parents('.semantic-container').first();
-          return Copy.buffer($element.outerHtml(), Copy.getCurrentPath());
+          return Copy.buffer($element.outerHtml());
         }
       }, {
         name: 'mouseover',
