@@ -40,15 +40,33 @@
     height: auto !important;
 }
 
-.semantic-container.drag-active, .semantic-container.drag-active .semantic-controls-top {
-    background: #F0F0F0;
+.semantic-container.copy-preview, .semantic-container.copy-preview > .semantic-controls-top {
+    background-color: #F2F2F2;
+}
+.semantic-container.copy-preview .exercise-controls, 
+.semantic-container.copy-preview .solution-controls {
+    display: none !important;
 }
 
-.semantic-container.delete-hover, .semantic-container.delete-hover .semantic-controls-top {
+.semantic-container.drag-active {
     background: #F0F0F0;
 }
-.semantic-container.delete-hover > .aloha-oer-block, .semantic-container.delete-hover > .semantic-controls-top {
+.semantic-container.drag-active .semantic-controls-top, 
+.semantic-container.drag-active .exercise-controls, 
+.semantic-container.drag-active .solution-controls {
+    display: none !important;
+}
+
+.semantic-container.delete-hover {
+    background: #F0F0F0;
+}
+.semantic-container.delete-hover > .aloha-oer-block{
     opacity: 0.3;
+}
+.semantic-container.delete-hover .semantic-controls-top, 
+.semantic-container.delete-hover .exercise-controls, 
+.semantic-container.delete-hover .solution-controls {
+    display: none !important;
 }
 
 .semantic-container {
@@ -61,9 +79,6 @@
 }
 .semantic-container.focused {
     border: 1px solid #ccc;
-}
-.semantic-container.copy-preview, .semantic-container.copy-preview .semantic-controls-top {
-    background-color: #F2F2F2;
 }
 
 .semantic-container .aloha-block-handle {

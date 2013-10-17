@@ -3,12 +3,19 @@
 }
 
 .example.aloha-oer-block {
-    background-color: #f3f3f3;
     border-left: 0;
     border-right: 0;
     border-top: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
     margin: 0 25px 0 10px;
+}
+
+.example.aloha-oer-block, 
+.example .semantic-controls-top, 
+.example .exercise > .solution-controls > span, 
+.example .multipart > .exercise-controls > span, 
+.example .multipart > .solution-controls > span {
+    background-color: #f3f3f3;
 }
 
 .example .body {
