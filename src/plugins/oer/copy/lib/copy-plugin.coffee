@@ -119,6 +119,9 @@ define ['aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', 'PubSub', './pa
 
           # Default paste behaviour follows
           $elements = jQuery plugin.getBuffer()
+          
+          # Remove any classes associated with previewing what element you were copying
+          $elements.removeClass('copy-preview focused')
 
           dstpath = plugin.getCurrentPath()
           if dstpath != null

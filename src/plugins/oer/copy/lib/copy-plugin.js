@@ -124,6 +124,7 @@
               return;
             }
             $elements = jQuery(plugin.getBuffer());
+            $elements.removeClass('copy-preview focused');
             dstpath = plugin.getCurrentPath();
             if (dstpath !== null) {
               dstpath = Path.dirname(dstpath);
