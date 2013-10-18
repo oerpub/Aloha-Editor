@@ -107,7 +107,7 @@ figure.aloha-oer-block .image-wrapper .image-edit.thank-you{
     left: 0;
 }
 
-.semantic-container.focused figure.aloha-oer-block .image-wrapper .image-edit {
+.semantic-container.focused > figure.aloha-oer-block > .image-wrapper > .image-edit {
     display: block;
 }
 
