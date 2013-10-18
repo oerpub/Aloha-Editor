@@ -9,7 +9,7 @@ body { counter-reset: equation; }
     text-align: center;
     border: 0;
     padding: 10px 0 0;
-    margin: 0 !important;
+    margin: 0 !important; /* !important done to override ID-based selector in oerpub-content.less */
 }
 .aloha-oer-block.equation:after {
     content: '(' counter(equation) ')';
