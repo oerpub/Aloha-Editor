@@ -15,13 +15,11 @@ define [
       return 'Definition'
       
     activate: ($element) ->
-      term = $element.children('dt').text()
+      term = $element.children('dt').contents()
       $definition = $element.children('dd').contents()
 
-      $element.empty()
-
       jQuery('<div>')
-        .text(term)
+        .append(term)
         .addClass('term')
         .attr('placeholder', 'Enter the term to be defined here')
         .appendTo($element)
@@ -35,10 +33,19 @@ define [
         .appendTo($element)
         .aloha()
         .append($definition)
+
+      # these elements need to stick around in case deactivate runs 
+      # during the activation, but now we can remove them
+      $element.find('dt,dd').remove()
      
     deactivate: ($element) ->
       term = $element.find('.term').text()
       $definition = $element.children('.body').contents()
+
+      # if the body is empty check for a 'dd', we might
+      # not be done activating
+      if not $definition.length
+        $definition = $element.children('dd').contents()
 
       $element.empty()
 

@@ -9,16 +9,19 @@
       },
       activate: function($element) {
         var $definition, term;
-        term = $element.children('dt').text();
+        term = $element.children('dt').contents();
         $definition = $element.children('dd').contents();
-        $element.empty();
-        jQuery('<div>').text(term).addClass('term').attr('placeholder', 'Enter the term to be defined here').appendTo($element).wrap('<div class="term-wrapper"></div>').aloha();
-        return jQuery('<div>').addClass('body').addClass('aloha-block-dropzone').attr('placeholder', "Type the definition here.").appendTo($element).aloha().append($definition);
+        jQuery('<div>').append(term).addClass('term').attr('placeholder', 'Enter the term to be defined here').appendTo($element).wrap('<div class="term-wrapper"></div>').aloha();
+        jQuery('<div>').addClass('body').addClass('aloha-block-dropzone').attr('placeholder', "Type the definition here.").appendTo($element).aloha().append($definition);
+        return $element.find('dt,dd').remove();
       },
       deactivate: function($element) {
         var $definition, term;
         term = $element.find('.term').text();
         $definition = $element.children('.body').contents();
+        if (!$definition.length) {
+          $definition = $element.children('dd').contents();
+        }
         $element.empty();
         jQuery('<dt>').text(term).appendTo($element);
         return jQuery('<dd>').html($definition).appendTo($element);
