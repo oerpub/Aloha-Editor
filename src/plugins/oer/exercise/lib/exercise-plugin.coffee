@@ -46,7 +46,7 @@ define [
       $problem = $element.children('.problem')
       $solutions = $element.children('.solution')
 
-      $element.children().not($problem).remove()
+      $element.children().not($problem).not($solutions).remove()
 
       $typeContainer = jQuery(TYPE_CONTAINER)
       $typeContainer.find('.type').text(type.charAt(0).toUpperCase() + type.slice(1) )
@@ -94,8 +94,6 @@ define [
       $body = ''
       $body = $element.children() if $element.text().trim().length
       
-      $element.children().remove()
-
       $typeContainer = jQuery(SOLUTION_TYPE_CONTAINER)
       $typeContainer.find('.type').text(type.charAt(0).toUpperCase() + type.slice(1) )
 
@@ -113,8 +111,10 @@ define [
         .append($body)
 
     deactivateSolution = ($element) ->
-      $element.children(':not(.body)').remove()
-      $element.children('.body').contents().unwrap()
+      if $element.children('.body').children().length
+        $element.children(':not(.body)').remove()
+        $element.children('.body').contents().unwrap()
+
       $element.children('.body').remove()
 
       $element.contents()

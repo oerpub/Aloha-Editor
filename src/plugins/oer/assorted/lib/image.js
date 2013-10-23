@@ -121,6 +121,9 @@
           files: $uploadImage[0].files
         });
       });
+      dialog.on('shown', function() {
+        return dialog.find('input,textarea,select').filter(':visible').first().focus();
+      });
       dialog.on('click', '.btn.action.cancel', function(evt) {
         evt.preventDefault();
         if (!editing) {

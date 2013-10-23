@@ -152,7 +152,7 @@ define ['aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', 'PubSub', './pa
 
       addCopyUi = ($ob) ->
         $ob = $ob.filter () -> not jQuery(this).has('.copy-section-controls').length
-        $ob.append('''
+        $ob.prepend('''
           <div class="aloha-ephemera copy-section-controls"
                contenteditable="false">
             <span href="#" title="Copy section" class="copy-section"><i class="icon-copy"></i> Copy section</span>

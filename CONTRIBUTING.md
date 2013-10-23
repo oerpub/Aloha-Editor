@@ -1,4 +1,4 @@
-### Contributor Guidelines
+### Gentics' Original Contributor Guidelines (applies to upstream repository)
 
 Sign the Contributor License Agreement
 

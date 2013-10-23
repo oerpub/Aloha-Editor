@@ -12,7 +12,7 @@
       type = $element.attr('data-type') || 'exercise';
       $problem = $element.children('.problem');
       $solutions = $element.children('.solution');
-      $element.children().not($problem).remove();
+      $element.children().not($problem).not($solutions).remove();
       $typeContainer = jQuery(TYPE_CONTAINER);
       $typeContainer.find('.type').text(type.charAt(0).toUpperCase() + type.slice(1));
       $typeContainer.find('.dropdown-menu li').each(function(i, li) {
@@ -41,7 +41,6 @@
       if ($element.text().trim().length) {
         $body = $element.children();
       }
-      $element.children().remove();
       $typeContainer = jQuery(SOLUTION_TYPE_CONTAINER);
       $typeContainer.find('.type').text(type.charAt(0).toUpperCase() + type.slice(1));
       $typeContainer.find('.dropdown-menu li').each(function(i, li) {
@@ -53,8 +52,10 @@
       return jQuery('<div>').addClass('body').addClass('aloha-block-dropzone').appendTo($element).aloha().append($body);
     };
     deactivateSolution = function($element) {
-      $element.children(':not(.body)').remove();
-      $element.children('.body').contents().unwrap();
+      if ($element.children('.body').children().length) {
+        $element.children(':not(.body)').remove();
+        $element.children('.body').contents().unwrap();
+      }
       $element.children('.body').remove();
       return $element.contents().filter(function(i, child) {
         return child.nodeType === 3 && child.data.trim().length;

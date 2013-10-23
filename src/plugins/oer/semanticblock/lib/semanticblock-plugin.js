@@ -2,11 +2,17 @@
 (function() {
   var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-  define(['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'jquery', 'aloha/ephemera', 'ui/ui', 'ui/button', 'copy/copy-plugin', 'css!semanticblock/css/semanticblock-plugin.css'], function(Aloha, BlockManager, Plugin, pluginManager, jQuery, Ephemera, UI, Button, Copy) {
-    var DIALOG_HTML, activate, bindEvents, blockControls, blockDragHelper, blockIdentifier, blockTemplate, cleanIds, cleanWhitespace, copyBuffer, deactivate, getLabel, insertElement, pluginEvents, registeredTypes, topControls;
+  define(['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'jquery', 'aloha/ephemera', 'ui/ui', 'ui/button', 'copy/copy-plugin', 'css!semanticblock/css/semanticblock-plugin.css'], function(Aloha, Block, BlockManager, Plugin, pluginManager, jQuery, Ephemera, UI, Button, Copy) {
+    var DIALOG_HTML, activate, bindEvents, blockControls, blockDragHelper, blockIdentifier, blockTemplate, cleanIds, cleanWhitespace, copyBuffer, deactivate, getLabel, insertElement, pluginEvents, registeredTypes, semanticBlock, topControls;
     if (pluginManager.plugins.semanticblock) {
       return pluginManager.plugins.semanticblock;
     }
+    semanticBlock = Block.AbstractBlock.extend({
+      shouldDestroy: function() {
+        return false;
+      }
+    });
+    BlockManager.registerBlockType('semanticBlock', semanticBlock);
     DIALOG_HTML = '<div class="semantic-settings modal hide" id="linkModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="false">\n  <div class="modal-header">\n    <h3></h3>\n  </div>\n  <div class="modal-body">\n    <div style="margin: 20px 10px 20px 10px; padding: 10px; border: 1px solid grey;">\n        <strong>Custom class</strong>\n        <p>\n            Give this element a custom "class". Nothing obvious will change in your document.\n            This is for advanced book styling and requires support from the publishing system.\n        </p> \n        <input type="text" placeholder="custom element class" name="custom_class">\n    </div>\n  </div>\n  <div class="modal-footer">\n    <button class="btn btn-primary action submit">Save changes</button>\n    <button class="btn action cancel">Cancel</button>\n  </div>\n</div>';
     blockTemplate = jQuery('<div class="semantic-container aloha-ephemera-wrapper"></div>');
     topControls = jQuery('<div class="semantic-controls-top aloha-ephemera">\n  <a class="copy" title="Copy this element"><i class="icon-copy"></i> Copy element</button>\n</div>');
@@ -211,7 +217,9 @@
         top.find('.copy').attr('title', "Copy this " + label);
         top.find('.copy').contents().last().replaceWith(" Copy " + label);
         if (type === null) {
-          $element.wrap(blockTemplate).parent().append(controls).prepend(top).alohaBlock();
+          $element.wrap(blockTemplate).parent().append(controls).prepend(top).alohaBlock({
+            'aloha-block-type': 'semanticBlock'
+          });
         } else {
           if (type.options) {
             if (typeof type.options === 'function') {
@@ -228,7 +236,9 @@
               }
             }
           }
-          $element.wrap(blockTemplate).parent().append(controls).prepend(top).alohaBlock();
+          $element.wrap(blockTemplate).parent().append(controls).prepend(top).alohaBlock({
+            'aloha-block-type': 'semanticBlock'
+          });
           type.activate($element);
           return;
         }

@@ -161,7 +161,7 @@
           $ob = $ob.filter(function() {
             return !jQuery(this).has('.copy-section-controls').length;
           });
-          return $ob.append('<div class="aloha-ephemera copy-section-controls"\n     contenteditable="false">\n  <span href="#" title="Copy section" class="copy-section"><i class="icon-copy"></i> Copy section</span>\n</div>');
+          return $ob.prepend('<div class="aloha-ephemera copy-section-controls"\n     contenteditable="false">\n  <span href="#" title="Copy section" class="copy-section"><i class="icon-copy"></i> Copy section</span>\n</div>');
         };
         return Aloha.bind('aloha-editable-created', function(evt, editable) {
           if (localStorage && localStorage.alohaOerCopyBuffer) {

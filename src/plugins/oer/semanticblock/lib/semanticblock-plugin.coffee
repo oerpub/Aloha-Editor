@@ -1,7 +1,12 @@
-define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'jquery', 'aloha/ephemera', 'ui/ui', 'ui/button', 'copy/copy-plugin', 'css!semanticblock/css/semanticblock-plugin.css'], (Aloha, BlockManager, Plugin, pluginManager, jQuery, Ephemera, UI, Button, Copy) ->
+define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'jquery', 'aloha/ephemera', 'ui/ui', 'ui/button', 'copy/copy-plugin', 'css!semanticblock/css/semanticblock-plugin.css'], (Aloha, Block, BlockManager, Plugin, pluginManager, jQuery, Ephemera, UI, Button, Copy) ->
 
   # hack to accomodate multiple executions
   return pluginManager.plugins.semanticblock  if pluginManager.plugins.semanticblock
+
+  semanticBlock = Block.AbstractBlock.extend
+    shouldDestroy: -> false # this stops aloha from destroying our blocks all willy nilly
+
+  BlockManager.registerBlockType 'semanticBlock', semanticBlock
 
   DIALOG_HTML = '''
     <div class="semantic-settings modal hide" id="linkModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="false">
@@ -174,7 +179,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       # Show the classes involved, filter out the aloha ones
       classes = (c for c in $element.attr('class').split(/\s+/) when not /^aloha/.test(c))
       elementName = classes.length and "element (class='#{classes.join(' ')}')" or 'element'
-
+	
   activate = ($element) ->
     unless $element.is('.semantic-container') or ($element.is('.alternates') and $element.parents('figure').length)
       $element.addClass 'aloha-oer-block'
@@ -199,7 +204,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
       top.find('.copy').attr('title', "Copy this #{label}")
       top.find('.copy').contents().last().replaceWith(" Copy #{label}")
       if type == null
-        $element.wrap(blockTemplate).parent().append(controls).prepend(top).alohaBlock()
+        $element.wrap(blockTemplate).parent().append(controls).prepend(top).alohaBlock({'aloha-block-type': 'semanticBlock'})
       else
         # Ask `type` plugin about the controls it wants
         if type.options
@@ -214,7 +219,7 @@ define ['aloha', 'block/blockmanager', 'aloha/plugin', 'aloha/pluginmanager', 'j
             controls.find('button.semantic-settings').remove() if 'settings' not in options.buttons
             top.find('a.copy').remove() if 'copy' not in options.buttons
 
-        $element.wrap(blockTemplate).parent().append(controls).prepend(top).alohaBlock()
+        $element.wrap(blockTemplate).parent().append(controls).prepend(top).alohaBlock({'aloha-block-type': 'semanticBlock'})
         type.activate $element
         return
  
