@@ -120,6 +120,11 @@ define [ 'jquery', 'aloha', 'aloha/plugin', 'PubSub', 'ui/button' ], (
         $el = jQuery(@)
         hTag = $el.attr('data-tagname')
         rangeObject = Aloha.Selection.getRangeObject()
+
+        # `Aloha.Selection.changeMarkupOnSelection` behaves odly on elements with no text inside
+        # add an empty text node to make handling of empty elements less goofy
+        $(rangeObject.startContainer).append(document.createTextNode(''))
+
         GENTICS.Utils.Dom.extendToWord rangeObject  if rangeObject.isCollapsed()
 
         Aloha.Selection.changeMarkupOnSelection Aloha.jQuery("<#{hTag}></#{hTag}>")

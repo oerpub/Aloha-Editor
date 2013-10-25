@@ -164,6 +164,7 @@
           $el = jQuery(this);
           hTag = $el.attr('data-tagname');
           rangeObject = Aloha.Selection.getRangeObject();
+          $(rangeObject.startContainer).append(document.createTextNode(''));
           if (rangeObject.isCollapsed()) {
             GENTICS.Utils.Dom.extendToWord(rangeObject);
           }
