@@ -195,7 +195,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
 
     # STEP1
     $maths = editable.obj.find('math')
-    $maths.wrap '<span class="math-element aloha-ephemera-wrapper"><span class="mathjax-wrapper aloha-ephemera"></span></span>'
+    $maths.wrap '<span class="math-element aloha-ephemera-wrapper" contenteditable="false"><span class="mathjax-wrapper aloha-ephemera"></span></span>'
 
     # TODO: Explicitly call Mathjax Typeset
     jQuery.each $maths, (i, mml) ->

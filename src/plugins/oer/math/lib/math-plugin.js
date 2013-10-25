@@ -122,7 +122,7 @@
         return evt.preventDefault();
       });
       $maths = editable.obj.find('math');
-      $maths.wrap('<span class="math-element aloha-ephemera-wrapper"><span class="mathjax-wrapper aloha-ephemera"></span></span>');
+      $maths.wrap('<span class="math-element aloha-ephemera-wrapper" contenteditable="false"><span class="mathjax-wrapper aloha-ephemera"></span></span>');
       jQuery.each($maths, function(i, mml) {
         var $mathElement, $mml, mathParts, _ref;
         $mml = jQuery(mml);
