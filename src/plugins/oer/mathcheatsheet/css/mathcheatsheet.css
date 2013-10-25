@@ -6,6 +6,10 @@
     float: right;
 }
 
+.math-editor-dialog .cheatsheet-label {
+    margin-left: 10px;
+}
+
 .math-editor-help-text {
     max-width: 45%;
 }
