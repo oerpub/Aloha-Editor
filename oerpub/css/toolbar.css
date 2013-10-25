@@ -260,3 +260,11 @@ figure figcaption::before {
   word-spacing: normal;
   vertical-align: middle;
 }
+
+.toolbar .ui-flash {
+  background-color: #7E9AB4;
+  color: white;
+  font-weight: bold;
+  padding: 0.25em;
+}
+
