@@ -257,6 +257,8 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
       .mahalo()
       .removeClass('aloha-editable aloha-block-blocklevel-sortable ui-sortable')
       .removeAttr('hover-placeholder')
+      .removeAttr('id') # titles arent special enough to keep their ids
+
     content = $element.children('.body')
     if content.is(':empty')
       content.remove()

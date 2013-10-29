@@ -265,7 +265,7 @@
           return;
         }
       }
-      $title = $element.children('.title').first().mahalo().removeClass('aloha-editable aloha-block-blocklevel-sortable ui-sortable').removeAttr('hover-placeholder');
+      $title = $element.children('.title').first().mahalo().removeClass('aloha-editable aloha-block-blocklevel-sortable ui-sortable').removeAttr('hover-placeholder').removeAttr('id');
       content = $element.children('.body');
       if (content.is(':empty')) {
         content.remove();
