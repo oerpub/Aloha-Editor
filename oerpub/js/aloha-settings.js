@@ -17,20 +17,40 @@
                 // jquery-ui and bootstrap conflict in a few cases (buttons,
                 // tooltip) our copy has those removed.
                 jqueryui: '../../oerpub/js/jquery-ui-1.9.0.custom-aloha'
+            },
+            map: {
+                '*': {
+                    'ui/ui': 'toolbar/toolbar-plugin'
+                }
             }
         },  
         plugins: {
             assorted: {
                 image: {
-                    preview: false,
+                    preview: true,
                     uploadurl: '/upload_dnd'
                 }
             },
             genericbutton: {
                 buttons: [{'id': 'save', 'title': 'Save', 'event': 'swordpushweb.save' }]
             },
+            toolbar: {
+                formats: {
+                  'p':   'Normal Text',
+                  'h1':  'Heading',
+                  'h2':  'Subheading',
+                  'h3':  'SubSubHeading',
+                  'pre': 'Code'
+                }
+            },
             format: {
                 config : ['b', 'i', 'u', 'p', 'sub', 'sup', 'h1', 'h2', 'h3']
+            },
+            table: {
+                editables: {
+                    '#canvas': { enabled: true },
+                    '.title-editor': {enabled: false},
+                }
             },
             block: {
                 defaults : {
@@ -46,9 +66,15 @@
         },
         bundles: {
             // Path for custom bundle relative from require.js path
-            oerpub: '../plugins/oerpub',
-            oer: '../plugins/oer',
-            cnx: '../plugins/cnx'
+            oer: '../plugins/oer'
         }
     };
+
+    Aloha.settings.contentHandler = {
+        insertHtml: [ 'word', 'generic', 'oembed'],
+        initEditable: [],
+        getContents: []
+    }
+
+
 })(window);

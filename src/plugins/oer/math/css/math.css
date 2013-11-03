@@ -33,7 +33,7 @@ math,
 }
 
 .math-popover {
-    min-width: 40em;
+    min-width: 45em;
 }
 
 .math-popover textarea.formula {
@@ -43,22 +43,24 @@ math,
     width: 100%;
 }
 
-.math-container {
+.math-popover .math-container {
     position: relative;
     margin-bottom: 1em;
 }
 
-.math-container textarea,
-.math-container pre {
+.math-popover .math-container textarea,
+.math-popover .math-container pre {
   margin: 0;
   padding: 5px;
   outline: 0;
   border: 0;
   white-space: pre-wrap;
   word-wrap: break-word;
+  font-size: 100%;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 
-.math-container textarea {
+.math-popover .math-container textarea {
   /* Hide any scrollbars */
   overflow: hidden;
   position: absolute;
@@ -69,7 +71,7 @@ math,
   resize: none;
 }
 
-.math-container pre {
+.math-popover .math-container pre {
   display: block;
   visibility: hidden;
 }
@@ -100,6 +102,6 @@ math,
     background-image: url(../img/remove-02.png);
 }
 
-button.done {
+button.done, button.copy {
     float: right;
 }

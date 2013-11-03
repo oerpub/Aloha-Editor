@@ -8,7 +8,7 @@
 @Aloha.settings =
   jQuery: @jQuery # Use the same version of jQuery
   logLevels:
-    error: true
+    error: false
     warn: true
     info: false
     debug: false
@@ -24,19 +24,38 @@
   plugins:
     # All the plugins we use in Aloha
     load: [
-      'oer/toolbar'
       'common/ui'
-      'common/format'
+      'oer/toolbar'
+      'oer/overlay'
+      'oer/format'
+      'common/contenthandler'
       'common/paste'
       'common/block'
       'common/list'
-      'common/table'
+      'oer/table'
+      'oer/overlay'
+      'oer/math'
       'extra/draganddropfiles'
       'common/image'
-      'oer/popover'
-      'oer/math'
       'oer/assorted'
+      'oer/title'
+      'common/undo'
+      'oer/undobutton'
+      'oer/genericbutton'
+      'oer/semanticblock'
+      'oer/exercise'
       'oer/note'
+    ]
+
+    note: [
+      { label: 'Note',      cls: 'note', hasTitle: true }
+      { label: 'Aside',     cls: 'note', hasTitle: true, type: 'aside' }
+      { label: 'Warning',   cls: 'note', hasTitle: true, type: 'warning' }
+      { label: 'Tip',       cls: 'note', hasTitle: true, type: 'tip' }
+      { label: 'Important', cls: 'note', hasTitle: true, type: 'important' }
+
+      { label: 'Noteish',   cls: 'noteish', hasTitle: true }
+      { label: 'Noteish (no Title)', cls: 'noteish-notitle', hasTitle: false }
     ]
 
     # This whole thing is what's needed to:

@@ -1,5 +1,9 @@
 /* candidate for a oerpub plugin? */
 
+body {
+    background-color: #CCCCCC;
+}
+
 figure {
     counter-increment: figure;
 }
@@ -23,4 +27,10 @@ figure figcaption::before {
 
 .aloha-editable-active, .aloha-editable-active[contenteditable="true"]:focus {
     outline: none !important;
+}
+
+/* Override all other css and hide the side-bar. We don't use it, and getting
+   rid of it otherwise is too invasive. */
+.aloha-sidebar-bar {
+    display: none !important;
 }

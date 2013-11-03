@@ -53,6 +53,7 @@ figure figcaption::before {
 /* Toolbar icons */
 .toolbar {
   background-color: whiteSmoke;
+  height: 40px;
   opacity: 0.95;
   position: fixed;
   top: 0;
@@ -76,8 +77,14 @@ figure figcaption::before {
   -moz-box-shadow: none;
   -webkit-box-shadow: none;
 }
+.toolbar .btn.btn-text {
+  padding: 5px;
+}
 .toolbar .btn-toolbar {
   margin: 3px 0;
+}
+.toolbar .btn[disabled] {
+  opacity: .3;
 }
 .toolbar .btn-group > .btn + .dropdown-toggle {
   height: 37px;
@@ -253,3 +260,11 @@ figure figcaption::before {
   word-spacing: normal;
   vertical-align: middle;
 }
+
+.toolbar .ui-flash {
+  background-color: #7E9AB4;
+  color: white;
+  font-weight: bold;
+  padding: 0.25em;
+}
+

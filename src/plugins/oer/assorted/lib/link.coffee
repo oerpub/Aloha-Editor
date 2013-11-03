@@ -5,16 +5,18 @@
 define [
   'aloha',
   'jquery',
-  'popover',
+  'overlay/overlay-plugin',
   'ui/ui',
   'aloha/console',
+  'aloha/ephemera',
   'css!assorted/css/link.css'
 ], (
   Aloha,
   jQuery,
   Popover,
   UI,
-  console
+  console,
+  Ephemera
 ) ->
 
   DIALOG_HTML = '''
@@ -33,8 +35,8 @@ define [
         <h4 id="link-destination">Link Destination</h4>
         <div class="tabbable tabs-left"> <!-- Only required for left/right tabs -->
           <ul class="nav nav-tabs">
-            <li><a href="#link-tab-external" data-toggle="tab">External</a></li>
-            <li><a href="#link-tab-internal" data-toggle="tab">Internal</a></li>
+            <li><span data-target="#link-tab-external" data-toggle="tab">External</span></li>
+            <li><span data-target="#link-tab-internal" data-toggle="tab">Internal</span></li>
           </ul>
           <div class="tab-content">
             <div class="tab-pane" id="link-tab-external">
@@ -67,12 +69,13 @@ define [
         </button>
         <a class="visit-link" target="_blank" title="Visit the link in a new window or tab">
           <i class="icon-external-link"></i>
-          <span class="title"></span>
-        </a>
+          <span class="title"></span></a>
       </span>
       <br/>
   '''
 
+  # have ephemera remove the attribute that bootstrap inserts for tooltips
+  Ephemera.attributes('data-original-title')
 
   showModalDialog = ($el) ->
       root = Aloha.activeEditable.obj
@@ -202,8 +205,10 @@ define [
       newRange.select()
       newRange
 
-  selector = 'a'
-
+  # Don't match links that are marked as ephemera. These are generally UI
+  # elements added by other plugins that are removed when the document is
+  # serialized and should never constitute a real link.
+  selector = 'a:not(.aloha-ephemera)'
 
   # see http://stackoverflow.com/questions/10903002/shorten-url-for-display-with-beginning-and-end-preserved-firebug-net-panel-st
   shortUrl = (linkurl, l) ->
@@ -345,6 +350,12 @@ define [
           newLink = Aloha.activeEditable.obj.find '.aloha-new-link'
           newLink.removeClass 'aloha-new-link'
 
+
+  # Prevent default on links as the bubble out of the editor. This signals
+  # any other machinery (or the browser) that we handled the event already.
+  Aloha.bind 'aloha-editable-created', (event, editable) ->
+    editable.obj.on 'click', 'a', (e)->
+      e.preventDefault()
 
   # Return config
   selector: selector

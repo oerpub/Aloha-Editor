@@ -32,8 +32,9 @@
 
 /* ========== section & section headers ========== */
 
-#canvas h1{
+#canvas h1 {
   color: #369;
+  height: 30px;
   padding: 0 0 .1em;
   border: 0 solid #369;
   border-bottom-width: 1px;
@@ -176,6 +177,11 @@ div.code{
   margin: 1em 0;
 }
 
+pre {
+  white-space: nowrap;
+  overflow-y: scroll;
+}
+
 pre.codeblock{
   margin: 0;
   text-align: left;
@@ -257,37 +263,9 @@ blockquote{
   border: 0;
 }
 
-/* ========== exercise ========== */
-
-.problemset-header{
-  margin: 2em 0 1em;
-  font-size: 1.15em;
-}
-
-.exercise{
-  margin: 1em 0;
-}
-
-.problem, .commentary{
-  margin: .5em 0;
-}
-
-.solution{
-  margin: .5em 0 .5em 3em;
-}
-
-.solution-toggles{
-  text-align: center;
-  margin-top: 1em;
-}
-
-.solution-toggles a{
-  text-decoration: none;
-}
-
 /* ========== assorted inline elements ========== */
 
-.cnxn, em{
+.cnxn{
   font-weight: bold;
 }
 
@@ -295,7 +273,7 @@ blockquote{
   font-variant: small-caps;
 }
 
-cite, em, i.emphasis .cite-title i{
+cite, i.emphasis .cite-title i{
   font-style: normal;
 }
 
@@ -330,68 +308,6 @@ i .foreign, .foreign i, blockquote i, blockquote .foreign, i blockquote, .foreig
 
 .foreign, blockquote i .foreign, blockquote .foreign i{
   font-style: italic;
-}
-
-/* ========== term & definition ========== */
-
-.term{
-  font-weight: bold;
-  font-style: normal;
-  display: inline;
-}
-
-.term .hovlink{
-  text-decoration: none;
-  border-bottom: 1px dotted #369;
-}
-
-.term .hovlink:visited{
-  border-color: #647;
-}
-
-.lensinfo a{
-  text-decoration: none !important;
-  border-bottom-width: 0 !important;
-}
-
-.lensinfo .term a{
-  color: #369;
-}
-
-.definition{
-  margin: 1em 0;
-}
-
-.meaning, .seealso{
-  margin: .5em 0 .5em 3em;
-  padding: .2em 0;
-}
-
-.seealso{
-  margin: .2em 0 .2em 3em;
-}
-
-/* ========== equation ========== */
-
-.equation{
-  margin: .5em 0 1em;
-  position: relative;
-}
-
-* html .equation{
-  width: 100%;
-  z-index: -1;
-}
-
-.equation-number{
-  position: absolute;
-  top: 50%;
-  right: 0;
-}
-
-.equation .title{
-  display: block;
-  margin-bottom: 1em;
 }
 
 /* ========== figure, subfigure & caption ========== */
@@ -514,20 +430,6 @@ semantics annotation-xml{
 
 math{
   font-size: 140%;
-}
-
-/* ========== note ========== */
-
-div.note{
-  padding: .75em;
-  margin: .5em 3em .75em;
-  border: 1px solid #333;
-  border-top-color: #ccc;
-  border-left-color: #ccc;
-}
-
-.note-header{
-  display: inline;
 }
 
 .footnote-reference{

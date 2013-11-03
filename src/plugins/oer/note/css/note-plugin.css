@@ -1,0 +1,8 @@
+.semantic-drag-source .note:before {
+    content: "Note to reader";
+}
+
+.note .body {
+  margin: 10px;
+  background-color: inherit;
+}

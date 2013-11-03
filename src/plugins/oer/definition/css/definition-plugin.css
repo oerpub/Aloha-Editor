@@ -1,0 +1,29 @@
+.semantic-drag-source dl.definition:before {
+    content: "Definition";
+}
+
+dl.definition.aloha-oer-block {
+    display: block;
+}
+dl.definition.aloha-oer-block {
+  padding: 0;
+  margin: 0 0 0 10px;
+  border: 0;
+}
+
+.aloha-oer-block.definition .term-wrapper:before {
+    content: "\25A0  Definition";
+    font-weight: bold;
+    margin: 5px 10px 0 5px;
+    color: #369;
+    display: inline-block;
+}
+.aloha-oer-block.definition .term {
+    display: inline-block;
+}
+.aloha-oer-block.definition .term:not(:empty) {
+    font-weight: bold;
+}
+dl.definition .body {
+  margin: 10px 0 10px 25px;
+}

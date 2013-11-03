@@ -123,9 +123,18 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, CreateLayer) {
             this.initButtons();
 
             // Mark some classes as ephemeral
-            Ephemera.classes('aloha-current-cell', 'aloha-current-row');
+            Ephemera.classes('aloha-current-cell', 'aloha-current-row', 'add-column-before', 'add-column-after');
 
             Aloha.bind('aloha-editable-created', function(event, editable){
+                var config = plugin.getEditableConfig(editable.obj);
+
+                /* If a config is available and this plugin is not explicitly
+                   enabled for this editable, disable it. In the absence of
+                   a specific configuration, default to enabling table
+                   events. */
+                if(config && config.enabled != undefined && !config.enabled){
+                    return
+                }
                 editable.obj.find('table').each(function(){
                     prepareTable(plugin, $(this));
                 });
@@ -144,7 +153,10 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, CreateLayer) {
                 // Aloha has its own 'keydown' event handler which will fire before the above handler
                 // and which will cause havoc ... havoc I tell you. Tables will be split!!!
                 // Change the order of the event handlers to suit our own purposes.
-                editable.obj.data('events')['keydown'].unshift(editable.obj.data('events')['keydown'].pop());
+                // XXX: Modifying internal structures like this is evil
+                // and unsupported. This will break again in future.
+                var handlers = $._data(editable.obj[0], 'events')['keydown'];
+                handlers.unshift(handlers.pop());
 
                 editable.obj.bind('keydown', 'tab shift+tab', function(e){
                     var $cell = $(
@@ -530,6 +542,14 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, CreateLayer) {
         clickTable: function(e){
             this.currentCell.length && this.currentCell.removeClass('aloha-current-cell');
             this.currentRow.length && this.currentRow.removeClass('aloha-current-row');
+
+            if (this.currentCell.attr('class') == '') {
+              this.currentCell.removeAttr('class')
+            }
+            if (this.currentRow.attr('class') == '') {
+              this.currentRow.removeAttr('class')
+            }
+
             this.currentCell = $(e.target).closest('td,th');
             this.currentRow = $(e.target).closest('tr');
             this.currentTable = $(e.target).closest('table');

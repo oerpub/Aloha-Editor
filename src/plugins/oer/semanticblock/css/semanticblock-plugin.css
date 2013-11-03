@@ -1,0 +1,323 @@
+/*  Logic for displaying placeholder text.
+    There are 2 cases when placeholder text should become visible:
+    1. If the user is hovering over a semantic element
+    2. If the user is editing a semantic element
+
+    Then, the placeholder text should appear on an element when all of the following occur:
+    - has a `placeholder` attribute
+    - does not contain text
+    - is not currently being edited (no cursor inside)
+
+    The placeholder text is added to the DOM using `:before { content: '...'; }`.
+    This way, the browser does most of the heavy lifting AND the actual text
+    is never part of the DOM for serializing.
+ */
+.semantic-container       *[placeholder]:empty:before {
+    font-weight: normal;
+    content: attr(placeholder);
+    color: #AAA;
+    font-style: italic;
+}
+.semantic-container:hover *[hover-placeholder]:empty:before {
+    font-weight: normal;
+    content: attr(hover-placeholder);
+    color: #AAA;
+    font-style: italic;
+}
+
+.aloha-oer-block-placeholder {
+    background: #C5DAE9;
+    border: 1px dashed #1b86d2;
+    min-height: 50px;
+    margin: 10px 0;
+}
+
+/* Make titles inline so they show up next to the type dropdown if there is one */
+.aloha-oer-block > .title { display: inline-block; }
+
+.semantic-drag-helper {
+    display: block;
+    height: auto !important;
+}
+
+.semantic-container.copy-preview, .semantic-container.copy-preview > .semantic-controls-top {
+    background-color: #F2F2F2;
+}
+.semantic-container.copy-preview .exercise-controls, 
+.semantic-container.copy-preview .solution-controls {
+    display: none !important;
+}
+
+.semantic-container.drag-active {
+    background: #F0F0F0;
+}
+.semantic-container.drag-active .semantic-controls-top, 
+.semantic-container.drag-active .exercise-controls, 
+.semantic-container.drag-active .solution-controls {
+    display: none !important;
+}
+
+.semantic-container.delete-hover {
+    background: #F0F0F0;
+}
+.semantic-container.delete-hover > .aloha-oer-block{
+    opacity: 0.3;
+}
+.semantic-container.delete-hover .semantic-controls-top, 
+.semantic-container.delete-hover .exercise-controls, 
+.semantic-container.delete-hover .solution-controls {
+    display: none !important;
+}
+
+.semantic-container {
+    cursor: auto !important; /* override default aloha cursor for blocks */
+    position: relative;
+    padding: 10px 0 10px;
+    margin: 10px 0 10px 0;
+    border: 1px solid transparent;
+    min-height: 15px;
+}
+.semantic-container.focused {
+    border: 1px solid #ccc;
+}
+
+.semantic-container .aloha-block-handle {
+    background-image:
+        linear-gradient(45deg, #C0C0C0 25%, transparent 25%, transparent 75%, #C0C0C0 75%),
+        linear-gradient(45deg, #C0C0C0 25%, transparent 25%, transparent 75%, #C0C0C0 75%);
+    background-position: 0 0, 2px 2px;
+    background-color: #FAFAFA;
+    background-size: 4px 4px;
+    border-radius: 0;
+    border: 1px solid #ccc;
+    height: 12px;
+    width: 50px;
+    margin-left: -25px; /* This will better center the handle, since "left: 50%" starts at the handle's left edge */
+    position: absolute;
+    left: 50%;
+    top: -8px;
+    display: none !important; /* override the default aloha display logic for handles */
+    cursor: -moz-grab !important;
+    cursor: -webkit-grab !important;
+    cursor: url('openhand.cur'), default;
+}
+.semantic-container.aloha-oer-dragging .aloha-block-handle {
+    cursor: -moz-grabbing !important;
+    cursor: -webkit-grabbing !important;
+    cursor: url('closedhand.cur'), default;
+}
+.semantic-container.drag-active .aloha-block-handle {
+    background-color: #F0F0F0;
+}
+.semantic-container.focused > .aloha-block-handle {
+    display: block !important; /* override the default aloha display logic for handles */
+}
+.semantic-container > .aloha-block-handle {
+    display: none !important; /* override the default aloha display logic for handles */
+}
+
+.semantic-container .semantic-controls {
+    border-left: 1px solid #ccc;
+    background: #F5F5F5;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 15px;
+    height: 100%;
+    display: none;
+    text-align: center;
+    line-height: normal;
+}
+.semantic-container.focused > .semantic-controls {
+    display: block;
+}
+.semantic-container > .semantic-controls {
+    display: none;
+}
+
+.semantic-delete:hover{
+    background-color: #000;
+    color: #fff;
+}
+.semantic-settings:hover{
+    color: #000;
+}
+
+.semantic-controls button {
+    outline: 0;
+    border: 0;
+    background: #F5F5F5;
+    margin: 0;
+    padding: 0;
+    color: #888;
+    width: 15px;
+}
+
+.semantic-controls-top {
+    position: absolute;
+    z-index: 2; /* otherwise sometimes it isn't fully clickable (e.g. in equations) */
+    top: 0;
+    right: 17px; /* put right next to .semantic-controls */
+    white-space: nowrap;
+    display: none;
+    font-size: 11px;
+    padding: 1px 6px;
+    background-color: #fff;
+}
+
+.semantic-controls-top a {
+    color: #666666 !important;
+    cursor: pointer;
+}
+
+.semantic-controls-top .icon-copy{
+    font-size: 12px; /* at least in my browser the icon messed up when displayed at 11px */
+}
+
+.semantic-container.focused > .semantic-controls-top {
+    display: block;
+}
+
+.aloha-oer-block {
+  padding: 20px 10px 5px 20px;
+  margin: 0 30px 0 30px;
+  border: 1px solid #333;
+  border-top-color: #ccc;
+  border-left-color: #ccc;
+}
+
+/* Put a bullet/square before the element label/type.  Include "li *" (dropdown code) so that the check mark shares styling ... specifics will be overriden later */
+.aloha-oer-block .type:before , .aloha-oer-block .type-container li *:before{
+    content: "\25A0";
+    vertical-align: top;
+    font-size: .9em;
+    display: inline-block;
+    /* The following helps to account for size/weight differences of other marks (arrow, checkmark) without things jumping around so much */
+    width: 11px;
+}
+
+.focused .aloha-oer-block .dropdown .type:before {
+    /* Change to arrow when hovering block */
+    content: "\25BE";
+    /* Make adjustments so that arrow feels like same size/positioning as square */
+    font-size: 1.1em;
+    margin-left: -1px;
+    margin-right: 1px;
+}
+
+.semantic-container .type-container {
+    margin-bottom: 10px;
+    position: relative;
+    padding: 5px 10px;
+    display: inline;
+}
+
+.aloha-oer-block .type , .aloha-oer-block .type-container li *{
+    font-weight: bold;
+    color: #369 !important; /* Important if * is an <a> due to ID-based declaration in oerpub-content.less */
+    text-decoration: none;
+}
+
+.aloha-oer-block .type-container ul.dropdown-menu {
+    /* Put the dropdown exactly on top of current type (-1px for the dropdown's borders) */
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    margin: 0;
+    padding: 0;
+}
+
+.aloha-oer-block .type-container li *{
+    padding: 5px 10px;
+    line-height: normal;
+    display: block;
+    cursor: pointer;
+}
+.aloha-oer-block .type-container li *:hover{
+    color: #ffffff !important; /* Important if * is an <a> due to ID-based declaration in oerpub-content.less */
+    background-color: #0081c2;
+    background-image: -moz-linear-gradient(top, #0088cc, #0077b3);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0077b3));
+    background-image: -webkit-linear-gradient(top, #0088cc, #0077b3);
+    background-image: -o-linear-gradient(top, #0088cc, #0077b3);
+    background-image: linear-gradient(to bottom, #0088cc, #0077b3);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0077b3', GradientType=0);
+}
+.aloha-oer-block .type-container li *:before {
+    content: ""; /* nothing if not the selected one */
+}
+.aloha-oer-block .type-container li.checked *:before {
+    content: "\2713"; /* checkmark if the selected one */
+    margin-left: -4px;
+    margin-right: 4px;
+    font-size: 1em;
+}
+.aloha-oer-block .title {
+    font-size: 1em;
+}
+.aloha-oer-block .title:not(:empty),
+.aloha-oer-block .title:focus {
+    font-weight: bold;
+}
+
+/* ========== note ========== */
+.semantic-drag-source > * > * {
+    display: none;
+}
+.semantic-drag-source > *:hover {
+    background: #DDD;
+}
+.semantic-drag-source > * {
+    margin: 5px 0;
+    padding: 4px 0 4px 10px;
+    border: 1px solid #999;
+    min-height: 0 !important;
+    width: 155px;
+    border-radius: 7px;
+    background: #EEE;
+    cursor: -moz-grab !important;
+    cursor: -webkit-grab !important;
+    cursor: url('openhand.cur'), default;
+}
+
+.semantic-drag-helper {
+    border-radius: 5px;
+    margin: 10px;
+    padding: 4px 20px 4px 20px;
+    background: white;
+    border: 1px solid black;
+    width: 300px;
+    height: 50px;
+    max-width: 300px;
+    max-height: 50px;
+    cursor: -moz-grabbing !important;
+    cursor: -webkit-grabbing !important;
+    cursor: url('closedhand.cur'), default;
+}
+
+.semantic-drag-helper .title,
+.semantic-drag-helper .body {
+    display: inline;
+}
+.semantic-drag-helper .title:before {
+    content: "\25A0";
+    margin-right: 3px;
+}
+.semantic-drag-helper .title:after {
+    content: ":";
+    margin-right: 10px;
+}
+.semantic-drag-helper .title {
+    text-transform: capitalize;
+    font-weight: bold;
+    color: #369;
+}
+
+.aloha-oer-ephemera-if-empty:empty {
+    height: 1px;
+}
+
+.aloha-oer-block .aloha-editable {
+    min-height: 20px;
+}

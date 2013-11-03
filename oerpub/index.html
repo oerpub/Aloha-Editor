@@ -2,36 +2,41 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
     <head>
         <title>Oerpub Editor</title>
-        <metal:css_macro define-macro="css">
-            <link rel="stylesheet" type="text/css" href="/Aloha-Editor/src/css/aloha.css"
+        <!--metal:base-macro define-macro="base"-->
+            <!--metal:base-slot define-slot="base"-->
+                <!-- Empty for demo -->
+            <!--/metal:base-slot-->
+        <!--/metal:base-macro-->
+        <!--metal:css_macro define-macro="css"-->
+            <link rel="stylesheet" type="text/css" href="../src/css/aloha.css"
                   tal:attributes="href string:${request.application_url}/aloha/src/css/aloha.css"> <!-- xhtml workaround --></link>
             <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css"
                   tal:attributes="href string:${request.application_url}/bootstrap/docs/assets/css/bootstrap.css" type="text/css"> <!-- xhtml workaround --></link>
             <link rel="stylesheet"  href=""
                   tal:attributes="href string:${request.application_url}/bootstrap/docs/assets/css/bootstrap-responsive.css" type="text/css"> <!-- xhtml workaround --></link>
-            <link rel="stylesheet" type="text/css" href="/Aloha-Editor/oerpub/css/bootstrap.css"
+            <link rel="stylesheet" type="text/css" href="css/bootstrap.css"
                   tal:attributes="href string:${request.application_url}/aloha/oerpub/css/bootstrap.css"> <!-- xhtml workaround --></link>
-            <link rel="stylesheet" type="text/css" href="/Aloha-Editor/oerpub/css/aloha.css"
+            <link rel="stylesheet" type="text/css" href="css/aloha.css"
                   tal:attributes="href string:${request.application_url}/aloha/oerpub/css/aloha.css"> <!-- xhtml workaround --></link>
-            <link rel="stylesheet" type="text/css" href="/Aloha-Editor/oerpub/css/html5_metacontent.css"
+            <link rel="stylesheet" type="text/css" href="css/html5_metacontent.css"
                   tal:attributes="href string:${request.application_url}/aloha/oerpub/css/html5_metacontent.css"> <!-- xhtml workaround --></link>
-            <link rel="stylesheet" type="text/css" href="/Aloha-Editor/oerpub/css/html5_content_in_oerpub.css"
+            <link rel="stylesheet" type="text/css" href="css/html5_content_in_oerpub.css"
                   tal:attributes="href string:${request.application_url}/aloha/oerpub/css/html5_content_in_oerpub.css"> <!-- xhtml workaround --></link>
-            <link rel="stylesheet" type="text/css" href="/Aloha-Editor/oerpub/css/style.css"
+            <link rel="stylesheet" type="text/css" href="css/style.css"
                   tal:attributes="href string:${request.application_url}/aloha/oerpub/css/style.css"> <!-- xhtml --></link>
-            <link rel="stylesheet" type="text/css" href="/Aloha-Editor/oerpub/css/toolbar.css"
+            <link rel="stylesheet" type="text/css" href="css/toolbar.css"
                   tal:attributes="href string:${request.application_url}/aloha/oerpub/css/toolbar.css"> <!-- xhtml --></link>
-        </metal:css_macro>
-        <metal:js_macro define-macro="javascript">
-            <base href="/Aloha-Editor/oerpub/sandbox/"
-                  tal:attributes="href body_base"/>
-            <script src="/Aloha-Editor/oerpub/js/jquery-1.7.1.min.js"
+        <!--/metal:css_macro-->
+        <!--metal:js_macro define-macro="javascript"-->
+            <script src="js/jquery-1.7.1.min.js"
                     tal:replace="nothing"> <!-- xhtml --></script>
-            <script src="/Aloha-Editor/oerpub/js/jquery.center.js"
+            <script src="js/jquery.center.js"
                     tal:replace="nothing"> <!-- xhtml --></script>
             <!-- Aloha editor -->
-            <script type="text/javascript" src="/Aloha-Editor/src/lib/require.js"
+            <script type="text/javascript" src="../src/lib/require.js"
                     tal:attributes="src string:${request.application_url}/aloha/src/lib/require.js"> <!-- xhtml workaround --></script>
+            <script src="js/jquery-ui-1.9.0.custom-aloha.js"
+                    tal:replace="nothing"> <!-- xhtml --></script>
 
             <!-- Mathjax -->
             <script type="text/javascript"
@@ -51,108 +56,46 @@
               AsciiMath: { noErrors: { disabled: true } }
             });</script>
 
-            <script type="text/javascript" src="/Aloha-Editor/oerpub/js/aloha-settings.js"
+            <script type="text/javascript" src="js/aloha-settings.js"
                     tal:attributes="src string:${request.static_url('oerpub.rhaptoslabs.swordpushweb:static/aloha-settings.js')}"> <!-- xhtml workaround --></script>
             <script type="text/javascript" src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js"
                     tal:attributes="src string:${request.application_url}/bootstrap/docs/assets/js/bootstrap.js"> <!-- xhtml workaround --></script>
-            <script type="text/javascript" src="/Aloha-Editor/src/lib/aloha.js"
+            <script type="text/javascript" src="../src/lib/aloha.js"
                     tal:attributes="src string:${request.application_url}/aloha/src/lib/aloha.js"
                 data-aloha-plugins="common/ui,
+                                    oer/copy,
                                     oer/toolbar,
-                                    oer/popover,
+                                    oer/overlay,
                                     oer/format,
+                                    common/contenthandler,
                                     common/paste,
                                     common/block,
                                     common/list,
                                     oer/table,
                                     oer/math,
+                                    oer/mathcheatsheet,
                                     extra/draganddropfiles,
                                     common/image,
                                     oer/assorted,
                                     oer/title,
                                     common/undo,
                                     oer/undobutton,
-                                    oer/genericbutton"> <!-- xhtml workaround --></script>
+                                    oer/genericbutton,
+                                    oer/semanticblock,
+                                    oer/exercise,
+                                    oer/quotation,
+                                    oer/equation,
+                                    oer/example,
+                                    oer/note"> <!-- xhtml workaround --></script>
 
             <script type="text/javascript"
                     tal:content="string:var body_url = '${body_url}';">
-                    var body_url = '/Aloha-Editor/oerpub/sandbox/index.html';</script>
+                    var body_url = 'sandbox/index.html';</script>
             <script type="text/javascript"
                     tal:content="string:var save_url = '${request.route_url('preview_save')}';">
                     var save_url = null;</script>
             <script type="text/javascript">
-
-                // HTML elements which are the options in the heading drop down
-                var headingChoices = null;
-                // Element tags which are generated as headings 
-                var possibleHeadings = new Array();
-
-                // Search through parent links in the DOM until we find an element whose enclosing tag
-                // is one of the section heading tags
-                function getClosestHeadingParent(ele) {
-                    console.log('starting');
-                    while(ele != null) {
-                        console.log(ele);
-                        if(ele.tagName && possibleHeadings.indexOf(ele.tagName.toUpperCase()) != -1) {
-                            break;
-                        }
-
-                        if(ele.classList && ele.classList[0] === 'title-editor') {
-                            break;
-                        }
-                        ele = ele.parentNode;
-                    }
-                    console.log('returning');
-                    console.log(ele);
-                    return ele;
-                }
-
-                // Find the English heading name for a certain tag name (for instance, pre -> Code)
-                function getCorrectNewHeadingName(ele) {
-                    newName = 'Normal Text'; // Default heading display
-                    for(var i = 0; i < headingChoices.length; i++) {
-                        var checking  = Aloha.jQuery(headingChoices[i]).attr('data-tagname').toUpperCase()
-                        if(ele.tagName == checking) {
-                            newName = headingChoices[i].innerHTML;
-                            break;
-                        }
-                    }
-                    return newName;
-                }
-
-                function headingFuncHelper(ele) {
-                    var button = Aloha.jQuery('#headingbutton')[0];
-                    if(!ele) {
-                        button.disabled = true;
-                        Aloha.jQuery('.currentHeading')[0].innerHTML = 'Unknown'; 
-                    } else if(ele.classList[0] === 'title-editor') {
-                        button.disabled=true;
-                        Aloha.jQuery('.currentHeading')[0].innerHTML = 'Title'; 
-                    } else {
-                        button.disabled=false;
-                        var newName = getCorrectNewHeadingName(ele);
-                        Aloha.jQuery('.currentHeading')[0].innerHTML = newName; 
-                    }
-                }
-
-                // Binds Update function to all headings. Update function updates the current heading being displayed
-                function headingFunc(event, data) { 
-                    var ele = this;
-                    headingFuncHelper(ele);
-                }
-
-                function recursiveHeadingFunc(event, data) {
-                    var selection = Aloha.getSelection();
-                    var ele = getClosestHeadingParent(selection._nativeSelection.anchorNode);
-                    headingFuncHelper(ele);
-                }
-
                 Aloha.ready(function(){
-
-                    headingChoices = Aloha.jQuery('.changeHeading');
-                    for(var i = 0; i < headingChoices.length; i++) {
-                        possibleHeadings[possibleHeadings.length] = Aloha.jQuery(headingChoices[i]).attr('data-tagname').toUpperCase();
-                    }
                     Aloha.require(['PubSub', 'genericbutton/genericbutton-plugin'],
                             function(PubSub, GenericButton){
                         // Save button is disabled until something is changed
@@ -174,6 +117,12 @@
                                 $html.attr('xmlns:mod',  'http://cnx.rice.edu/#moduleIds' ); 
                                 $html.attr('xmlns:bib',  'http://bibtexml.sf.net/');
                                 $html.attr('xmlns:data', 'http://dev.w3.org/html5/spec/#custom');
+
+                                // Build simple header with title.
+                                var $head = $('<head />'),
+                                    title = editor.obj.find('>div.title').text();
+                                $('<title/>').text(title).appendTo($head);
+                                $html.append($head);
 
                                 var $body = $('<body />');
                                 $body.attr('class', 'content');
@@ -200,6 +149,13 @@
                                         }
                                         PubSub.pub('swordpushweb.saved');
                                     });
+                                } else {
+                                    $('#statusmessage').data('message')('Saved');
+                                    GenericButton.getButtons()["save"].enable(false);
+                                    $('.btn.save').html('Saved');
+                                    if (callback_function) {
+                                        callback_function();
+                                    }
                                 }
                             }
                         }
@@ -238,7 +194,9 @@
                         // Fetch the preview
                         $('#statusmessage').data('message')('Loading preview...');
                         Aloha.jQuery.get(body_url, function(data){
-                            var $editable = Aloha.jQuery('#canvas').html(data);
+                            var $d = Aloha.jQuery('<div />').html(data);
+                            var $editable = Aloha.jQuery('#canvas').html(
+                                $d.find('> *'));
 
                             // Remove the pyramid debug toolbar from the preview
                             // if it exists. This code should do nothing in production
@@ -251,30 +209,20 @@
                             // editor.isModified().
                             window.setInterval(savePreview, 30000);
 
-
-                            // Bind a handler for the changed event
-                            var editor = Aloha.getEditableById('canvas');
-                            Aloha.bind('aloha-smart-content-changed', function(){
-                                if(editor.isModified()){
+                            setInterval(function() {
+                                var editor = Aloha.getEditableById('canvas');
+                                if (editor.isModified()) {
                                     $('.btn.save').html('Save');
                                     GenericButton.getButtons()["save"].enable(true);
                                 }
-                            });
-                            // Binds the function to all headers, paragraphs, and pre tags
-                            Aloha.jQuery(":header, p, pre").bind('click', headingFunc);
-                            Aloha.jQuery('#canvas').bind('keyup', recursiveHeadingFunc);
-                            Aloha.jQuery('#canvas').bind('click', recursiveHeadingFunc);
-                            Aloha.jQuery(".title-editor").bind('click', headingFunc);
+                            }, 250);
                             Aloha.jQuery('#statusmessage').data('message')('Preview loaded');
                         });
                     });
-                    var button = Aloha.jQuery('#headingbutton')[0];
-                    button.disabled=true;
-                    Aloha.jQuery('.currentHeading')[0].innerHTML = 'Title'; 
                 });
                 </script>
 
-        </metal:js_macro>
+        <!--/metal:js_macro-->
     </head>
     <body>
         <div id="ie6-container-wrap">
@@ -296,19 +244,9 @@
                       <span class="separator"> </span>
                       <div class="btn-group headings">
                         <button class="btn heading dropdown-toggle" data-toggle="dropdown" rel="tooltip" title="Text Heading" id="headingbutton">
-                          <span class="currentHeading">Nothing</span>
+                          <span class="currentHeading">&nbsp;</span>
                           <span class="caret"></span></button>
-                        <ul class="dropdown-menu">
-                          <!-- "changeHeading" is important so a click can be attached and
-                               data-tagname is used both to identify if the cursor is in one of these and
-                           is used to change one heading to another
-                           -->
-                          <li><a href="#" class="action changeHeading" data-tagname="p">Normal Text</a></li>
-                          <li><a href="#" class="action changeHeading" data-tagname="h1">Heading</a></li>
-                          <li><a href="#" class="action changeHeading" data-tagname="h2">Subheading</a></li>
-                          <li><a href="#" class="action changeHeading" data-tagname="h3">SubSubHeading</a></li>
-                          <li><a href="#" class="action changeHeading" data-tagname="pre">Code</a></li>
-                        </ul>
+                        <ul class="dropdown-menu"></ul>
                       </div>
                       <span class="separator"> </span>
                       <div class="btn-group">
@@ -333,6 +271,7 @@
                       <span class="separator"> </span>
                       <div class="btn-group">
                         <button class="btn action insertImage-oer" rel="tooltip" title="Insert Image"><i class="icon-image-insert"></i></button>
+                        <!--<button class="btn action insertVideo-oer" rel="tooltip" title="Insert Video"><i class="icon-image-insert"></i></button>-->
                         <button class="btn action createTable" rel="tooltip" title="Create Table"><i class="icon-table-insert"></i></button>
                         <button class="btn dropdown-toggle" data-toggle="dropdown" rel="tooltip" title="Table Operations">
                           <span class="caret"></span>
@@ -350,21 +289,62 @@
                         <button class="btn action insertMath" rel="tooltip" title="Insert Math"><i class="icon-math-insert"></i></button>
                       </div>
 
+
+                      <span class="separator"></span>
+                      <div class="btn-group">
+                        <button class="btn btn-text dropdown-toggle" data-toggle="dropdown" rel="tooltip" title="Add a new...">
+                          Add a new...
+                          <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                          <li><a href="#" class="action insertNote">Note to Reader</a></li>
+                          <li><a href="#" class="action insertExample">Example</a></li>
+                          <li><a href="#" class="action insertExercise">Exercise</a></li>
+                          <li><a href="#" class="action insertQuotation">Quotation</a></li>
+                          <li><a href="#" class="action insertEquation">Equation</a></li>
+                        </ul>
+                      </div>
+                      <div class="btn-group">
+                        <button class="btn action paste" rel="tooltip" title="paste">Paste</button>
+                      </div>
                     </div>
 
+                    <div style="margin-top: 20px; width: 200px;">
+                        <h4>Drag to add a new ...</h4>
+
+                        <div class="semantic-drag-source">
+                            <div class="note">
+                                <div class="title"></div>
+                            </div>
+                            
+                            <div class="example">
+                                <div class="title"></div>
+                            </div>
+
+                            <div class="exercise">
+                                <div class="problem"></div>
+                            </div>
+
+                            <blockquote class="quote">
+                            </blockquote>
+                            
+                            <div class="equation">
+                            </div>
+                        </div>
+
+                    </div>
                 </div><!-- / ".toolbar" -->
                 </metal:toolbar>
 
                 <div id="content">
-                <div id="artboard">
-                    <metal:editor define-macro="editor">
-                    <div id="statusmessage"></div>
-                    <div id="editor">
-                        <div id="canvas">
+                    <div id="artboard">
+                        <metal:editor define-macro="editor">
+                        <div id="statusmessage"></div>
+                        <div id="editor">
+                            <div id="canvas" class="aloha-root-editable" style="margin-left: 200px;"></div>
                         </div>
+                        </metal:editor>
                     </div>
-                    </metal:editor>
-                </div>
                 </div>
             </div>
         </div>

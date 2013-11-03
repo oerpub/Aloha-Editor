@@ -3,12 +3,17 @@
 We are adapting the Aloha editor for creating books, textbooks and other structured content. We are adding mathematics editing and 
 the ability to add educational features like examples, exercises, equations, and glossary entries.   
 
+**Copyright:** Contributions to this repository by the OERPUB project contractors are Copyright (c) 2013 Kathi Fletcher. 
+
+**Funding:** Funding to the OERPUB fork of Aloha Editor for editing textbook content has been funded by the Shuttleworth Foundation through a fellowship and project funds to Kathi Fletcher.
+
 **Demos:** Thanks for checking us out! You can play with some of our demos by going to our [Demo Page](http://oerpub.github.io/Aloha-Editor/)
 
 **Plugins:** Development is done in branches off of `master`, which are then tested on the `dev` branch, specifically in the [Plugins](src/plugins) directory.
 
 **Quickstart:** To get a development enviroment set up quickly and start working on the editor, 
-use the [following instructions](quickstart.rst)
+use the [following instructions](quickstart.rst). The instructions are for Ubuntu using nginx as the webserver, but you can of course use apache or if you have a mac
+the webserver that is already present.
 
 **Development Workflow:** If you develop please look at our [dev workflow](dev-workflow.md)
 

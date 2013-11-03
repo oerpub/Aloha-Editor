@@ -127,7 +127,8 @@ function (
 				}
 			});
 		},
-
+	
+		
         /**
          * Adds the ui meta fields (search, title) to the floating menu. 
          */
@@ -141,6 +142,7 @@ function (
 				name: 'imageSource',
 				scope: plugin.name
 			});
+			this.imgSrcField.setTemplate( '<span><b>{name}</b><br/>{url}</span>' );
 			this.imgSrcField.setObjectTypeFilter(plugin.objectTypeFilter);
 			
 			this.imgTitleField = AttributeField({

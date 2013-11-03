@@ -30,7 +30,7 @@
     -moz-box-shadow:    3px 3px 2px 2px #ddd;
     -webkit-box-shadow: 3px 3px 2px 2px #ddd;
     box-shadow:         3px 3px 2px 2px #ddd;
-    z-index: 4;
+    z-index: 1010;
     position: relative;
 }
 
@@ -54,6 +54,9 @@
 .aloha-block.title:focus,
 .aloha-block.title:hover {
     outline: none !important;
-    box-shadow: none !important;
     padding: 0;
+}
+
+.aloha-block {
+    box-shadow: none !important;
 }
