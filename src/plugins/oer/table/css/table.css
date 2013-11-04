@@ -1,7 +1,11 @@
+.aloha-editable .table {
+  margin: 1em 0 0 !important; /* !important in order to override ID-based selector in oerpub-content.less */
+}
+
 .aloha-editable table {
     table-layout: fixed;
-    width: 98%;
-    margin: 0.25em 1em;
+    width: 96% !important; /* !important to override ID-based selector in oerpub-content.less */
+    margin: 0 1em !important; /* !important to override ID-based selector in oerpub-content.less */
     border-top: 1px solid #666666;
     border-left: 1px solid #666666;
     border-collapse: collapse;
@@ -101,7 +105,6 @@
 }
 .aloha-editable td.delete-column,
 .aloha-editable th.delete-column {
-    opacity: .25;
     color: #bbb;
     background-image: url("../img/remove.png") !important;
 }

@@ -1,7 +1,16 @@
-define(
-['aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', 'PubSub',
-    'ui/dialog', 'aloha/ephemera', 'table/table-create-layer', 'css!table/css/table.css'],
-function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, CreateLayer) {
+define([
+  'aloha',
+  'aloha/plugin',
+  'jquery',
+  'ui/ui',
+  'ui/button',
+  'PubSub',
+  'ui/dialog',
+  'aloha/ephemera',
+  'semanticblock/semanticblock-plugin',
+  'table/table-create-layer',
+  'css!table/css/table.css'],
+function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, CreateLayer) {
     "use strict";
 
 	var GENTICS = window.GENTICS;
@@ -90,7 +99,6 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, CreateLayer) {
 
         table.wrap(w1).wrap(w2).wrap(w3);
 
-        w1.attr('contentEditable', 'false');
         // glue a mouseover event onto it
         table.on('mouseenter', function(e){
             // We will later use this to bring up ui
@@ -99,10 +107,6 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, CreateLayer) {
         table.on('mouseleave', function(e){
             // We will later use this to hide ui
             //console && console.log(e.target);
-        });
-
-        table.on('click', function(e){
-            plugin.clickTable(e);
         });
     }
 
@@ -113,14 +117,47 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, CreateLayer) {
         getSelection().removeAllRanges();
         getSelection().addRange(range);
     }
+  
+    var plugin;
 
     return plugin.create('table', {
         defaults: {
         },
+        selector: 'table',
+        getLabel: function() {
+          return 'Table';
+        },
+        onDrop: function($element) {
+          plugin.renumberCaptions($element.parents('.aloha-editable').last());
+        },
+        activate: function($element) {
+
+          var $body = $element.wrap('<div class="body">')
+            .parent()
+            .aloha()
+            .data('disableDropTarget', true)
+            ;
+
+          // this reference is broken by the above rejiggering
+          $element = $body.find('table').first(); 
+
+          // wraps element in a bunch of wrappers i'm not totally sure are necessary
+          prepareTable(plugin, $element);
+
+          // renumber things
+          plugin.renumberCaptions($element.parents('.aloha-editable').last());
+        },
+        deactivate: function($element) {
+          $element.parents('.body').first().children().unwrap();
+        },
         init: function(){
-            var plugin = this;
+            plugin = this;
             this.createLayer = new CreateLayer(this);
             this.initButtons();
+
+            semanticBlock.register(plugin);
+
+            semanticBlock.registerEvent('click', 'table', this.clickTable);
 
             // Mark some classes as ephemeral
             Ephemera.classes('aloha-current-cell', 'aloha-current-row', 'add-column-before', 'add-column-after');
@@ -135,10 +172,6 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, CreateLayer) {
                 if(config && config.enabled != undefined && !config.enabled){
                     return
                 }
-                editable.obj.find('table').each(function(){
-                    prepareTable(plugin, $(this));
-                });
-                plugin.renumberCaptions(editable.obj);
                 editable.obj.on('keydown', null, 'return', function(e){
                     var $canvas = editable.obj;
                     var $currentTableCell = $canvas.find('.aloha-current-cell');
@@ -254,17 +287,7 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, CreateLayer) {
                 icon: "aloha-icon aloha-icon-createTable",
                 scope: 'Aloha.continuoustext',
                 click: function(e){
-                    var layer = that.createLayer;
-                    var $insertionEl = $('<span class="aloha-ephemera table-placeholder"> </span>');
-                    GENTICS.Utils.Dom.insertIntoDOM($insertionEl, Aloha.Selection.getRangeObject(),
-                                                    Aloha.activeEditable.obj);
-                    layer.show(e);
-                    $(layer).off('table-create-layer.closed').on('table-create-layer.closed', function(e){
-                        Aloha.activeEditable.obj.find('.table-placeholder').remove();
-                        // Once we've managed to make menus sticky, we
-                        // will close the menus here.
-                        //alert('closed');
-                    });
+                    that.createLayer.show(e);
                 }
             });
 
@@ -355,7 +378,7 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, CreateLayer) {
                 icon: "aloha-icon aloha-icon-deletetable",
                 scope: this.name,
                 click: function(){
-                    that.currentTable.remove();
+                    that.currentTable.parents('.semantic-container').remove();
                     that.currentTable = $();
                     that.renumberCaptions(Aloha.activeEditable.obj);
                 },
@@ -471,7 +494,6 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, CreateLayer) {
                 var table = document.createElement('table');
                 var tableId = table.id = GENTICS.Utils.guid();
                 var tbody = document.createElement('tbody');
-                var $insertion = Aloha.activeEditable.obj.find('.table-placeholder') || $();
 
                 // Create caption
                 var caption = document.createElement('caption');
@@ -507,24 +529,10 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, CreateLayer) {
                 }
                 table.appendChild(tbody);
 
-               if ( $insertion && $insertion.length > 0 ) {
-                   $insertion.replaceWith($(table));
-               }
-               else {
-                    prepareRangeContainersForInsertion(
-                        Aloha.Selection.getRangeObject(), table);
-                
-                    // insert the table at the current selection
-                    GENTICS.Utils.Dom.insertIntoDOM($(table),
-                        Aloha.Selection.getRangeObject(), Aloha.activeEditable.obj);
-                }
+                semanticBlock.insertAtCursor(table)
 
+                // not sure if this is necessary, but leaving anyway
                 cleanupAfterInsertion();
-                prepareTable(this, $(table));
-                this.renumberCaptions(Aloha.activeEditable.obj);
-                var ev = $.Event();
-                ev.type = 'blur';
-                Aloha.activeEditable.smartContentChange(ev);
             } else {
                 this.error('There is no active Editable where the table can be inserted!');
             }
@@ -540,28 +548,29 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, CreateLayer) {
             });
         },
         clickTable: function(e){
-            this.currentCell.length && this.currentCell.removeClass('aloha-current-cell');
-            this.currentRow.length && this.currentRow.removeClass('aloha-current-row');
+            plugin.currentCell.length && plugin.currentCell.removeClass('aloha-current-cell');
+            plugin.currentRow.length && plugin.currentRow.removeClass('aloha-current-row');
 
-            if (this.currentCell.attr('class') == '') {
-              this.currentCell.removeAttr('class')
+            if (plugin.currentCell.attr('class') == '') {
+              plugin.currentCell.removeAttr('class')
             }
-            if (this.currentRow.attr('class') == '') {
-              this.currentRow.removeAttr('class')
+            if (plugin.currentRow.attr('class') == '') {
+              plugin.currentRow.removeAttr('class')
             }
 
-            this.currentCell = $(e.target).closest('td,th');
-            this.currentRow = $(e.target).closest('tr');
-            this.currentTable = $(e.target).closest('table');
-            this.currentCell.length && this.currentCell.addClass('aloha-current-cell');
-            this.currentRow.length && this.currentRow.addClass('aloha-current-row');
+            plugin.currentCell = $(e.target).closest('td,th');
+            plugin.currentRow = $(e.target).closest('tr');
+            plugin.currentTable = $(e.target).closest('table');
+            plugin.currentCell.length && plugin.currentCell.addClass('aloha-current-cell');
+            plugin.currentRow.length && plugin.currentRow.addClass('aloha-current-row');
+
             e.preventDefault();
         },
         focusCell: function(cell){
             placeCursor(cell);
             cell.click();
         },
-	    error: function(msg){
+	      error: function(msg){
             Aloha.Log.error(this, msg);
         },
         currentCell: $(), // Defined when clicked

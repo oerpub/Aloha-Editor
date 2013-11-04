@@ -60,7 +60,7 @@
 .semantic-container.delete-hover {
     background: #F0F0F0;
 }
-.semantic-container.delete-hover > .aloha-oer-block{
+.semantic-container.delete-hover .aloha-oer-block{
     opacity: 0.3;
 }
 .semantic-container.delete-hover .semantic-controls-top, 

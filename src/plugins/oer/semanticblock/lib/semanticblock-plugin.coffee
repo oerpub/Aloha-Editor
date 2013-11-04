@@ -144,7 +144,7 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
     callback: ->
       jQuery(this).parents('.semantic-container').removeClass('focused')
       jQuery(this).addClass('focused') unless jQuery(this).find('.focused').length
-      wrapped = jQuery(this).children('.aloha-oer-block').first()
+      wrapped = jQuery(this).find('.aloha-oer-block').first()
       label = wrapped.length and blockIdentifier(wrapped)
       jQuery(this).find('.aloha-block-handle').first().attr('title', "Drag this #{label} to another location")
   ,
@@ -166,10 +166,15 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
   ]
   insertElement = (element) ->
   
-  getLabel = ($element) ->
+  getType = ($element) ->
+    $element = $element.find('.aloha-oer-block').first() if $element.is('.semantic-container')
+
     for type in registeredTypes
       if $element.is(type.selector)
-        return type.getLabel $element
+        return type
+
+  getLabel = ($element) ->
+    getType($element)?.getLabel($element)
 
   blockIdentifier = ($element) ->
     label = getLabel($element)
@@ -190,11 +195,7 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
         jQuery('<p class="aloha-oer-ephemera-if-empty"></p>').insertAfter($element)
 
       # What kind of block is being activated
-      type = null
-      for plugin in registeredTypes
-        if $element.is(plugin.selector)
-          type = plugin
-          break
+      type = getType($element)
 
       controls = blockControls.clone()
       top = topControls.clone()
@@ -220,6 +221,7 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
             top.find('a.copy').remove() if 'copy' not in options.buttons
 
         $element.wrap(blockTemplate).parent().append(controls).prepend(top).alohaBlock({'aloha-block-type': 'semanticBlock'})
+
         type.activate $element
         return
  
@@ -247,10 +249,11 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
     $element.removeClass 'aloha-oer-block ui-draggable'
     $element.removeAttr 'style'
 
-    for type in registeredTypes
-      if $element.is(type.selector)
-        type.deactivate $element
-        return
+    type = getType($element)
+
+    if type
+      type.deactivate $element
+      return
 
     # if we make it this far none of the deactivators have run
     $title = $element.children('.title').first()
@@ -339,9 +342,22 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
         sortableInterval = setInterval ->
           if $root.data 'sortable'
             clearInterval(sortableInterval)
+
+            if $root.data('disableDropTarget')
+              $root.removeClass('aloha-block-blocklevel-sortable aloha-block-dropzone')
+
+            $root.sortable 'option', 'change', (e, ui) ->
+              ui.item.data("disableDrop", ui.placeholder.parent().data('disableDropTarget'))
+
             $root.sortable 'option', 'stop', (e, ui) ->
+              if ui.item.data('disableDrop')
+                jQuery(this).sortable("cancel")
+                return
+
               $root = jQuery(ui.item)
               activate $root if $root.is(selector)
+              getType($root)?.onDrop?($root)
+
             $root.sortable 'option', 'placeholder', 'aloha-oer-block-placeholder aloha-ephemera',
           100
 
