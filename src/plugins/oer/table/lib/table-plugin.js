@@ -228,6 +228,17 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, 
                     e.preventDefault();
                     e.stopPropagation();
                 });
+
+                // When a semantic block is deleted, renumber tables if
+                // this caused any tables to be deleted.
+                editable.obj.on('semantic-delete', '.semantic-container', function(e){
+                    var deleted = $(this).find('table');
+                    if (deleted.length) {
+                        var a = $(this).parents('.aloha-editable').last();
+                        plugin.renumberCaptions(a.find('table').not(deleted));
+                    }
+                });
+
                 // Disable firefox's inline table editing.
                 try {
                     document.execCommand("enableInlineTableEditing", null, false);
