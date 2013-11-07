@@ -332,9 +332,10 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, 
                     that.currentRow.remove();
                     that.currentRow = $();
                     if(that.currentTable.find("td,th").length==0){
+                        var editable = that.currentTable.parents('.aloha-editable').last();
                         that.currentTable.remove();
                         that.currentTable = $();
-                        that.renumberCaptions(Aloha.activeEditable.obj);
+                        that.renumberCaptions(editable);
                     }
                 },
                 preview: function(){
@@ -356,9 +357,10 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, 
                     });
                     // If the table is now devoid of any rows, delete it
                     if(that.currentTable.find("td,th").length==0){
+                        var editable = that.currentTable.parents('.aloha-editable').last();
                         that.currentTable.remove();
                         that.currentTable = $();
-                        that.renumberCaptions(Aloha.activeEditable.obj);
+                        that.renumberCaptions(editable);
                     }
                 },
                 preview: function(){
@@ -378,9 +380,10 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, 
                 icon: "aloha-icon aloha-icon-deletetable",
                 scope: this.name,
                 click: function(){
+                    var editable = that.currentTable.parents('.aloha-editable').last();
                     that.currentTable.parents('.semantic-container').remove();
                     that.currentTable = $();
-                    that.renumberCaptions(Aloha.activeEditable.obj);
+                    that.renumberCaptions(editable);
                 },
                 preview: function(){
                     that.currentTable.addClass("delete-table");
