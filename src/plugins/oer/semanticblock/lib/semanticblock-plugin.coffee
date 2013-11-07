@@ -83,8 +83,12 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
     name: 'click'
     selector: '.semantic-container .semantic-delete'
     callback: () ->
-      jQuery(this).parents('.semantic-container').first().slideUp 'slow', ->
-        jQuery(this).remove()
+      block = jQuery(this).parents('.semantic-container').first()
+      evt = $.Event('semantic-delete')
+      block.trigger(evt)
+      if not evt.isDefaultPrevented()
+        block.slideUp 'slow', ->
+          jQuery(this).remove()
   ,
     name: 'click'
     selector: '.semantic-container .semantic-controls-top .copy'
