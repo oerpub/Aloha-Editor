@@ -128,7 +128,7 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, 
           return 'Table';
         },
         onDrop: function($element) {
-          plugin.renumberCaptions($element.parents('.aloha-editable').last());
+          plugin.renumberCaptions($element.parents('.aloha-editable').last().find('table'));
         },
         activate: function($element) {
 
@@ -145,7 +145,7 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, 
           prepareTable(plugin, $element);
 
           // renumber things
-          plugin.renumberCaptions($element.parents('.aloha-editable').last());
+          plugin.renumberCaptions($element.parents('.aloha-editable').last().find('table'));
         },
         deactivate: function($element) {
           $element.parents('.body').first().children().unwrap();
@@ -335,7 +335,7 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, 
                         var editable = that.currentTable.parents('.aloha-editable').last();
                         that.currentTable.remove();
                         that.currentTable = $();
-                        that.renumberCaptions(editable);
+                        that.renumberCaptions(editable.find('table'));
                     }
                 },
                 preview: function(){
@@ -360,7 +360,7 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, 
                         var editable = that.currentTable.parents('.aloha-editable').last();
                         that.currentTable.remove();
                         that.currentTable = $();
-                        that.renumberCaptions(editable);
+                        that.renumberCaptions(editable.find('table'));
                     }
                 },
                 preview: function(){
@@ -383,7 +383,7 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, 
                     var editable = that.currentTable.parents('.aloha-editable').last();
                     that.currentTable.parents('.semantic-container').remove();
                     that.currentTable = $();
-                    that.renumberCaptions(editable);
+                    that.renumberCaptions(editable.find('table'));
                 },
                 preview: function(){
                     that.currentTable.addClass("delete-table");
@@ -540,8 +540,8 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, 
                 this.error('There is no active Editable where the table can be inserted!');
             }
         },
-        renumberCaptions: function(editor){
-            editor.find('table').each(function(idx, el){
+        renumberCaptions: function(tables){
+            tables.each(function(idx, el){
                 var caption = $(el).find('caption');
                 if(caption.length){
                     caption.html('Table ' + (idx + 1));
