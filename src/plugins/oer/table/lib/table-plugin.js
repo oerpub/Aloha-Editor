@@ -172,7 +172,8 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, 
                 if(config && config.enabled != undefined && !config.enabled){
                     return
                 }
-                editable.obj.on('keydown', null, 'return', function(e){
+                editable.obj.off('.table');
+                editable.obj.on('keydown.table', null, 'return', function(e){
                     var $canvas = editable.obj;
                     var $currentTableCell = $canvas.find('.aloha-current-cell');
                     var inTable = ( $currentTableCell.length > 0 ? true : false );
@@ -231,7 +232,7 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, 
 
                 // When a semantic block is deleted, renumber tables if
                 // this caused any tables to be deleted.
-                editable.obj.on('semantic-delete', '.semantic-container', function(e){
+                editable.obj.on('semantic-delete.table', '.semantic-container', function(e){
                     var deleted = $(this).find('table');
                     if (deleted.length) {
                         var a = $(this).parents('.aloha-editable').last();
