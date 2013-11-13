@@ -114,6 +114,27 @@
     color: #bbb;
 }
 
+.aloha-root-editable {
+    counter-reset: table;
+}
+
+.aloha-editable table {
+    counter-increment: table;
+}
+
+.aloha-editable table:after {
+    content: "Table " counter(table);
+    display: table-caption;
+    caption-side: bottom;
+    text-align: left;
+    padding-top: 0.25em;
+    text-align: left;
+    color: #336699;
+    font-size: 0.9em;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
 .table-placeholder {
     display: block;
     opacity: 0.35;

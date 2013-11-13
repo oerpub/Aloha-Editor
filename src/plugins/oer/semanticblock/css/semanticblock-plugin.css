@@ -269,13 +269,12 @@
     background: #DDD;
 }
 .semantic-drag-source > * {
-    margin: 5px;
-    padding: 5px 0 5px 10px;
-    border: 1px solid black;
+    margin: 5px 0;
+    padding: 4px 0 4px 10px;
+    border: 1px solid #999;
     min-height: 0 !important;
-    height: 20px;
     width: 155px;
-    border-radius: 5px;
+    border-radius: 7px;
     background: #EEE;
     cursor: -moz-grab !important;
     cursor: -webkit-grab !important;

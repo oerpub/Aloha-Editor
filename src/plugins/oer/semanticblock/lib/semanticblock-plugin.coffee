@@ -204,7 +204,7 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
       controls.find('.semantic-settings').attr('title', "Advanced options for this #{label}")
       top.find('.copy').attr('title', "Copy this #{label}")
       top.find('.copy').contents().last().replaceWith(" Copy #{label}")
-      if type == null
+      if not type
         $element.wrap(blockTemplate).parent().append(controls).prepend(top).alohaBlock({'aloha-block-type': 'semanticBlock'})
       else
         # Ask `type` plugin about the controls it wants

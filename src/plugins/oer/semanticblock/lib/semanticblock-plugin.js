@@ -216,7 +216,7 @@
         controls.find('.semantic-settings').attr('title', "Advanced options for this " + label);
         top.find('.copy').attr('title', "Copy this " + label);
         top.find('.copy').contents().last().replaceWith(" Copy " + label);
-        if (type === null) {
+        if (!type) {
           $element.wrap(blockTemplate).parent().append(controls).prepend(top).alohaBlock({
             'aloha-block-type': 'semanticBlock'
           });

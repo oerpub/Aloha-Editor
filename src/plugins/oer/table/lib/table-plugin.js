@@ -127,9 +127,6 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, 
         getLabel: function() {
           return 'Table';
         },
-        onDrop: function($element) {
-          plugin.renumberCaptions($element.parents('.aloha-editable').last());
-        },
         activate: function($element) {
 
           var $body = $element.wrap('<div class="body">')
@@ -143,9 +140,6 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, 
 
           // wraps element in a bunch of wrappers i'm not totally sure are necessary
           prepareTable(plugin, $element);
-
-          // renumber things
-          plugin.renumberCaptions($element.parents('.aloha-editable').last());
         },
         deactivate: function($element) {
           $element.parents('.body').first().children().unwrap();
@@ -334,7 +328,6 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, 
                     if(that.currentTable.find("td,th").length==0){
                         that.currentTable.remove();
                         that.currentTable = $();
-                        that.renumberCaptions(Aloha.activeEditable.obj);
                     }
                 },
                 preview: function(){
@@ -358,7 +351,6 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, 
                     if(that.currentTable.find("td,th").length==0){
                         that.currentTable.remove();
                         that.currentTable = $();
-                        that.renumberCaptions(Aloha.activeEditable.obj);
                     }
                 },
                 preview: function(){
@@ -380,7 +372,6 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, 
                 click: function(){
                     that.currentTable.parents('.semantic-container').remove();
                     that.currentTable = $();
-                    that.renumberCaptions(Aloha.activeEditable.obj);
                 },
                 preview: function(){
                     that.currentTable.addClass("delete-table");
@@ -495,13 +486,6 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, 
                 var tableId = table.id = GENTICS.Utils.guid();
                 var tbody = document.createElement('tbody');
 
-                // Create caption
-                var caption = document.createElement('caption');
-                $(caption).attr('contentEditable', 'false');
-                var captiontext = document.createTextNode('Table 0');
-                caption.appendChild(captiontext);
-                table.appendChild(caption);
-
                 // Create headerrows of headers
                 for(var i=0; i<headerrows; i++){
                     var tr = document.createElement('tr');
@@ -536,16 +520,6 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, 
             } else {
                 this.error('There is no active Editable where the table can be inserted!');
             }
-        },
-        renumberCaptions: function(editor){
-            editor.find('table').each(function(idx, el){
-                var caption = $(el).find('caption');
-                if(caption.length){
-                    caption.html('Table ' + (idx + 1));
-                } else {
-                    $(el).prepend('<caption>Table ' + (idx+1) + '</caption>');
-                }
-            });
         },
         clickTable: function(e){
             plugin.currentCell.length && plugin.currentCell.removeClass('aloha-current-cell');
