@@ -442,7 +442,7 @@ define [
   getWidth = ($image) ->
     image = $image.get(0)
     if image
-      return image.naturalWidth or image.width
+      return image.width
     return 0
 
   setWidth = (image) ->
