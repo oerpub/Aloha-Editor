@@ -357,6 +357,7 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
               $root = jQuery(ui.item)
               activate $root if $root.is(selector)
               getType($root)?.onDrop?($root)
+              Aloha.activeEditable.smartContentChange({type: 'block-change'})
 
             $root.sortable 'option', 'placeholder', 'aloha-oer-block-placeholder aloha-ephemera',
           100

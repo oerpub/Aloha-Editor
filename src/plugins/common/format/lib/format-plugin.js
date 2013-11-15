@@ -256,6 +256,7 @@ define('format/format-plugin', [
 			}
 			format(formatPlugin, rangeObject, markup);
 		}
+        Aloha.activeEditable.smartContentChange({type: 'block-change'});
 	}
 
 	function onSelectionChanged(formatPlugin, rangeObject) {

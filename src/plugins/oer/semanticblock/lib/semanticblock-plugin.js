@@ -368,7 +368,14 @@
                 if ($root.is(selector)) {
                   activate($root);
                 }
-                return (_ref = getType($root)) != null ? typeof _ref.onDrop === "function" ? _ref.onDrop($root) : void 0 : void 0;
+                if ((_ref = getType($root)) != null) {
+                  if (typeof _ref.onDrop === "function") {
+                    _ref.onDrop($root);
+                  }
+                }
+                return Aloha.activeEditable.smartContentChange({
+                  type: 'block-change'
+                });
               });
               $root.sortable('option', 'placeholder', 'aloha-oer-block-placeholder aloha-ephemera');
             }

@@ -198,6 +198,7 @@ define [
       # remove the anchor but preserve its contents
       preserveContents = true
       GENTICS.Utils.Dom.removeFromDOM a, newRange, preserveContents
+      Aloha.activeEditable.smartContentChange type: 'block-change'
 
       # select the new, colapsed range
       newRange.startContainer = newRange.endContainer
@@ -349,6 +350,9 @@ define [
           #   and remove the marker class
           newLink = Aloha.activeEditable.obj.find '.aloha-new-link'
           newLink.removeClass 'aloha-new-link'
+
+          # Tell Aloha that we changed something
+          editable.smartContentChange type: 'block-change'
 
 
   # Prevent default on links as the bubble out of the editor. This signals

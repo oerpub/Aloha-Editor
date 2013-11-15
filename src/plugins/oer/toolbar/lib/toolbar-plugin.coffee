@@ -140,6 +140,9 @@ define [ 'jquery', 'aloha', 'aloha/plugin', 'PubSub', 'ui/button' ], (
         e2.type = 'change-heading'
         e2.target = $newEl[0]
         $newEl.trigger(e2)
+
+        # Tell Aloha we changed things
+        squirreledEditable.smartContentChange type: 'block-change'
         
         # $newEl.attr('id', $oldEl.attr('id))
         # Setting the id is commented because otherwise collaboration wouldn't register a change in the document

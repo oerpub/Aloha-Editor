@@ -113,6 +113,9 @@
       newRange.select();
       preserveContents = true;
       GENTICS.Utils.Dom.removeFromDOM(a, newRange, preserveContents);
+      Aloha.activeEditable.smartContentChange({
+        type: 'block-change'
+      });
       newRange.startContainer = newRange.endContainer;
       newRange.startOffset = newRange.endOffset;
       newRange.select();
@@ -228,7 +231,10 @@
               GENTICS.Utils.Dom.insertIntoDOM($a, range, Aloha.activeEditable.obj);
             }
             newLink = Aloha.activeEditable.obj.find('.aloha-new-link');
-            return newLink.removeClass('aloha-new-link');
+            newLink.removeClass('aloha-new-link');
+            return editable.smartContentChange({
+              type: 'block-change'
+            });
           }
         });
       }

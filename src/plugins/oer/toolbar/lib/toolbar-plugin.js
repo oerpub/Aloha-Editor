@@ -176,7 +176,10 @@
           e2 = $.Event();
           e2.type = 'change-heading';
           e2.target = $newEl[0];
-          return $newEl.trigger(e2);
+          $newEl.trigger(e2);
+          return squirreledEditable.smartContentChange({
+            type: 'block-change'
+          });
         };
         $ROOT.on('click', '.action.changeHeading', changeHeading);
         $ROOT.on('mousedown', ".action", function(evt) {
