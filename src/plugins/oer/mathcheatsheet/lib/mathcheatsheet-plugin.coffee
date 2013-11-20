@@ -1,4 +1,4 @@
-define ['aloha', 'aloha/plugin', 'jquery', 'css!../../../oer/mathcheatsheet/css/mathcheatsheet.css'], (Aloha, Plugin, $) ->
+define ['aloha', 'aloha/plugin', 'jquery', 'css!mathcheatsheet/css/mathcheatsheet.css'], (Aloha, Plugin, $) ->
   Plugin.create "mathcheatsheet",
     defaultSettings: {}
     init: ->
