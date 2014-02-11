@@ -1,0 +1,27 @@
+.semantic-drag-source .mc3activity:before {
+    content: "MC3 Activity";
+}
+
+.mc3activity.aloha-oer-block {
+    border-left: 0;
+    border-right: 0;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    margin: 0 25px 0 10px;
+}
+
+.mc3activity.aloha-oer-block,
+.mc3activity .semantic-controls-top,
+.mc3activity .exercise > .solution-controls > span,
+.mc3activity .multipart > .exercise-controls > span,
+.mc3activity .multipart > .solution-controls > span {
+    background-color: #f3f3f3;
+}
+
+.mc3activity .body {
+  margin: 10px;
+}
+
+.mc3activity .mc3activity_outcome_link {
+    margin: 10px;
+}
