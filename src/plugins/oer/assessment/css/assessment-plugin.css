@@ -1,0 +1,18 @@
+
+.assessment-modal input[type=text] {
+  margin-top: 10px;
+}
+
+.assessment-confirm-modal .modal-body {
+  height: 430px;
+}
+
+.assessment-modal .search-results {
+  display: none;
+  max-height: 200px;
+  overflow: auto;
+}
+
+.assessment-modal .search-results .template {
+  display: none;
+}

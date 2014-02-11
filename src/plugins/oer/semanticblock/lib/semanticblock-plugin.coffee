@@ -211,7 +211,7 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
 
         $element.wrap(blockTemplate).parent().append(controls).prepend(top).alohaBlock({'aloha-block-type': 'semanticBlock'})
 
-        type.activate $element
+        type.activate? $element
         return
  
       # if we make it this far none of the activators have run
@@ -241,7 +241,7 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
     type = getType($element)
 
     if type
-      type.deactivate $element
+      type.deactivate? $element
       return
 
     # if we make it this far none of the deactivators have run
@@ -389,6 +389,12 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
       range = Aloha.Selection.getRangeObject()
       $element.addClass 'semantic-temp'
       GENTICS.Utils.Dom.insertIntoDOM $element, range, Aloha.activeEditable.obj
+      $element = Aloha.jQuery('.semantic-temp').removeClass('semantic-temp')
+      activate $element
+
+    insertOver: ($element, target) ->
+      $element.addClass 'semantic-temp'
+      target.replaceWith $element
       $element = Aloha.jQuery('.semantic-temp').removeClass('semantic-temp')
       activate $element
 
