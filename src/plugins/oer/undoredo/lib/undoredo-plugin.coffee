@@ -1,16 +1,4 @@
 define [ 'aloha', 'aloha/plugin', 'jquery', 'aloha/ephemera', './xpath' ], (Aloha, Plugin, $, Ephemera, XPath) ->
-    timestamp = () ->
-      return (new Date()).getTime()
-
-    intersection = (a, b) ->
-      if b.length > a.length
-        # indexOf to loop over shorter array
-        t=b
-        b=a
-        a=t
-      return Array.prototype.filter.call a, (i) ->
-        Array.prototype.indexOf.call(b, i) != -1
-
     Plugin.create 'undoredo',
       _observer: null
       _mutations: []
@@ -40,7 +28,15 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'aloha/ephemera', './xpath' ], (Aloh
         @_versions.push
           xpath: XPath.xpathFor(node)
           fragment: f
-        @_ptr++
+
+        # If timeline is too long, chop off the head. Limit to keeping ten
+        # fragments to conserve memory use. Worst case scenario, we might have
+        # up to ten copies of the whole document stored here.
+        if @_versions.length > 10
+          @_versions.shift()
+
+        # Store new location in timeline
+        @_ptr = @_versions.length
 
       init: () ->
         plugin = @
@@ -57,8 +53,6 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'aloha/ephemera', './xpath' ], (Aloh
           timeoutID = null
 
           plugin._observer = new MutationObserver (mutations) ->
-            console.log('Mutations to', mutations)
- 
             # Remove mutations to ephemera
             mutations = mutations.filter (m) -> not $(m.target).is(ephemera_selector)
 
