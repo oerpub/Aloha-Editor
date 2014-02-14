@@ -1,9 +1,13 @@
-define [ 'aloha', 'aloha/plugin', 'jquery', 'aloha/ephemera', './xpath' ], (Aloha, Plugin, $, Ephemera, XPath) ->
+define [ 'aloha', 'aloha/plugin', 'jquery', 'aloha/ephemera',
+         'ui/ui', 'ui/button', './xpath' ], (Aloha, Plugin, $, Ephemera,
+         Ui, Button, XPath) ->
     Plugin.create 'undoredo',
       _observer: null
       _mutations: []
       _versions: []
       _ptr: 0
+      _undobutton: null
+      _redobutton: null
 
       disable: () ->
         @_observer.disconnect()
@@ -53,7 +57,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'aloha/ephemera', './xpath' ], (Aloh
           timeoutID = null
 
           plugin._observer = new MutationObserver (mutations) ->
-            # Remove mutations to ephemera
+            # Ignore mutations to ephemera
             mutations = mutations.filter (m) -> not $(m.target).is(ephemera_selector)
 
             # Append to list of mutations
@@ -85,6 +89,19 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'aloha/ephemera', './xpath' ], (Aloh
 
         Aloha.bind 'aloha-editable-destroyed', () ->
           @disable()
+
+        # Register buttons
+        @_undobutton = Ui.adopt "undo", Button,
+          tooltip: "Undo",
+          icon: "aloha-icon aloha-icon-undo",
+          scope: 'Aloha.continuoustext',
+          click: () => @undo()
+
+        @_redobutton = Ui.adopt "redo", Button,
+          tooltip: "Redo",
+          icon: "aloha-icon aloha-icon-redo",
+          scope: 'Aloha.continuoustext',
+          click: () => @redo()
 
       restore: (v) ->
         # Find the node, and replace it with the old version
