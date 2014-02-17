@@ -87,7 +87,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
   # losing all jQuery data attached to it (like popover data, the original Math Formula, etc)
   # add `aloha-ephemera-wrapper` so this span is unwrapped
   Aloha.ready ->
-    MathJax.Hub.Configured() if MathJax?
+    MathJax?.Hub.Configured()
 
   placeCursorAfter = (el) ->
     # The selection-changed stuff in aloha incorrectly thinks we are
@@ -116,7 +116,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
 
 
   getMathFor = (el) ->
-    jax = MathJax.Hub.getJaxFor el
+    jax = MathJax?.Hub.getJaxFor(el)
     if jax
       return jQuery(jax.root.toMathML())
     return null
@@ -124,7 +124,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
   squirrelMath = ($el) ->
     # `$el` is the `.math-element`
 
-    $mml = getMathFor $el.find('script')[0]
+    $mml = getMathFor($el.find('script')[0])
     if $mml != null
       # STEP3
       $el.find('.mathml-wrapper').remove()
@@ -272,7 +272,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
     $math = jQuery('<span class="math-element aloha-ephemera-wrapper"><span class="mathjax-wrapper aloha-ephemera"></span></span>')
     $container.html($math)
     $math.trigger 'show-popover'
-    
+
   insertMath = () ->
     $el = jQuery('<span class="math-element aloha-ephemera-wrapper"><span class="mathjax-wrapper aloha-ephemera">&#160;</span></span>') # nbsp
     range = Aloha.Selection.getRangeObject()
@@ -517,8 +517,8 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
     click: () -> insertMath()
 
   # Add a copy option to the mathjax menu
-  MathJax.Callback.Queue MathJax.Hub.Register.StartupHook "MathMenu Ready", () ->
-    copyCommand = MathJax.Menu.ITEM.COMMAND "Copy Math", (e,f,g) ->
+  MathJax?.Callback.Queue MathJax.Hub.Register.StartupHook('MathMenu Ready'), () ->
+    copyCommand = MathJax.Menu.ITEM.COMMAND 'Copy Math', (e,f,g) ->
       $script = jQuery(document.getElementById(MathJax.Menu.jax.inputID))
       Copy.buffer $script.parent().parent().outerHtml(), 'text/oerpub-content'
     MathJax.Menu.menu.items.unshift copyCommand
@@ -533,5 +533,5 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'overlay/overlay-plugin', 'ui/ui', '
     # Expose editor, so the cheatsheet plugin can modify it.
     editor: $_editor
 
-  Popover.register ob
+  Popover.register(ob)
   return ob
