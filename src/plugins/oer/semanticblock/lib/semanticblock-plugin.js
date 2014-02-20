@@ -52,7 +52,10 @@
         selector: '.semantic-container .semantic-delete',
         callback: function() {
           return jQuery(this).parents('.semantic-container').first().slideUp('slow', function() {
-            return jQuery(this).remove();
+            jQuery(this).remove();
+            return Aloha.activeEditable.smartContentChange({
+              type: 'block-change'
+            });
           });
         }
       }, {
@@ -327,9 +330,9 @@
         Ephemera.ephemera().pruneFns.push(function(node) {
           return jQuery(node).removeClass('aloha-block-dropzone aloha-editable-active aloha-editable aloha-block-blocklevel-sortable ui-sortable').removeAttr('contenteditable placeholder').get(0);
         });
-        return Aloha.bind('aloha-editable-created', function(e, params) {
+        return Aloha.bind('aloha-editable-created', function(e, editable) {
           var $root, classes, selector, sortableInterval, type, _i, _len;
-          $root = params.obj;
+          $root = editable.obj;
           classes = [];
           for (_i = 0, _len = registeredTypes.length; _i < _len; _i++) {
             type = registeredTypes[_i];
@@ -362,10 +365,10 @@
                     _ref.onDrop($element);
                   }
                 }
-                Aloha.activeEditable.smartContentChange({
+                $element.removeClass('drag-active');
+                return editable.smartContentChange({
                   type: 'block-change'
                 });
-                return $element.removeClass('drag-active');
               });
               $root.sortable('option', 'placeholder', 'aloha-oer-block-placeholder aloha-ephemera');
             }
@@ -408,7 +411,10 @@
         $element.addClass('semantic-temp');
         GENTICS.Utils.Dom.insertIntoDOM($element, range, Aloha.activeEditable.obj);
         $element = Aloha.jQuery('.semantic-temp').removeClass('semantic-temp');
-        return activate($element);
+        activate($element);
+        return Aloha.activeEditable.smartContentChange({
+          type: 'block-change'
+        });
       },
       appendElement: function($element, target) {
         $element.addClass('semantic-temp');

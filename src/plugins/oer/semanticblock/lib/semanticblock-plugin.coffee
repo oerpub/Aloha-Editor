@@ -74,6 +74,7 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
     callback: () ->
       jQuery(this).parents('.semantic-container').first().slideUp 'slow', ->
         jQuery(this).remove()
+        Aloha.activeEditable.smartContentChange({type: 'block-change'})
   ,
     name: 'click'
     selector: '.semantic-container .semantic-controls-top .copy'
@@ -317,8 +318,8 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
           .removeAttr('contenteditable placeholder')
           .get(0)
 
-      Aloha.bind 'aloha-editable-created', (e, params) =>
-        $root = params.obj
+      Aloha.bind 'aloha-editable-created', (e, editable) =>
+        $root = editable.obj
 
         classes = []
         classes.push type.selector for type in registeredTypes
@@ -351,9 +352,8 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
               $element = jQuery(ui.item)
               activate $element if $element.is(selector)
               getType($element)?.onDrop?($element)
-              Aloha.activeEditable.smartContentChange({type: 'block-change'})
-
               $element.removeClass('drag-active')
+              editable.smartContentChange({type: 'block-change'})
 
 
             $root.sortable 'option', 'placeholder', 'aloha-oer-block-placeholder aloha-ephemera',
@@ -391,6 +391,7 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
       GENTICS.Utils.Dom.insertIntoDOM $element, range, Aloha.activeEditable.obj
       $element = Aloha.jQuery('.semantic-temp').removeClass('semantic-temp')
       activate $element
+      Aloha.activeEditable.smartContentChange({type: 'block-change'})
 
     appendElement: ($element, target) ->
       $element.addClass 'semantic-temp'
