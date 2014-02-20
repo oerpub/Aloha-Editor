@@ -6,6 +6,8 @@ define(function(){
   var getNodeXPath = function(node) {
       if (node && node.id)
           return '//*[@id="' + node.id + '"]';
+      else if (node.nodeType == 3)
+          return getNodeTreeXPath(node.parentNode);
       else
           return getNodeTreeXPath(node);
   };
@@ -14,7 +16,7 @@ define(function(){
       var paths = [];
   
       // Use nodeName (instead of localName) so namespace prefix is included (if any).
-      for (; node && (node.nodeType == 1 || node.nodeType == 3) ; node = node.parentNode)  {
+      for (; node && (node.nodeType == 1) ; node = node.parentNode)  {
           var index = 0;
           if (node && node.id) {
               paths.splice(0, 0, '/*[@id="' + node.id + '"]');
@@ -30,7 +32,7 @@ define(function(){
                   ++index;
           }
   
-          var tagName = (node.nodeType == 1 ? node.nodeName.toLowerCase() : "text()");
+          var tagName = node.nodeName.toLowerCase();
           var pathIndex = (index ? "[" + (index+1) + "]" : "");
           paths.splice(0, 0, tagName + pathIndex);
       }
