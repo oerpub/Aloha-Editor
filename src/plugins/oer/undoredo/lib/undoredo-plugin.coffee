@@ -1,6 +1,5 @@
-define [ 'aloha', 'aloha/plugin', 'jquery', 'aloha/ephemera',
-         'ui/ui', 'ui/button', './xpath' ], (Aloha, Plugin, $, Ephemera,
-         Ui, Button, XPath) ->
+define [ 'aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', './xpath' ], (
+         Aloha, Plugin, $, Ui, Button, XPath) ->
     Plugin.create 'undoredo',
       _observer: null
       _mutations: []
@@ -8,6 +7,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'aloha/ephemera',
       _ptr: 0
       _undobutton: null
       _redobutton: null
+      _editable: null
 
       disable: () ->
         @_observer.disconnect()
@@ -47,48 +47,47 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'aloha/ephemera',
 
         Aloha.bind 'aloha-editable-created', (evt, editable) ->
 
-          # Only root editable
+          # Only root editable. Make this configurable!
           return if not editable.obj.is('.aloha-root-editable')
 
-          # Get registered ephemera
-          emap = Ephemera.ephemera().classMap
-          ephemera_selector = (Object.keys(emap).map (c)->'.'+c).join(',')
+          # squirrel editable
+          plugin._editable = editable
 
-          timeoutID = null
-
+          # Collect mutations for later processing
           plugin._observer = new MutationObserver (mutations) ->
-            # Ignore mutations to ephemera
-            mutations = mutations.filter (m) -> not $(m.target).is(ephemera_selector)
-
             # Append to list of mutations
             if mutations.length
               plugin._mutations = plugin._mutations.concat(mutations)
 
-              # Wait two seconds for more, then process
-              if timeoutID
-                clearTimeout(timeoutID)
-              timeoutID = setTimeout(
-                () ->
-                  timeoutID = null
-
-                  if plugin._mutations.length
-                    # find the top-most target.
-                    top = plugin._mutations[0].target
-                    for mutation in plugin._mutations.slice(1)
-                      while top and top != mutation.target and \
-                          not $(top).has(mutation.target).length
-                        top = top.parentElement
-
-                    # Keep a copy of this element, so we can restore it later.
-                    plugin.addVersion(top)
-
-                    # Clear list of mutations
-                    plugin._mutations = []
-              , 2000)
           plugin.enable(editable.obj[0])
+          plugin.reset(editable)
+
+        # Once editor or plugin signals a change, process the mutations
+        Aloha.bind 'aloha-smart-content-changed', (e, data) ->
+          # Only root editable. Make this configurable!
+          editable = data.editable
+          return if not editable.obj.is('.aloha-root-editable')
+
+          # Ignore mutations disconnected from this editable
+          mutations = plugin._mutations.filter (m) ->
+            editable.obj.is(m.target) or editable.obj.has(m.target).length
+
+          if mutations.length
+            # find the top-most target.
+            top = mutations[0].target
+            for mutation in mutations.slice(1)
+              while top.parentElement and top != mutation.target and \
+                  not $(top).has(mutation.target).length
+                top = top.parentElement
+
+            # Keep a copy of this element, so we can restore it later.
+            plugin.addVersion(top)
+
+            # Clear list of mutations
+            plugin._mutations = []
 
         Aloha.bind 'aloha-editable-destroyed', () ->
-          @disable()
+          plugin.disable()
 
         # Register buttons
         @_undobutton = Ui.adopt "undo", Button,
@@ -109,7 +108,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'aloha/ephemera',
         if node
           @disable
           $(node).empty().append(v.fragment.firstChild.cloneNode(true).childNodes)
-          @enable(Aloha.activeEditable.obj[0])
+          @enable(@_editable.obj[0])
 
       undo: () ->
         if @_ptr > 1
@@ -125,6 +124,6 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'aloha/ephemera',
           @restore(v)
         return @_ptr
 
-      reset: () ->
+      reset: (editable) ->
         @_ptr = 0
-        @addVersion(Aloha.activeEditable.obj[0])
+        @addVersion(editable?.obj[0] or @_editable.obj[0])
