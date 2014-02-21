@@ -43,20 +43,8 @@
           if (!editable.obj.is('.aloha-root-editable')) {
             return;
           }
-          plugin._editable = editable;
-          plugin._observer = new MutationObserver(function(mutations) {
-            if (mutations.length) {
-              return plugin._mutations = plugin._mutations.concat(mutations);
-            }
-          });
-          plugin.enable(editable.obj[0]);
-          return plugin.reset(editable);
-        });
-        Aloha.bind('aloha-smart-content-changed', function(e, data) {
-          return plugin.process(data);
-        });
-        Aloha.bind('aloha-editable-destroyed', function() {
-          return plugin.disable();
+          editable.obj[0].undoScope = true;
+          return plugin._editable = editable;
         });
         this._undobutton = Ui.adopt("undo", Button, {
           tooltip: "Undo",
@@ -109,28 +97,10 @@
         }
       },
       undo: function() {
-        var v;
-        this.process({
-          editable: this._editable
-        });
-        if (this._ptr > 1) {
-          this._ptr--;
-          v = this._versions[this._ptr - 1];
-          this.restore(v);
-        }
-        return this._ptr;
+        return this._editable.obj[0].undoManager.undo();
       },
       redo: function() {
-        var v;
-        this.process({
-          editable: this._editable
-        });
-        if (this._ptr < this._versions.length) {
-          this._ptr++;
-          v = this._versions[this._ptr - 1];
-          this.restore(v);
-        }
-        return this._ptr;
+        return this._editable.obj[0].undoManager.redo();
       },
       reset: function(editable) {
         this._ptr = 0;

@@ -49,23 +49,27 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', './xpath' ], (
           # Only root editable. Make this configurable!
           return if not editable.obj.is('.aloha-root-editable')
 
+          # Turn on the undoManager on the editable. This has no effect
+          # on browsers that don't support it.
+          editable.obj[0].undoScope = true
+
           # squirrel editable
           plugin._editable = editable
 
-          # Collect mutations for later processing
-          plugin._observer = new MutationObserver (mutations) ->
-            # Append to list of mutations
-            if mutations.length
-              plugin._mutations = plugin._mutations.concat(mutations)
+          ## Collect mutations for later processing
+          #plugin._observer = new MutationObserver (mutations) ->
+          #  # Append to list of mutations
+          #  if mutations.length
+          #    plugin._mutations = plugin._mutations.concat(mutations)
 
-          plugin.enable(editable.obj[0])
-          plugin.reset(editable)
+          #plugin.enable(editable.obj[0])
+          #plugin.reset(editable)
 
         # Once editor or plugin signals a change, process the mutations
-        Aloha.bind 'aloha-smart-content-changed', (e, data) -> plugin.process(data)
+        #Aloha.bind 'aloha-smart-content-changed', (e, data) -> plugin.process(data)
 
-        Aloha.bind 'aloha-editable-destroyed', () ->
-          plugin.disable()
+        #Aloha.bind 'aloha-editable-destroyed', () ->
+        #  plugin.disable()
 
         # Register buttons
         @_undobutton = Ui.adopt "undo", Button,
@@ -114,20 +118,22 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', './xpath' ], (
           @enable(@_editable.obj[0])
 
       undo: () ->
-        @process(editable: @_editable)
-        if @_ptr > 1
-          @_ptr--
-          v = @_versions[@_ptr-1]
-          @restore(v)
-        return @_ptr
+        @_editable.obj[0].undoManager.undo()
+        #@process(editable: @_editable)
+        #if @_ptr > 1
+        #  @_ptr--
+        #  v = @_versions[@_ptr-1]
+        #  @restore(v)
+        #return @_ptr
 
       redo: () ->
-        @process(editable: @_editable)
-        if @_ptr < @_versions.length
-          @_ptr++
-          v = @_versions[@_ptr-1]
-          @restore(v)
-        return @_ptr
+        @_editable.obj[0].undoManager.redo()
+        #@process(editable: @_editable)
+        #if @_ptr < @_versions.length
+        #  @_ptr++
+        #  v = @_versions[@_ptr-1]
+        #  @restore(v)
+        #return @_ptr
 
       reset: (editable) ->
         @_ptr = 0

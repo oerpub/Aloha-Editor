@@ -51,11 +51,16 @@
         name: 'click',
         selector: '.semantic-container .semantic-delete',
         callback: function() {
-          return jQuery(this).parents('.semantic-container').first().slideUp('slow', function() {
-            jQuery(this).remove();
-            return Aloha.activeEditable.smartContentChange({
-              type: 'block-change'
-            });
+          var editable,
+            _this = this;
+          editable = jQuery(this).closest('.aloha-root-editable');
+          editable[0].undoManager.transact({
+            executeAutomatic: function() {
+              return jQuery(_this).parents('.semantic-container').first().remove();
+            }
+          }, false);
+          return Aloha.activeEditable.smartContentChange({
+            type: 'block-change'
           });
         }
       }, {
