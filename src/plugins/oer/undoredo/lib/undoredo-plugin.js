@@ -18,7 +18,6 @@
           attributes: false,
           childList: true,
           characterData: true,
-          characterDataOldValue: true,
           subtree: true
         });
       },
@@ -54,26 +53,7 @@
           return plugin.reset(editable);
         });
         Aloha.bind('aloha-smart-content-changed', function(e, data) {
-          var editable, mutation, mutations, top, _i, _len, _ref;
-          editable = data.editable;
-          if (!editable.obj.is('.aloha-root-editable')) {
-            return;
-          }
-          mutations = plugin._mutations.filter(function(m) {
-            return editable.obj.is(m.target) || editable.obj.has(m.target).length;
-          });
-          if (mutations.length) {
-            top = mutations[0].target;
-            _ref = mutations.slice(1);
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-              mutation = _ref[_i];
-              while (top.parentElement && top !== mutation.target && !$(top).has(mutation.target).length) {
-                top = top.parentElement;
-              }
-            }
-            plugin.addVersion(top);
-            return plugin._mutations = [];
-          }
+          return plugin.process(data);
         });
         Aloha.bind('aloha-editable-destroyed', function() {
           return plugin.disable();
@@ -95,17 +75,44 @@
           }
         });
       },
+      process: function(data) {
+        var editable, mutation, mutations, top, _i, _len, _ref;
+        editable = data.editable;
+        if (!editable.obj.is('.aloha-root-editable')) {
+          return;
+        }
+        console.log(data.triggerType, data.keyCode, data.keyIdentifier);
+        mutations = this._mutations.filter(function(m) {
+          return editable.obj.is(m.target) || editable.obj.has(m.target).length;
+        });
+        if (mutations.length) {
+          top = mutations[0].target;
+          _ref = mutations.slice(1);
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            mutation = _ref[_i];
+            while (top.parentElement && top !== mutation.target && !$(top).has(mutation.target).length) {
+              top = top.parentElement;
+            }
+          }
+          this.addVersion(top);
+          return this._mutations = [];
+        }
+      },
       restore: function(v) {
         var node;
         node = XPath.nodeFor(v.xpath);
         if (node) {
           this.disable;
           $(node).empty().append(v.fragment.firstChild.cloneNode(true).childNodes);
+          $(node).focus();
           return this.enable(this._editable.obj[0]);
         }
       },
       undo: function() {
         var v;
+        this.process({
+          editable: this._editable
+        });
         if (this._ptr > 1) {
           this._ptr--;
           v = this._versions[this._ptr - 1];
@@ -115,6 +122,9 @@
       },
       redo: function() {
         var v;
+        this.process({
+          editable: this._editable
+        });
         if (this._ptr < this._versions.length) {
           this._ptr++;
           v = this._versions[this._ptr - 1];

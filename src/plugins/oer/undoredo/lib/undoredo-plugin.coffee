@@ -18,7 +18,6 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', './xpath' ], (
           attributes: false
           childList: true
           characterData: true
-          characterDataOldValue: true
           subtree: true
 
       addVersion: (node) ->
@@ -63,28 +62,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', './xpath' ], (
           plugin.reset(editable)
 
         # Once editor or plugin signals a change, process the mutations
-        Aloha.bind 'aloha-smart-content-changed', (e, data) ->
-          # Only root editable. Make this configurable!
-          editable = data.editable
-          return if not editable.obj.is('.aloha-root-editable')
-
-          # Ignore mutations disconnected from this editable
-          mutations = plugin._mutations.filter (m) ->
-            editable.obj.is(m.target) or editable.obj.has(m.target).length
-
-          if mutations.length
-            # find the top-most target.
-            top = mutations[0].target
-            for mutation in mutations.slice(1)
-              while top.parentElement and top != mutation.target and \
-                  not $(top).has(mutation.target).length
-                top = top.parentElement
-
-            # Keep a copy of this element, so we can restore it later.
-            plugin.addVersion(top)
-
-            # Clear list of mutations
-            plugin._mutations = []
+        Aloha.bind 'aloha-smart-content-changed', (e, data) -> plugin.process(data)
 
         Aloha.bind 'aloha-editable-destroyed', () ->
           plugin.disable()
@@ -102,15 +80,41 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', './xpath' ], (
           scope: 'Aloha.continuoustext',
           click: () => @redo()
 
+      process: (data) ->
+        # Only root editable. Make this configurable!
+        editable = data.editable
+        return if not editable.obj.is('.aloha-root-editable')
+
+        console.log(data.triggerType, data.keyCode, data.keyIdentifier)
+        # Ignore mutations disconnected from this editable
+        mutations = @_mutations.filter (m) ->
+          editable.obj.is(m.target) or editable.obj.has(m.target).length
+
+        if mutations.length
+          # find the top-most target.
+          top = mutations[0].target
+          for mutation in mutations.slice(1)
+            while top.parentElement and top != mutation.target and \
+                not $(top).has(mutation.target).length
+              top = top.parentElement
+
+          # Keep a copy of this element, so we can restore it later.
+          @addVersion(top)
+
+          # Clear list of mutations
+          @_mutations = []
+
       restore: (v) ->
         # Find the node, and replace it with the old version
         node = XPath.nodeFor(v.xpath)
         if node
           @disable
           $(node).empty().append(v.fragment.firstChild.cloneNode(true).childNodes)
+          $(node).focus()
           @enable(@_editable.obj[0])
 
       undo: () ->
+        @process(editable: @_editable)
         if @_ptr > 1
           @_ptr--
           v = @_versions[@_ptr-1]
@@ -118,6 +122,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', './xpath' ], (
         return @_ptr
 
       redo: () ->
+        @process(editable: @_editable)
         if @_ptr < @_versions.length
           @_ptr++
           v = @_versions[@_ptr-1]
