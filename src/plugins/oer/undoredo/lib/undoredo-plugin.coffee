@@ -1,49 +1,40 @@
-define [ 'aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', './xpath' ], (
-         Aloha, Plugin, $, Ui, Button, XPath) ->
+define [ 'aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', './diff_match_patch_uncompressed' ], (
+         Aloha, Plugin, $, Ui, Button) ->
+    timestamp = () ->
+      new Date().getTime()
+
+    reversePatch = (patch) ->
+      reversed = (new diff_match_patch).patch_deepCopy(patch)
+      for i in [0..reversed.length-1]
+        for j in [0..reversed[i].diffs.length-1]
+          reversed[i].diffs[j][0] = -(reversed[i].diffs[j][0])
+      return reversed
+
+    Differ = new diff_match_patch()
+
     Plugin.create 'undoredo',
-      _observer: null
+      _text_observer: null
       _mutations: []
-      _versions: []
+      _patches: []
       _ptr: 0
       _undobutton: null
       _redobutton: null
       _editable: null
 
       disable: () ->
-        @_observer.disconnect()
+        @_text_observer.disconnect()
 
       enable: (editable) ->
-        @_observer.takeRecords() # Empty the queue
-        @_observer.observe editable,
+        @_text_observer.takeRecords() # Empty the queue
+        @_text_observer.observe editable,
           attributes: false
-          childList: true
+          childList: false
           characterData: true
+          characterDataOldValue: true
           subtree: true
-
-      addVersion: (node) ->
-        # Create a fragment to store the node
-        f = document.createDocumentFragment()
-        f.appendChild node.cloneNode(true)
-
-        # Truncate the versions stack at our present working point, thereby
-        # creating a new timeline if a new version is added after an undo.
-        @_versions.length = @_ptr
-        @_versions.push
-          xpath: XPath.xpathFor(node)
-          fragment: f
-
-        # If timeline is too long, chop off the head. Limit to keeping ten
-        # fragments to conserve memory use. Worst case scenario, we might have
-        # up to ten copies of the whole document stored here.
-        if @_versions.length > 10
-          @_versions.shift()
-
-        # Store new location in timeline
-        @_ptr = @_versions.length
 
       init: () ->
         plugin = @
-
         Aloha.bind 'aloha-editable-created', (evt, editable) ->
 
           # Only root editable. Make this configurable!
@@ -53,16 +44,35 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', './xpath' ], (
           plugin._editable = editable
 
           # Collect mutations for later processing
-          plugin._observer = new MutationObserver (mutations) ->
-            # Append to list of mutations
-            if mutations.length
-              plugin._mutations = plugin._mutations.concat(mutations)
+          prevts = 0
+          prevmu = null
+          plugin._text_observer = new MutationObserver (mutations) ->
+            ts = timestamp()
+            for mutation in mutations
+              if plugin._ptr > 0 and prevmu and prevmu.target == mutation.target and ts - prevts < 1500
+                # Merge change with the previous one, as it is to the same
+                # target within a short time span.
+                diff = Differ.patch_make(prevmu.oldValue, mutation.target.data)
+                plugin._patches[plugin._ptr-1] = {
+                  type: 'text'
+                  target: mutation.target
+                  diff: diff
+                }
+              else
+                # Either a different target, or too much time has passed.
+                diff = Differ.patch_make(mutation.oldValue, mutation.target.data)
+                plugin._patches[plugin._ptr] = {
+                  type: 'text'
+                  target: mutation.target
+                  diff: diff
+                }
+                plugin._ptr = plugin._patches.length
+                prevmu = mutation
+
+              prevts = ts
 
           plugin.enable(editable.obj[0])
           plugin.reset(editable)
-
-        # Once editor or plugin signals a change, process the mutations
-        Aloha.bind 'aloha-smart-content-changed', (e, data) -> plugin.process(data)
 
         Aloha.bind 'aloha-editable-destroyed', () ->
           plugin.disable()
@@ -80,55 +90,25 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', './xpath' ], (
           scope: 'Aloha.continuoustext',
           click: () => @redo()
 
-      process: (data) ->
-        # Only root editable. Make this configurable!
-        editable = data.editable
-        return if not editable.obj.is('.aloha-root-editable')
-
-        console.log(data.triggerType, data.keyCode, data.keyIdentifier)
-        # Ignore mutations disconnected from this editable
-        mutations = @_mutations.filter (m) ->
-          editable.obj.is(m.target) or editable.obj.has(m.target).length
-
-        if mutations.length
-          # find the top-most target.
-          top = mutations[0].target
-          for mutation in mutations.slice(1)
-            while top.parentElement and top != mutation.target and \
-                not $(top).has(mutation.target).length
-              top = top.parentElement
-
-          # Keep a copy of this element, so we can restore it later.
-          @addVersion(top)
-
-          # Clear list of mutations
-          @_mutations = []
-
-      restore: (v) ->
-        # Find the node, and replace it with the old version
-        node = XPath.nodeFor(v.xpath)
-        if node
-          @disable
-          $(node).empty().append(v.fragment.firstChild.cloneNode(true).childNodes)
-          $(node).focus()
-          @enable(@_editable.obj[0])
-
       undo: () ->
-        @process(editable: @_editable)
-        if @_ptr > 1
+        if @_ptr > 0
+          p = @_patches[@_ptr-1]
+          diff = reversePatch(p.diff)
+          @disable()
+          p.target.data = Differ.patch_apply(diff, p.target.data)[0]
+          @enable(@_editable.obj[0])
           @_ptr--
-          v = @_versions[@_ptr-1]
-          @restore(v)
         return @_ptr
 
       redo: () ->
-        @process(editable: @_editable)
-        if @_ptr < @_versions.length
+        if @_ptr < @_patches.length
+          p = @_patches[@_ptr]
+          @disable()
+          p.target.data = Differ.patch_apply(p.diff, p.target.data)[0]
+          @enable(@_editable.obj[0])
           @_ptr++
-          v = @_versions[@_ptr-1]
-          @restore(v)
         return @_ptr
 
       reset: (editable) ->
+        @_patches = []
         @_ptr = 0
-        @addVersion(editable?.obj[0] or @_editable.obj[0])
