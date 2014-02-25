@@ -37,6 +37,111 @@
           subtree: true
         });
       },
+      transact: function(callback, merge) {
+        var add_undo_redo, host, observer, ptr,
+          _this = this;
+        host = this._editable.obj[0];
+        if (merge) {
+          ptr = this._ptr - 1;
+        } else {
+          ptr = this._ptr;
+        }
+        add_undo_redo = function(undoer, redoer) {
+          if (!_this._patches[ptr]) {
+            _this._patches[ptr] = {
+              type: 'transaction',
+              undo: [],
+              redo: []
+            };
+            _this._ptr = _this._patches.length;
+          }
+          _this._patches[ptr].undo.push(undoer);
+          return _this._patches[ptr].redo.push(redoer);
+        };
+        this.disable();
+        observer = new MutationObserver(function(mutations) {
+          var currentValue, expander, mutation, mutator, oldValue, redo, redoer, reducer, undo, undoer, _i, _len, _results;
+          _results = [];
+          for (_i = 0, _len = mutations.length; _i < _len; _i++) {
+            mutation = mutations[_i];
+            if (mutation.type === 'childList') {
+              expander = function() {
+                if (this.before) {
+                  return $(this.before).after(this.nodes);
+                } else if (this.after) {
+                  return $(this.after).before(this.nodes);
+                } else {
+                  return $(this.target).append(this.nodes);
+                }
+              };
+              reducer = function() {
+                return $(this.nodes).remove();
+              };
+              if (mutation.addedNodes.length) {
+                undo = reducer.bind({
+                  nodes: mutation.addedNodes
+                });
+                redo = expander.bind({
+                  before: mutation.previousSibling,
+                  after: mutation.nextSibling,
+                  target: mutation.target,
+                  nodes: mutation.addedNodes
+                });
+                add_undo_redo(undo, redo);
+              }
+              if (mutation.removedNodes.length) {
+                undo = expander.bind({
+                  before: mutation.previousSibling,
+                  after: mutation.nextSibling,
+                  target: mutation.target,
+                  nodes: mutation.removedNodes
+                });
+              }
+              redo = reducer.bind({
+                nodes: mutation.removedNodes
+              });
+              _results.push(add_undo_redo(undo, redo));
+            } else if (mutation.type === 'characterData') {
+              currentValue = mutation.target.data;
+              oldValue = mutation.oldValue;
+              mutator = function() {
+                return this.target.data = this.value;
+              };
+              undoer = mutator.bind({
+                target: mutation.target,
+                value: oldValue
+              });
+              redoer = mutator.bind({
+                target: mutation.target,
+                value: currentValue
+              });
+              if (!_this._patches[ptr]) {
+                _this._patches[ptr] = {
+                  type: 'transaction',
+                  undo: [],
+                  redo: []
+                };
+              }
+              _results.push(add_undo_redo(undoer, redoer));
+            } else {
+              _results.push(void 0);
+            }
+          }
+          return _results;
+        });
+        observer.observe(host, {
+          attributes: false,
+          childList: true,
+          characterData: true,
+          characterDataOldValue: true,
+          subtree: true
+        });
+        callback();
+        setTimeout((function() {
+          return observer.disconnect();
+        }), 100);
+        return this.enable(host);
+      },
       init: function() {
         var plugin,
           _this = this;
@@ -100,24 +205,46 @@
         });
       },
       undo: function() {
-        var diff, p;
+        var diff, p, u, _i, _len, _ref;
         if (this._ptr > 0) {
           p = this._patches[this._ptr - 1];
-          diff = reversePatch(p.diff);
           this.disable();
-          p.target.data = Differ.patch_apply(diff, p.target.data)[0];
-          this.enable(this._editable.obj[0]);
+          try {
+            if (p.type === 'text') {
+              diff = reversePatch(p.diff);
+              p.target.data = Differ.patch_apply(diff, p.target.data)[0];
+            } else if (p.type === 'transaction') {
+              _ref = p.undo;
+              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                u = _ref[_i];
+                u();
+              }
+            }
+          } finally {
+            this.enable(this._editable.obj[0]);
+          }
           this._ptr--;
         }
         return this._ptr;
       },
       redo: function() {
-        var p;
+        var p, r, _i, _len, _ref;
         if (this._ptr < this._patches.length) {
           p = this._patches[this._ptr];
           this.disable();
-          p.target.data = Differ.patch_apply(p.diff, p.target.data)[0];
-          this.enable(this._editable.obj[0]);
+          try {
+            if (p.type === 'text') {
+              p.target.data = Differ.patch_apply(p.diff, p.target.data)[0];
+            } else if (p.type === 'transaction') {
+              _ref = p.redo;
+              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                r = _ref[_i];
+                r();
+              }
+            }
+          } finally {
+            this.enable(this._editable.obj[0]);
+          }
           this._ptr++;
         }
         return this._ptr;

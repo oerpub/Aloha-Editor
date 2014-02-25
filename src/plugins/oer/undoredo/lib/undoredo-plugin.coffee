@@ -33,6 +33,109 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', './diff_match_
           characterDataOldValue: true
           subtree: true
 
+      # This follows to some extent the pattern of the undoManager that will
+      # eventually make it into browsers, defined here:
+      # 
+      transact: (callback, merge) ->
+        host = @_editable.obj[0]
+        if merge
+          ptr = @_ptr-1
+        else
+          ptr = @_ptr
+
+        add_undo_redo = (undoer, redoer) =>
+          if not @_patches[ptr]
+            @_patches[ptr] =
+              type: 'transaction'
+              undo: []
+              redo: []
+            @_ptr = @_patches.length
+
+          @_patches[ptr].undo.push(undoer)
+          @_patches[ptr].redo.push(redoer)
+
+        @disable() # Stop watching textual changes while recording a transation
+        observer = new MutationObserver (mutations) =>
+          for mutation in mutations
+            # Mutations can add nodes, remove nodes, and modify text. For each
+            # observed mutation, build commands that will undo or redo the
+            # effect
+            if mutation.type == 'childList'
+
+                # Mutator that adds the nodes
+                expander = () ->
+                  if @before
+                    $(@before).after(@nodes)
+                  else if @after
+                    $(@after).before(@nodes)
+                  else
+                    $(@target).append(@nodes)
+
+                reducer = () ->
+                    $(@nodes).remove()
+
+                if mutation.addedNodes.length
+                  undo = reducer.bind
+                    nodes: mutation.addedNodes
+                  redo = expander.bind
+                    before: mutation.previousSibling
+                    after: mutation.nextSibling
+                    target: mutation.target
+                    nodes: mutation.addedNodes
+                  add_undo_redo(undo, redo)
+
+                if mutation.removedNodes.length
+                  undo = expander.bind
+                    before: mutation.previousSibling
+                    after: mutation.nextSibling
+                    target: mutation.target
+                    nodes: mutation.removedNodes
+                 redo = reducer.bind
+                    nodes: mutation.removedNodes
+                  add_undo_redo(undo, redo)
+
+            else if mutation.type == 'characterData'
+              currentValue = mutation.target.data
+              oldValue = mutation.oldValue
+
+              # Create mutators
+              mutator = () ->
+                @target.data = @value
+
+              # Build an undoer
+              undoer = mutator.bind
+                target: mutation.target
+                value: oldValue
+
+              # Build a redoer
+              redoer = mutator.bind
+                target: mutation.target
+                value: currentValue
+
+              if not @_patches[ptr]
+                @_patches[ptr] =
+                  type: 'transaction'
+                  undo: []
+                  redo: []
+
+              add_undo_redo(undoer, redoer)
+
+        # Observe the editable area
+        observer.observe host,
+          attributes: false
+          childList: true
+          characterData: true
+          characterDataOldValue: true
+          subtree: true
+
+        # Make the changes
+        callback()
+
+        # Give the mutations a chance to propagate before disconnecting.
+        # Is this a browser bug?
+        setTimeout((() -> observer.disconnect()), 100)
+        @enable(host)
+
       init: () ->
         plugin = @
         Aloha.bind 'aloha-editable-created', (evt, editable) ->
@@ -93,10 +196,16 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', './diff_match_
       undo: () ->
         if @_ptr > 0
           p = @_patches[@_ptr-1]
-          diff = reversePatch(p.diff)
           @disable()
-          p.target.data = Differ.patch_apply(diff, p.target.data)[0]
-          @enable(@_editable.obj[0])
+          try
+            if p.type == 'text'
+              diff = reversePatch(p.diff)
+              p.target.data = Differ.patch_apply(diff, p.target.data)[0]
+            else if p.type == 'transaction'
+              for u in p.undo
+                u()
+          finally
+            @enable(@_editable.obj[0])
           @_ptr--
         return @_ptr
 
@@ -104,8 +213,14 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', './diff_match_
         if @_ptr < @_patches.length
           p = @_patches[@_ptr]
           @disable()
-          p.target.data = Differ.patch_apply(p.diff, p.target.data)[0]
-          @enable(@_editable.obj[0])
+          try
+            if p.type == 'text'
+              p.target.data = Differ.patch_apply(p.diff, p.target.data)[0]
+            else if p.type == 'transaction'
+              for r in p.redo
+                r()
+          finally
+            @enable(@_editable.obj[0])
           @_ptr++
         return @_ptr
 
