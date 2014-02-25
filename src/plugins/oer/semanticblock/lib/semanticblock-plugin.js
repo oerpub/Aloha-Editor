@@ -51,11 +51,20 @@
         name: 'click',
         selector: '.semantic-container .semantic-delete',
         callback: function() {
-          return jQuery(this).parents('.semantic-container').first().slideUp('slow', function() {
-            jQuery(this).remove();
-            return Aloha.activeEditable.smartContentChange({
-              type: 'block-change'
+          var editable,
+            _this = this;
+          editable = jQuery(this).closest('.aloha-root-editable');
+          Aloha.require(['undoredo/undoredo-plugin'], function(UndoRedo) {
+            UndoRedo.transact(function() {
+              var ob;
+              ob = jQuery(_this).parents('.semantic-container').first();
+              ob.removeClass('delete-hover');
+              return ob.remove();
             });
+            return false;
+          });
+          return Aloha.activeEditable.smartContentChange({
+            type: 'block-change'
           });
         }
       }, {

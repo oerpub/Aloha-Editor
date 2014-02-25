@@ -72,9 +72,14 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
     name: 'click'
     selector: '.semantic-container .semantic-delete'
     callback: () ->
-      jQuery(this).parents('.semantic-container').first().slideUp 'slow', ->
-        jQuery(this).remove()
-        Aloha.activeEditable.smartContentChange({type: 'block-change'})
+      editable = jQuery(@).closest('.aloha-root-editable')
+      Aloha.require ['undoredo/undoredo-plugin'], (UndoRedo) =>
+        UndoRedo.transact () =>
+          ob = jQuery(@).parents('.semantic-container').first()
+          ob.removeClass 'delete-hover'
+          ob.remove()
+        false
+      Aloha.activeEditable.smartContentChange({type: 'block-change'})
   ,
     name: 'click'
     selector: '.semantic-container .semantic-controls-top .copy'
