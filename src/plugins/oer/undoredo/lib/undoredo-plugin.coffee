@@ -71,6 +71,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', './diff_match_
                     $(@after).before(@nodes)
                   else
                     $(@target).append(@nodes)
+                  $(@target).trigger $.Event('undoredo', nodes: @nodes)
 
                 reducer = () ->
                     $(@nodes).remove()

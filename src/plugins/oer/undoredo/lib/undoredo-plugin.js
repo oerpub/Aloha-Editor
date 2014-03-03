@@ -68,12 +68,15 @@
             if (mutation.type === 'childList') {
               expander = function() {
                 if (this.before) {
-                  return $(this.before).after(this.nodes);
+                  $(this.before).after(this.nodes);
                 } else if (this.after) {
-                  return $(this.after).before(this.nodes);
+                  $(this.after).before(this.nodes);
                 } else {
-                  return $(this.target).append(this.nodes);
+                  $(this.target).append(this.nodes);
                 }
+                return $(this.target).trigger($.Event('undoredo', {
+                  nodes: this.nodes
+                }));
               };
               reducer = function() {
                 return $(this.nodes).remove();
