@@ -401,7 +401,7 @@
                 return activate(jQuery(this));
               }
             });
-            return jQuery('.semantic-drag-source').children().each(function() {
+            jQuery('.semantic-drag-source').children().each(function() {
               var element, elementLabel;
               element = jQuery(this);
               elementLabel = (element.data('type') || element.attr('class')).split(' ')[0];
@@ -420,6 +420,16 @@
                   return jQuery(ui.helper).addClass('dragging');
                 },
                 refreshPositions: true
+              });
+            });
+            return $root.off('undoredo').on('undoredo', function(e) {
+              console.log('Re-activating a restored block');
+              return jQuery(e.nodes).each(function() {
+                var $el;
+                $el = jQuery(this);
+                if ($el.is('.semantic-container')) {
+                  return activate($el);
+                }
               });
             });
           }

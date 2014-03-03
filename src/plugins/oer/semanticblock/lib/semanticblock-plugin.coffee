@@ -397,6 +397,11 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
          
               refreshPositions: true
 
+          $root.off('undoredo').on 'undoredo', (e) ->
+            console.log('Re-activating a restored block')
+            jQuery(e.nodes).each () ->
+              $el = jQuery(@)
+              activate $el if $el.is('.semantic-container')
 
     insertAtCursor: (template) ->
       $element = jQuery(template)
