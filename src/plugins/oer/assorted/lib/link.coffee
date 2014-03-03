@@ -22,7 +22,7 @@ define [
   DIALOG_HTML = '''
     <form class="modal" id="linkModal" tabindex="-1" role="dialog" aria-labelledby="linkModalLabel" aria-hidden="true">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3 id="linkModalLabel">Edit link</h3>
       </div>
       <div class="modal-body">
@@ -32,22 +32,9 @@ define [
             <input id="link-contents" class="input-xlarge" type="text" placeholder="Enter a phrase here" required />
           </div>
         </div>
-        <h4 id="link-destination">Link Destination</h4>
-        <div class="tabbable tabs-left"> <!-- Only required for left/right tabs -->
-          <ul class="nav nav-tabs">
-            <li><span data-target="#link-tab-external" data-toggle="tab">External</span></li>
-            <li><span data-target="#link-tab-internal" data-toggle="tab">Internal</span></li>
-          </ul>
-          <div class="tab-content">
-            <div class="tab-pane" id="link-tab-external">
-              <span for="link-external">Link to webpage</span>
-              <input class="link-input link-external" id="link-external" type="url" pattern="https?://.+"/>
-            </div>
-            <div class="tab-pane" id="link-tab-internal">
-              <label for="link-internal">Link to a part in this document</label>
-              <select class="link-input link-internal" id="link-internal" size="5" multiple="multiple"></select>
-            </div>
-          </div>
+        <div id="link-url">
+          <span for="link-external">Link to webpage</span>
+          <input class="link-input link-external" id="link-external" type="url" pattern="https?://.+"/>
         </div>
       </div>
       <div class="modal-footer">
