@@ -37,6 +37,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', './diff_match_
       # eventually make it into browsers, defined here:
       # 
       transact: (callback, merge) ->
+        queue = []
         host = @_editable.obj[0]
         if merge
           ptr = @_ptr-1
@@ -120,6 +121,12 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', './diff_match_
 
               add_undo_redo(undoer, redoer)
 
+            # Execute things pushed onto the queue. This is used among others
+            # to disconnect() the observer as soon as possible, while not
+            # disconnecting it so soon that mutations aren't observed at all.
+            while listener = queue.shift()
+              listener()
+
         # Observe the editable area
         observer.observe host,
           attributes: false
@@ -129,12 +136,16 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', './diff_match_
           subtree: true
 
         # Make the changes
-        callback()
+        if callback
+          r = callback()
 
         # Give the mutations a chance to propagate before disconnecting.
-        # Is this a browser bug?
-        setTimeout((() -> observer.disconnect()), 100)
+        queue.push observer.disconnect.bind(observer)
+
         @enable(host)
+
+        # return original result
+        return r
 
       init: () ->
         plugin = @

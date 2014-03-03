@@ -38,8 +38,9 @@
         });
       },
       transact: function(callback, merge) {
-        var add_undo_redo, host, observer, ptr,
+        var add_undo_redo, host, observer, ptr, queue, r,
           _this = this;
+        queue = [];
         host = this._editable.obj[0];
         if (merge) {
           ptr = this._ptr - 1;
@@ -60,7 +61,7 @@
         };
         this.disable();
         observer = new MutationObserver(function(mutations) {
-          var currentValue, expander, mutation, mutator, oldValue, redo, redoer, reducer, undo, undoer, _i, _len, _results;
+          var currentValue, expander, listener, mutation, mutator, oldValue, redo, redoer, reducer, undo, undoer, _i, _len, _results;
           _results = [];
           for (_i = 0, _len = mutations.length; _i < _len; _i++) {
             mutation = mutations[_i];
@@ -100,7 +101,7 @@
               redo = reducer.bind({
                 nodes: mutation.removedNodes
               });
-              _results.push(add_undo_redo(undo, redo));
+              add_undo_redo(undo, redo);
             } else if (mutation.type === 'characterData') {
               currentValue = mutation.target.data;
               oldValue = mutation.oldValue;
@@ -122,10 +123,16 @@
                   redo: []
                 };
               }
-              _results.push(add_undo_redo(undoer, redoer));
-            } else {
-              _results.push(void 0);
+              add_undo_redo(undoer, redoer);
             }
+            _results.push((function() {
+              var _results1;
+              _results1 = [];
+              while (listener = queue.shift()) {
+                _results1.push(listener());
+              }
+              return _results1;
+            })());
           }
           return _results;
         });
@@ -136,11 +143,12 @@
           characterDataOldValue: true,
           subtree: true
         });
-        callback();
-        setTimeout((function() {
-          return observer.disconnect();
-        }), 100);
-        return this.enable(host);
+        if (callback) {
+          r = callback();
+        }
+        queue.push(observer.disconnect.bind(observer));
+        this.enable(host);
+        return r;
       },
       init: function() {
         var plugin,
