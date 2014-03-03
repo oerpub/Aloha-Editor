@@ -317,6 +317,17 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
 
     init: ->
 
+      # Wrap the mouseStop command in undo/redo. This essentially records
+      # whatever happens after a mouseStop as an undoable transaction, which
+      # essentially makes it possible to undo/redo semantic blocks.
+      Aloha.require ['undoredo/undoredo-plugin'], (UndoRedo) =>
+        proto = $.ui.sortable.prototype
+        proto._original_mouseStop = proto._mouseStop
+        proto._mouseStop = (event, noPropagation) ->
+          return UndoRedo.transact () =>
+            @_original_mouseStop(event, noPropagation)
+          false
+
       Ephemera.ephemera().pruneFns.push (node) ->
         jQuery(node)
           .removeClass('aloha-block-dropzone aloha-editable-active aloha-editable aloha-block-blocklevel-sortable ui-sortable')

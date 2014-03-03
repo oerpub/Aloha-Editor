@@ -336,6 +336,18 @@
       },
       init: function() {
         var _this = this;
+        Aloha.require(['undoredo/undoredo-plugin'], function(UndoRedo) {
+          var proto;
+          proto = $.ui.sortable.prototype;
+          proto._original_mouseStop = proto._mouseStop;
+          return proto._mouseStop = function(event, noPropagation) {
+            var _this = this;
+            return UndoRedo.transact(function() {
+              return _this._original_mouseStop(event, noPropagation);
+            });
+            return false;
+          };
+        });
         Ephemera.ephemera().pruneFns.push(function(node) {
           return jQuery(node).removeClass('aloha-block-dropzone aloha-editable-active aloha-editable aloha-block-blocklevel-sortable ui-sortable').removeAttr('contenteditable placeholder').get(0);
         });
