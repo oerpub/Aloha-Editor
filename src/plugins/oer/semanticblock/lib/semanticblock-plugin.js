@@ -453,10 +453,13 @@
         $element = Aloha.jQuery('.semantic-temp').removeClass('semantic-temp');
         return activate($element);
       },
+      ignore: function(selector) {
+        return this.settings.defaultSelector += ':not(' + selector + ')';
+      },
       register: function(plugin) {
         registeredTypes.push(plugin);
         if (plugin.ignore) {
-          return this.settings.defaultSelector += ':not(' + plugin.ignore + ')';
+          return this.ignore(plugin.ignore);
         }
       },
       registerEvent: function(name, selector, callback) {

@@ -168,7 +168,10 @@ define ['aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', 'PubSub', './pa
           @pastebutton.disable()
 
         # Scan editor for sections, add discoverability ui
-        addCopyUi editable.obj.find('h1,h2,h3')
+        addCopyUi(editable.obj.find('h1,h2,h3')
+          .not('[data-type=title]') # not the document title
+          .filter( (i, item) -> !$(item).parents('[contenteditable=false]').length ) # only headings that are editable
+        )
         editable.obj.on 'change-heading', (e) -> addCopyUi(jQuery(e.target))
 
         # When one of these buttons are clicked, copy that section.

@@ -169,7 +169,9 @@
           } else {
             _this.pastebutton.disable();
           }
-          addCopyUi(editable.obj.find('h1,h2,h3'));
+          addCopyUi(editable.obj.find('h1,h2,h3').not('[data-type=title]').filter(function(i, item) {
+            return !$(item).parents('[contenteditable=false]').length;
+          }));
           editable.obj.on('change-heading', function(e) {
             return addCopyUi(jQuery(e.target));
           });

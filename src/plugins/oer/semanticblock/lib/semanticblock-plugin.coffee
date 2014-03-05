@@ -418,9 +418,12 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
       $element = Aloha.jQuery('.semantic-temp').removeClass('semantic-temp')
       activate $element
 
+    ignore: (selector) ->
+      @settings.defaultSelector += ':not('+selector+')'
+
     register: (plugin) ->
       registeredTypes.push(plugin)
-      @settings.defaultSelector += ':not('+plugin.ignore+')' if plugin.ignore
+      @ignore(plugin.ignore) if plugin.ignore
 
     registerEvent: (name, selector, callback) ->
       pluginEvents.push
