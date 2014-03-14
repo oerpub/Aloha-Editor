@@ -321,3 +321,7 @@
 .aloha-oer-block .aloha-editable {
     min-height: 20px;
 }
+
+.oer-placeholder:before {
+    content: url(../img/insert-here-arrow.png);
+}

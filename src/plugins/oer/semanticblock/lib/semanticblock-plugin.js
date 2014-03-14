@@ -441,15 +441,13 @@
         });
       },
       insertPlaceholder: function() {
-        var range;
-        $('.oer-placeholder').remove();
+        var placeholder, range;
+        placeholder = $('<span class="aloha-ephemera oer-placeholder"></span>');
         range = Aloha.Selection.getRangeObject();
-        return GENTICS.Utils.Dom.insertIntoDOM($('<span class="aloha-ephemera oer-placeholder"></span>'), range, Aloha.activeEditable.obj);
+        GENTICS.Utils.Dom.insertIntoDOM(placeholder, range, Aloha.activeEditable.obj);
+        return placeholder;
       },
       insertOverPlaceholder: function($element, $placeholder) {
-        if (!($placeholder != null ? $placeholder.length : void 0)) {
-          $placeholder = $('.oer-placeholder');
-        }
         $element.addClass('semantic-temp');
         $placeholder.replaceWith($element);
         $element = Aloha.jQuery('.semantic-temp').removeClass('semantic-temp');

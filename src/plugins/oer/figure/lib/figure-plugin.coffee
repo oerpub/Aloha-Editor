@@ -28,13 +28,13 @@ define [
     selector: 'figure'
     insertPlaceholder: ->
       semanticBlock.insertPlaceholder()
-    insertOverPlaceholder: ($content) ->
+    insertOverPlaceholder: ($content, $placeholder) ->
       $figure = $('<figure>')
         .append('<div class="title">')
         .append($content)
         .append('<figcaption>')
         
-      semanticBlock.insertOverPlaceholder($figure)
+      semanticBlock.insertOverPlaceholder($figure, $placeholder)
     init: () ->
       plugin = @
       semanticBlock.register(plugin)
