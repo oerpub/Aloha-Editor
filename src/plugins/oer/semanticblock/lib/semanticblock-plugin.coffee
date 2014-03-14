@@ -416,9 +416,24 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
 
     insertOverPlaceholder: ($element, $placeholder) ->
       $element.addClass 'semantic-temp'
-      $placeholder.replaceWith($element)
-      $element = Aloha.jQuery('.semantic-temp').removeClass('semantic-temp')
-      activate $element
+
+      # split the replacement of the placeholder into a separate remove and
+      # add, so we can apply undo recording to the adding of the final block.
+      next = $placeholder.next()
+      parent = $placeholder.parent()
+      $placeholder.remove()
+
+      # Now add the block while recording the events. Afterwards, activate the
+      # element.
+      Aloha.require ['undoredo/undoredo-plugin'], (UndoRedo) =>
+        UndoRedo.transact () ->
+          $element.removeClass('semantic-temp')
+          if next[0]
+            next.before($element)
+          else
+            parent.append($element)
+          activate $element
+        , false
 
       $element
 

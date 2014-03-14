@@ -448,10 +448,23 @@
         return placeholder;
       },
       insertOverPlaceholder: function($element, $placeholder) {
+        var next, parent,
+          _this = this;
         $element.addClass('semantic-temp');
-        $placeholder.replaceWith($element);
-        $element = Aloha.jQuery('.semantic-temp').removeClass('semantic-temp');
-        activate($element);
+        next = $placeholder.next();
+        parent = $placeholder.parent();
+        $placeholder.remove();
+        Aloha.require(['undoredo/undoredo-plugin'], function(UndoRedo) {
+          return UndoRedo.transact(function() {
+            $element.removeClass('semantic-temp');
+            if (next[0]) {
+              next.before($element);
+            } else {
+              parent.append($element);
+            }
+            return activate($element);
+          }, false);
+        });
         return $element;
       },
       insertAtCursor: function(template) {
