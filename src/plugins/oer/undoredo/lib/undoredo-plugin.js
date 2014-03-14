@@ -37,7 +37,7 @@
           subtree: true
         });
       },
-      transact: function(callback, merge) {
+      transact: function(callback, merge, afterwards) {
         var add_undo_redo, host, observer, ptr, queue, r,
           _this = this;
         queue = [];
@@ -150,6 +150,9 @@
           r = callback();
         }
         queue.push(observer.disconnect.bind(observer));
+        if (afterwards) {
+          queue.push(afterwards);
+        }
         this.enable(host);
         return r;
       },

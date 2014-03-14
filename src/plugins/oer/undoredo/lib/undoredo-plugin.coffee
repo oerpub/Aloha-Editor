@@ -36,7 +36,7 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', './diff_match_
       # This follows to some extent the pattern of the undoManager that will
       # eventually make it into browsers, defined here:
       # 
-      transact: (callback, merge) ->
+      transact: (callback, merge, afterwards) ->
         queue = []
         host = @_editable.obj[0]
         if merge
@@ -142,6 +142,10 @@ define [ 'aloha', 'aloha/plugin', 'jquery', 'ui/ui', 'ui/button', './diff_match_
 
         # Give the mutations a chance to propagate before disconnecting.
         queue.push observer.disconnect.bind(observer)
+
+        # Execute anything we've been asked to do afterwards after the
+        # disconnect
+        queue.push afterwards if afterwards
 
         @enable(host)
 
