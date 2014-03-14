@@ -1,0 +1,32 @@
+
+figure {
+  text-align: center;
+  overflow: auto;
+}
+
+.semantic-container:hover figure div.title:not(:focus):empty:before {
+  color: #AAA; 
+  font-style: italic;  
+  content: "Add a figure title (optional)"; 
+}
+
+.semantic-container:hover figure figcaption > p:not(:focus):empty:before {
+  color: #AAA; 
+  font-style: italic;  
+  content: "Add a figure caption (optional)"; 
+}
+
+figure.aloha-oer-block {
+    display: block;
+    border: 0;
+    padding-top: 0; 
+    padding-bottom: 0;
+    margin: 0 32px 0 15px !important; /* !important in order to override ID-based selector from oerpub-content.less */
+}
+
+figure.aloha-oer-block > .title, 
+figure.aloha-oer-block > figcaption {
+    display: block;
+    text-align: center
+}
+

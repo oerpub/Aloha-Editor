@@ -10,7 +10,7 @@ define([
   'semanticblock/semanticblock-plugin',
   'table/table-create-layer',
   'css!table/css/table.css'],
-function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, CreateLayer) {
+function(Aloha, Plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, CreateLayer) {
     "use strict";
 
 	var GENTICS = window.GENTICS;
@@ -91,7 +91,7 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, 
         return function(){ throw "getSelection not implemented"; }
     })(window, document);
 
-    function prepareTable(plugin, table){
+    function prepareTable(table){
         // Wrap table in ui-wrappper
         var w1 = $('<div class="canvas-wrap aloha-ephemera-wrapper" />');
         var w2 = $('<div class="table canvas aloha-ephemera-wrapper" />');
@@ -118,9 +118,7 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, 
         getSelection().addRange(range);
     }
   
-    var plugin;
-
-    return plugin.create('table', {
+    return Plugin.create('table', {
         defaults: {
         },
         selector: 'table',
@@ -139,19 +137,19 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, 
           $element = $body.find('table').first(); 
 
           // wraps element in a bunch of wrappers i'm not totally sure are necessary
-          prepareTable(plugin, $element);
+          prepareTable($element);
         },
         deactivate: function($element) {
           $element.parents('.body').first().children().unwrap();
         },
         init: function(){
-            plugin = this;
+            var plugin = this;
             this.createLayer = new CreateLayer(this);
             this.initButtons();
 
             semanticBlock.register(plugin);
 
-            semanticBlock.registerEvent('click', 'table', this.clickTable);
+            semanticBlock.registerEvent('click', 'table', this.clickTable.bind(this));
 
             // Mark some classes as ephemeral
             Ephemera.classes('aloha-current-cell', 'aloha-current-row', 'add-column-before', 'add-column-after');
@@ -281,7 +279,15 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, 
                 icon: "aloha-icon aloha-icon-createTable",
                 scope: 'Aloha.continuoustext',
                 click: function(e){
+                    // Add a temporary indicator of where the table will be
+                    // going.
+                    var $insertionEl = $('<span class="aloha-ephemera table-placeholder"> </span>');
+                    GENTICS.Utils.Dom.insertIntoDOM($insertionEl, Aloha.Selection.getRangeObject(),
+                                                    Aloha.activeEditable.obj);
                     that.createLayer.show(e);
+                    $(that.createLayer).off('table-create-layer.closed').on('table-create-layer.closed', function(e){
+                        $insertionEl.remove();
+                    });
                 }
             });
 
@@ -522,29 +528,28 @@ function(Aloha, plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, 
             }
         },
         clickTable: function(e){
-            plugin.currentCell.length && plugin.currentCell.removeClass('aloha-current-cell');
-            plugin.currentRow.length && plugin.currentRow.removeClass('aloha-current-row');
+            this.currentCell.length && this.currentCell.removeClass('aloha-current-cell');
+            this.currentRow.length && this.currentRow.removeClass('aloha-current-row');
 
-            if (plugin.currentCell.attr('class') == '') {
-              plugin.currentCell.removeAttr('class')
+            if (this.currentCell.attr('class') == '') {
+              this.currentCell.removeAttr('class')
             }
-            if (plugin.currentRow.attr('class') == '') {
-              plugin.currentRow.removeAttr('class')
+            if (this.currentRow.attr('class') == '') {
+              this.currentRow.removeAttr('class')
             }
 
-            plugin.currentCell = $(e.target).closest('td,th');
-            plugin.currentRow = $(e.target).closest('tr');
-            plugin.currentTable = $(e.target).closest('table');
-            plugin.currentCell.length && plugin.currentCell.addClass('aloha-current-cell');
-            plugin.currentRow.length && plugin.currentRow.addClass('aloha-current-row');
-
+            this.currentCell = $(e.target).closest('td,th');
+            this.currentRow = $(e.target).closest('tr');
+            this.currentTable = $(e.target).closest('table');
+            this.currentCell.length && this.currentCell.addClass('aloha-current-cell');
+            this.currentRow.length && this.currentRow.addClass('aloha-current-row');
             e.preventDefault();
         },
         focusCell: function(cell){
             placeCursor(cell);
             cell.click();
         },
-	      error: function(msg){
+	    error: function(msg){
             Aloha.Log.error(this, msg);
         },
         currentCell: $(), // Defined when clicked

@@ -1,0 +1,27 @@
+
+#mediaEmbedDialog input[type=text],
+#mediaConfirmEmbedDialog input[type=text] {
+  margin-bottom: 0px;
+}
+#mediaEmbedDialog label,
+#mediaConfirmEmbedDialog label {
+  margin-bottom: 0px;
+  margin-top: 5px;
+}
+
+#mediaConfirmEmbedDialog .embed-preview {
+  text-align: center;
+}
+#mediaConfirmEmbedDialog form {
+  margin-top: 5px;
+  margin-bottom: 0px;
+}
+#mediaConfirmEmbedDialog textarea {
+  width: 95%;
+  margin-bottom: 0px;
+}
+
+
+.noembed-meta-info {
+  display: none;
+}

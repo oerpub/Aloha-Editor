@@ -354,12 +354,17 @@
         return Aloha.bind('aloha-editable-created', function(e, editable) {
           var $root, classes, selector, sortableInterval, type, _i, _len;
           $root = editable.obj;
+          selector = _this.settings.defaultSelector;
           classes = [];
           for (_i = 0, _len = registeredTypes.length; _i < _len; _i++) {
             type = registeredTypes[_i];
-            classes.push(type.selector);
+            if (type.selector) {
+              classes.push(type.selector);
+            }
           }
-          selector = _this.settings.defaultSelector + ',' + classes.join();
+          if (classes.length) {
+            selector += ',' + classes.join();
+          }
           sortableInterval = setInterval(function() {
             if ($root.data('sortable')) {
               clearInterval(sortableInterval);
@@ -434,6 +439,22 @@
             });
           }
         });
+      },
+      insertPlaceholder: function() {
+        var range;
+        $('.oer-placeholder').remove();
+        range = Aloha.Selection.getRangeObject();
+        return GENTICS.Utils.Dom.insertIntoDOM($('<span class="aloha-ephemera oer-placeholder"></span>'), range, Aloha.activeEditable.obj);
+      },
+      insertOverPlaceholder: function($element, $placeholder) {
+        if (!($placeholder != null ? $placeholder.length : void 0)) {
+          $placeholder = $('.oer-placeholder');
+        }
+        $element.addClass('semantic-temp');
+        $placeholder.replaceWith($element);
+        $element = Aloha.jQuery('.semantic-temp').removeClass('semantic-temp');
+        activate($element);
+        return $element;
       },
       insertAtCursor: function(template) {
         var $element, range;

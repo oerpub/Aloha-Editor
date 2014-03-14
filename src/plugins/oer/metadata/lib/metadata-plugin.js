@@ -322,6 +322,14 @@
           title = this.$_element.find('title').remove().text();
           this.$_element.find(elements.title.selector).text(title);
         }
+        $('body').on('blur', '#module-metadata-modal .bootstrap-tagsinput input', function() {
+          var t;
+          t = $(this).val();
+          if (t) {
+            $(this).parent().prev().tagsinput('add', t);
+            return $(this).val('');
+          }
+        });
         return this.$_element.click(function() {
           return _this._showModal();
         });

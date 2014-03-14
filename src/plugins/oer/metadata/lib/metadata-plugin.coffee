@@ -481,6 +481,14 @@ define [
         title = @$_element.find('title').remove().text()
         @$_element.find(elements.title.selector).text(title)
 
+      # If the user leaves a value hanging without using one of the confirmKeys
+      # to complete the tag, complete it for him.
+      $('body').on 'blur', '#module-metadata-modal .bootstrap-tagsinput input', () ->
+        t = $(this).val()
+        if t
+          $(this).parent().prev().tagsinput('add', t)
+          $(this).val('')
+
       @$_element.click =>
         @_showModal()
 
