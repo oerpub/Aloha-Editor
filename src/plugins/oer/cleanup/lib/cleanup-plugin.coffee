@@ -5,7 +5,7 @@ define [
     'aloha/contenthandlermanager'
 ], ($, Aloha, Plugin, ContentHandlerManager) ->
 
-  makeCleaner = (WordHandler) ->
+  makeCleaner = (WordHandler, settings) ->
     return ContentHandlerManager.createHandler
       handleContent: (content) ->
         # TODO
@@ -38,6 +38,10 @@ define [
           newhead = head.replace(/^[\d.]+([^ \s\d.])/, '$1')
           $(el).text(newhead) if head != newhead
 
+        # 2.4. If an additional cleanup callback is configured, call it.
+        if settings.extra
+          settings.extra($content)
+
         # 3. convert to proper xhtml. We do this by cloning the jquery
         # wrapped dom into an xhtml document. This also properly encodes
         # any entities to their unicode equivalents. Then we serialize the
@@ -54,5 +58,5 @@ define [
 
   Plugin.create 'cleanup',
     init: () ->
-      Aloha.require ['contenthandler/wordcontenthandler'], (WordHandler) ->
-        ContentHandlerManager.register('cleanup', makeCleaner(WordHandler))
+      Aloha.require ['contenthandler/wordcontenthandler'], (WordHandler) =>
+        ContentHandlerManager.register('cleanup', makeCleaner(WordHandler, @settings))
