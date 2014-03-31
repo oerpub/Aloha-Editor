@@ -20,7 +20,7 @@ define [
 ) ->
 
   # This will be prefixed with Aloha.settings.baseUrl
-  WARNING_IMAGE_PATH = '/../plugins/oer/image/img/warning.png'
+  WARNING_IMAGE_PATH = '/../plugins/oer/assorted/img/warning.png'
 
   DIALOG_HTML_CONTAINER = '''
       <form class="plugin image modal hide fade form-horizontal" id="linkModal" tabindex="-1" role="dialog" aria-labelledby="linkModalLabel" aria-hidden="true" data-backdrop="false" />'''
@@ -268,6 +268,9 @@ define [
       deferred.reject()
       dialog.modal('hide')
 
+    dialog.on 'hidden', () ->
+      deferred.reject()
+
     dialog.modal {show: true}
 
     return deferred.promise()
@@ -388,11 +391,13 @@ define [
     return deferred.promise()
 
   insertImage = () ->
-    Figure.insertPlaceholder()
+    marker = Figure.insertPlaceholder()
 
     showCreateDialog().then (image) ->
-      Figure.insertOverPlaceholder(image)
+      Figure.insertOverPlaceholder(image, marker)
       showModalDialog2(image)
+    .fail () ->
+      marker.remove()
 
   $('body').bind 'aloha-image-resize', ->
     Aloha.activeEditable.smartContentChange({type: 'block-change'})

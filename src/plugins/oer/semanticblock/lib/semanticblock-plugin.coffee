@@ -387,14 +387,12 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
               refreshPositions: true
 
     insertPlaceholder: ->
-      $('.oer-placeholder').remove()
-
+      placeholder = $('<span class="aloha-ephemera oer-placeholder"></span>')
       range = Aloha.Selection.getRangeObject()
-      GENTICS.Utils.Dom.insertIntoDOM $('<span class="aloha-ephemera oer-placeholder"></span>'), range, Aloha.activeEditable.obj
+      GENTICS.Utils.Dom.insertIntoDOM placeholder, range, Aloha.activeEditable.obj
+      return placeholder
 
     insertOverPlaceholder: ($element, $placeholder) ->
-      $placeholder = $('.oer-placeholder') if not $placeholder?.length
-
       $element.addClass 'semantic-temp'
       $placeholder.replaceWith($element)
       $element = Aloha.jQuery('.semantic-temp').removeClass('semantic-temp')

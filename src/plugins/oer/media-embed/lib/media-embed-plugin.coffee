@@ -75,9 +75,11 @@ define [
 
   embed = Plugin.create 'mediaEmbed',
 
+    placeholder: null # Keep track of an inserted place holder
+
     ignore: '[data-type="title"],[data-type="alternates"],.noembed-embed,.noembed-embed *'
 
-    create: (thing) =>
+    create: (thing) ->
       $thing = $(TEMPLATE)
 
       $thing.find('[data-type="title"]').text(thing.title)
@@ -91,7 +93,8 @@ define [
       $thing.find('[data-type="alternates"]').html(thing.html)
 
       $caption = $thing.find('figcaption').remove()
-      $figure  = Figure.insertOverPlaceholder($thing.contents())
+      $figure  = Figure.insertOverPlaceholder($thing.contents(), @placeholder)
+      @placeholder = null
 
       $figure.find('figcaption').find('.aloha-editable').html($caption.contents())
 
@@ -110,12 +113,12 @@ define [
 
       $dialog.find('input[name="figureTitle"]').val(thing.title) if thing.title
 
-      $dialog.find('.cancel').off('click').click (e) ->
+      $dialog.find('.cancel').off('click').on 'click', (e) ->
         e.preventDefault(true)
         $dialog.modal 'hide'
         embed.showDialog()
 
-      $dialog.find('.embed').off('.embed').click (e) ->
+      $dialog.find('.embed').off('.embed').on 'click', (e) ->
         e.preventDefault(true)
         $dialog.modal 'hide'
         embed.create
@@ -124,6 +127,13 @@ define [
           author: thing.author
           authorUrl: thing.authorUrl
 
+      $dialog.find('[data-dismiss]').on 'click', (e) ->
+        embed.placeholder.remove()
+        embed.placeholder = null
+      $dialog.on 'keyup.dismiss.modal', (e) =>
+        if e.which == 27
+          @placeholder.remove()
+          @placeholder = null
       $dialog.modal {show: true}
 
     embedByUrl: (url) =>
@@ -173,6 +183,13 @@ define [
           .fail ->
             $dialog.find('.text-error').show()
 
+      $dialog.find('[data-dismiss]').on 'click', (e) =>
+        @placeholder.remove()
+        @placeholder = null
+      $dialog.on 'keyup.dismiss.modal', (e) =>
+        if e.which == 27
+          @placeholder.remove()
+          @placeholder = null
       $dialog.modal 'show'
 
     init: () ->
@@ -184,7 +201,7 @@ define [
       # For legacy toolbars
       UI.adopt "insertMediaEmbed", Button,
         click: =>
-          Figure.insertPlaceholder()
+          @placeholder = Figure.insertPlaceholder()
           @showDialog()
 
       semanticBlock.register(this)
