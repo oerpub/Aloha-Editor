@@ -17,9 +17,10 @@ define [
     $(element).find('figcaption > p').aloha()
 
   deactivate = (element) ->
-
-    $(element).find('div.title').mahalo()
-    $(element).find('figcaption > p').mahalo()
+    # Only call mahalo if the element is editable, thereby saving some time
+    if $(element).is('.aloha-editable')
+      $(element).find('div.title').mahalo()
+      $(element).find('figcaption > p').mahalo()
 
   Plugin.create 'oer-figure',
     getLabel: -> 'Figure'
