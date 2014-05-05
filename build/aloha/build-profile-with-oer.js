@@ -239,6 +239,8 @@
         'multipart/css': '../plugins/oer/multipart/css',
         'quotation': '../plugins/oer/quotation/lib',
         'quotation/css': '../plugins/oer/quotation/css',
+        'rule': '../plugins/oer/rule/lib',
+        'rule/css': '../plugins/oer/rule/css',
 
         //Do not forget to add these to aloha.coffee
 
