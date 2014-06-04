@@ -51,8 +51,20 @@
         name: 'click',
         selector: '.semantic-container .semantic-delete',
         callback: function() {
-          return jQuery(this).parents('.semantic-container').first().slideUp('slow', function() {
-            return jQuery(this).remove();
+          var editable,
+            _this = this;
+          editable = jQuery(this).closest('.aloha-root-editable');
+          Aloha.require(['undoredo/undoredo-plugin'], function(UndoRedo) {
+            UndoRedo.transact(function() {
+              var ob;
+              ob = jQuery(_this).parents('.semantic-container').first();
+              ob.removeClass('delete-hover');
+              return ob.remove();
+            });
+            return false;
+          });
+          return Aloha.activeEditable.smartContentChange({
+            type: 'block-change'
           });
         }
       }, {
@@ -324,12 +336,24 @@
       },
       init: function() {
         var _this = this;
+        Aloha.require(['undoredo/undoredo-plugin'], function(UndoRedo) {
+          var proto;
+          proto = $.ui.sortable.prototype;
+          proto._original_mouseStop = proto._mouseStop;
+          return proto._mouseStop = function(event, noPropagation) {
+            var _this = this;
+            return UndoRedo.transact(function() {
+              return _this._original_mouseStop(event, noPropagation);
+            });
+            return false;
+          };
+        });
         Ephemera.ephemera().pruneFns.push(function(node) {
           return jQuery(node).removeClass('aloha-block-dropzone aloha-editable-active aloha-editable aloha-block-blocklevel-sortable ui-sortable').removeAttr('contenteditable placeholder').get(0);
         });
-        return Aloha.bind('aloha-editable-created', function(e, params) {
+        return Aloha.bind('aloha-editable-created', function(e, editable) {
           var $root, classes, selector, sortableInterval, type, _i, _len;
-          $root = params.obj;
+          $root = editable.obj;
           selector = _this.settings.defaultSelector;
           classes = [];
           for (_i = 0, _len = registeredTypes.length; _i < _len; _i++) {
@@ -367,10 +391,10 @@
                     _ref.onDrop($element);
                   }
                 }
-                Aloha.activeEditable.smartContentChange({
+                $element.removeClass('drag-active');
+                return editable.smartContentChange({
                   type: 'block-change'
                 });
-                return $element.removeClass('drag-active');
               });
               $root.sortable('option', 'placeholder', 'aloha-oer-block-placeholder aloha-ephemera');
             }
@@ -382,7 +406,7 @@
                 return activate(jQuery(this));
               }
             });
-            return jQuery('.semantic-drag-source').children().each(function() {
+            jQuery('.semantic-drag-source').children().each(function() {
               var element, elementLabel;
               element = jQuery(this);
               elementLabel = (element.data('type') || element.attr('class')).split(' ')[0];
@@ -403,6 +427,16 @@
                 refreshPositions: true
               });
             });
+            return $root.off('undoredo').on('undoredo', function(e) {
+              console.log('Re-activating a restored block');
+              return jQuery(e.nodes).each(function() {
+                var $el;
+                $el = jQuery(this);
+                if ($el.is('.semantic-container')) {
+                  return activate($el);
+                }
+              });
+            });
           }
         });
       },
@@ -414,10 +448,23 @@
         return placeholder;
       },
       insertOverPlaceholder: function($element, $placeholder) {
+        var next, parent,
+          _this = this;
         $element.addClass('semantic-temp');
-        $placeholder.replaceWith($element);
-        $element = Aloha.jQuery('.semantic-temp').removeClass('semantic-temp');
-        activate($element);
+        next = $placeholder.next();
+        parent = $placeholder.parent();
+        $placeholder.remove();
+        Aloha.require(['undoredo/undoredo-plugin'], function(UndoRedo) {
+          return UndoRedo.transact(function() {
+            $element.removeClass('semantic-temp');
+            if (next[0]) {
+              next.before($element);
+            } else {
+              parent.append($element);
+            }
+            return activate($element);
+          }, false);
+        });
         return $element;
       },
       insertAtCursor: function(template) {
@@ -427,7 +474,10 @@
         $element.addClass('semantic-temp');
         GENTICS.Utils.Dom.insertIntoDOM($element, range, Aloha.activeEditable.obj);
         $element = Aloha.jQuery('.semantic-temp').removeClass('semantic-temp');
-        return activate($element);
+        activate($element);
+        return Aloha.activeEditable.smartContentChange({
+          type: 'block-change'
+        });
       },
       appendElement: function($element, target) {
         $element.addClass('semantic-temp');

@@ -70,8 +70,14 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
     name: 'click'
     selector: '.semantic-container .semantic-delete'
     callback: () ->
-      jQuery(this).parents('.semantic-container').first().slideUp 'slow', ->
-        jQuery(this).remove()
+      editable = jQuery(@).closest('.aloha-root-editable')
+      Aloha.require ['undoredo/undoredo-plugin'], (UndoRedo) =>
+        UndoRedo.transact () =>
+          ob = jQuery(@).parents('.semantic-container').first()
+          ob.removeClass 'delete-hover'
+          ob.remove()
+        false
+      Aloha.activeEditable.smartContentChange({type: 'block-change'})
   ,
     name: 'click'
     selector: '.semantic-container .semantic-controls-top .copy'
@@ -309,14 +315,25 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
 
     init: ->
 
+      # Wrap the mouseStop command in undo/redo. This essentially records
+      # whatever happens after a mouseStop as an undoable transaction, which
+      # essentially makes it possible to undo/redo semantic blocks.
+      Aloha.require ['undoredo/undoredo-plugin'], (UndoRedo) =>
+        proto = $.ui.sortable.prototype
+        proto._original_mouseStop = proto._mouseStop
+        proto._mouseStop = (event, noPropagation) ->
+          return UndoRedo.transact () =>
+            @_original_mouseStop(event, noPropagation)
+          false
+
       Ephemera.ephemera().pruneFns.push (node) ->
         jQuery(node)
           .removeClass('aloha-block-dropzone aloha-editable-active aloha-editable aloha-block-blocklevel-sortable ui-sortable')
           .removeAttr('contenteditable placeholder')
           .get(0)
 
-      Aloha.bind 'aloha-editable-created', (e, params) =>
-        $root = params.obj
+      Aloha.bind 'aloha-editable-created', (e, editable) =>
+        $root = editable.obj
         
         selector = @settings.defaultSelector
 
@@ -354,9 +371,8 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
               $element = jQuery(ui.item)
               activate $element if $element.is(selector)
               getType($element)?.onDrop?($element)
-              Aloha.activeEditable.smartContentChange({type: 'block-change'})
-
               $element.removeClass('drag-active')
+              editable.smartContentChange({type: 'block-change'})
 
 
             $root.sortable 'option', 'placeholder', 'aloha-oer-block-placeholder aloha-ephemera',
@@ -386,6 +402,12 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
          
               refreshPositions: true
 
+          $root.off('undoredo').on 'undoredo', (e) ->
+            console.log('Re-activating a restored block')
+            jQuery(e.nodes).each () ->
+              $el = jQuery(@)
+              activate $el if $el.is('.semantic-container')
+
     insertPlaceholder: ->
       placeholder = $('<span class="aloha-ephemera oer-placeholder"></span>')
       range = Aloha.Selection.getRangeObject()
@@ -394,9 +416,24 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
 
     insertOverPlaceholder: ($element, $placeholder) ->
       $element.addClass 'semantic-temp'
-      $placeholder.replaceWith($element)
-      $element = Aloha.jQuery('.semantic-temp').removeClass('semantic-temp')
-      activate $element
+
+      # split the replacement of the placeholder into a separate remove and
+      # add, so we can apply undo recording to the adding of the final block.
+      next = $placeholder.next()
+      parent = $placeholder.parent()
+      $placeholder.remove()
+
+      # Now add the block while recording the events. Afterwards, activate the
+      # element.
+      Aloha.require ['undoredo/undoredo-plugin'], (UndoRedo) =>
+        UndoRedo.transact () ->
+          $element.removeClass('semantic-temp')
+          if next[0]
+            next.before($element)
+          else
+            parent.append($element)
+          activate $element
+        , false
 
       $element
 
@@ -407,6 +444,7 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
       GENTICS.Utils.Dom.insertIntoDOM $element, range, Aloha.activeEditable.obj
       $element = Aloha.jQuery('.semantic-temp').removeClass('semantic-temp')
       activate $element
+      Aloha.activeEditable.smartContentChange({type: 'block-change'})
 
     appendElement: ($element, target) ->
       $element.addClass 'semantic-temp'
