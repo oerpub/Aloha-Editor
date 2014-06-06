@@ -3,7 +3,7 @@ define([
 	'jquery',
 	'aloha/plugin',
 	'ui/ui',
-	'ui/toggleButton',
+//	'ui/toggleButton',
 	'ui/button',
         'css!footnote/css/footnote.css'
 //	'ui/scopes',
