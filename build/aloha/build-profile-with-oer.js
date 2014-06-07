@@ -243,6 +243,8 @@
         'multipart/css': '../plugins/oer/multipart/css',
         'quotation': '../plugins/oer/quotation/lib',
         'quotation/css': '../plugins/oer/quotation/css',
+        'footnote/css': '../plugins/oer/footnote/css',
+        'footnote': '../plugins/oer/footnote/lib',
 
         //Do not forget to add these to aloha.coffee
 
@@ -442,6 +444,7 @@
                 'quotation/quotation-plugin',
                 'table/table-plugin',
                 'toolbar/toolbar-plugin',
+                'footnote/footnote-plugin',
             ],
         },
     ],

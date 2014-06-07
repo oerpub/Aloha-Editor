@@ -1,0 +1,30 @@
+body
+{
+    counter-reset:footnote;
+}
+
+span.footnote-data {
+    display:none;
+}
+
+span.footnote-marker:hover > span.footnote-data {
+    position: absolute;
+    background: white;
+    display:inline;
+    padding: 0.5em;
+    border: 2px solid #A4C0CC;
+    border-radius: 10px;
+}
+
+span.footnote-marker {
+    counter-increment: footnote;
+}
+
+span.footnote-marker::before {
+    content: counter(footnote) ;
+    border-radius: 50%;
+    padding: 0.25em;
+    margin: 0.5em;
+    top: -1em;
+    background: #A4C0CC;
+}
