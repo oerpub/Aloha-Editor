@@ -78,7 +78,7 @@ define [
           <strong>Source for this image (Required)</strong>
         </div>
         <div class="source-selection">
-          <ul style="list-style-type: none; padding: 0; margin: 0;">
+          <ul style="list-style-type: none">
             <li id="listitem-i-own-this">
               <label class="radio">
                 <input type="radio" name="image-source-selection" value="i-own-this">I own it (no citation needed)
