@@ -77,6 +77,7 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
     selector: '.semantic-container .semantic-delete'
     callback: () ->
       jQuery(this).parents('.semantic-container').first().slideUp 'slow', ->
+        Aloha.activeEditable.smartContentChange({type: 'block-change'});
         jQuery(this).remove()
   ,
     name: 'click'
