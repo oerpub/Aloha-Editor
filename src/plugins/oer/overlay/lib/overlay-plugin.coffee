@@ -263,7 +263,6 @@ define [ 'aloha', 'jquery', 'css!overlay/css/popover.css' ], (Aloha, jQuery) ->
             $node.popover
               html: true # bootstrap changed the default for this config option so set it to HTML
               placement: @placement or 'bottom'
-              trigger: 'manual'
               template: popover_template
               container: 'body'
               content: =>
@@ -386,7 +385,7 @@ define [ 'aloha', 'jquery', 'css!overlay/css/popover.css' ], (Aloha, jQuery) ->
       $el = jQuery(rangeObject.getCommonAncestorContainer())
       $el = $el.parents(helper.selector).eq(0) if not $el.is(helper.selector)
 
-      if Aloha.activeEditable
+      if Aloha.activeEditable and $el.length
         # Hide other tooltips of the same type
         nodes = jQuery(Aloha.activeEditable.obj).find(helper.selector)
         nodes = nodes.not($el)
