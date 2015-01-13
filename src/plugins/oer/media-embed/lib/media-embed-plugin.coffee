@@ -193,6 +193,14 @@ define [
       $dialog.modal 'show'
 
     init: () ->
+      # Patch Aloha DOM cleanup method to skip iframes
+      domModule = Aloha.require('util/dom')
+      domModule.__old_doCleanup = domModule.doCleanup
+      domModule.doCleanup = (cleanup, rangeObject, start) ->
+        if start != undefined and Aloha.jQuery(start).is('iframe')
+          return false
+        @__old_doCleanup(cleanup, rangeObject, start)
+
       # Add a listener
       UI.adopt "insert-mediaEmbed", Button,
         click: =>
