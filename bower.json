@@ -11,6 +11,6 @@
   "license": "AGPL",
   "dependencies": {
     "bootstrap": "~3.3",
-    "font-awesome": "~4.2"
+    "font-awesome": "~4.3"
   }
 }
