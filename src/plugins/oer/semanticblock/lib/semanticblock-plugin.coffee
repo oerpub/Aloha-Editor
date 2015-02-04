@@ -77,8 +77,8 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
     selector: '.semantic-container .semantic-delete'
     callback: () ->
       jQuery(this).parents('.semantic-container').first().slideUp 'slow', ->
+        jQuery(this).remove();
         Aloha.activeEditable.smartContentChange({type: 'block-change'});
-        jQuery(this).remove()
   ,
     name: 'click'
     selector: '.semantic-container .semantic-controls-top .copy'
@@ -110,7 +110,7 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
       dialog.modal 'show'
 
       # put the dialog in the middle of the window
-      dialog.css({'margin-top':(jQuery(window).height()-dialog.height())/2,'top':'0'})
+      dialog.css({'margin-top':(jQuery(window).height()-dialog.height()) / 2,'top':'0'})
 
       $element = jQuery(this).parents('.semantic-controls').siblings('.aloha-oer-block')
       elementName = getLabel($element)
