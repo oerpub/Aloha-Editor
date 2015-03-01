@@ -1,0 +1,73 @@
+/* Remove the annoying WAI button in tables */
+.aloha-table-wrapper div.aloha-wai-red {
+  background-image: none !important;
+}
+/* Hide the annoying floating toolbar */
+.aloha-toolbar {
+  display: none !important;
+}
+/* Add some padding on the top so the toolbar has room to float in */
+.document {
+  margin: 4em;
+}
+/* Needs to occur AFTER the bootstrap.css */
+/* Allows the popover to grow in size */
+.popover {
+  width: auto;
+}
+/* We don't use the title in popovers so hide it... */
+.popover .popover-title {
+  display: none;
+}
+.aloha-image-upload-drop-box {
+  text-align: center;
+  border: 1px dashed #ccc;
+  width: 400px;
+  padding: 100px 0;
+  cursor: pointer;
+}
+/* Metadata fields that occur around the image */
+.aloha-image-attrib .aloha-image-attr-alt::before {
+  content: "Please provide a description of this image for the visually impaired";
+  color: #ccc;
+  display: block;
+}
+/* Just some formatting of the input boxes */
+.aloha-image-attrib input {
+  display: block;
+}
+.aloha-image-attrib .aloha-image-attr-alt {
+  width: 400px;
+  display: block;
+}
+/* Toolbar icons */
+.toolbar {
+  background-color: whiteSmoke;
+  height: 40px;
+  opacity: 0.95;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  padding-left: 1em;
+  box-shadow: 0 2px 3px 0 #CCC;
+  z-index: 1010;
+  padding-top: 5px;
+}
+.separator {
+  background-image: url("../images/toolbar.png");
+  background-position: -3px 0;
+  display: inline-block;
+  height: 33px;
+  letter-spacing: normal;
+  width: 20px;
+  word-spacing: normal;
+  vertical-align: middle;
+}
+
+.toolbar .ui-flash {
+  background-color: #7E9AB4;
+  color: white;
+  font-weight: bold;
+  padding: 0.25em;
+}
+

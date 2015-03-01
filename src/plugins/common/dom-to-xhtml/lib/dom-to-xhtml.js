@@ -118,7 +118,7 @@ function(
 	 *        The given string with & and < characters replaced with the corresponding HTML entity references.
 	 */
 	function encodePcdata(str) {
-		return str.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+		return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 	}
 
 	/**
@@ -237,15 +237,15 @@ function(
 	 *
 	 * @see serializeElement()
 	 */
-	function serializeChildren(element, child, unrecognized, ephemera, xhtml) {
+	function serializeChildren(element, child, unrecognized, ephemera, xhtml, headingStack) {
 		while (null != child) {
 			if (1 === child.nodeType && unrecognized && "/" + element.nodeName == child.nodeName) {
 				child = child.nextSibling;
 				break;
 			} else if (1 === child.nodeType && isUnrecognized(child)) {
-				child = serializeElement(child, child.nextSibling, true, ephemera, xhtml);
+				child = serializeElement(child, child.nextSibling, true, ephemera, xhtml, headingStack);
 			} else {
-				serialize(child, ephemera, xhtml);
+				serialize(child, ephemera, xhtml, headingStack);
 				child = child.nextSibling;
 			}
 		}
@@ -277,7 +277,7 @@ function(
 	 *        of the given element, or otherwise the first sibling of child that is not considered
 	 *        a child of the given element.
 	 */
-	function serializeElement(element, child, unrecognized, ephemera, xhtml) {
+	function serializeElement(element, child, unrecognized, ephemera, xhtml, headingStack) {
         var elementName = element.nodeName;
         var nsDeclaration;
 
@@ -300,8 +300,24 @@ function(
 		if (!unrecognized && null == child && emptyElements[elementName]) {
 			xhtml.push('<' + elementName + makeAttrString(element, ephemera) + '/>');
 		} else {
-			xhtml.push('<' + elementName + nsDeclaration + makeAttrString(element) + '>');
-			child = serializeChildren(element, child, unrecognized, ephemera, xhtml);
+			// If it is a h# element then wrap it in a <section> and transfer all the attributes to the section
+			// Push the heading onto the stack so the <section> can be closed later.
+			if (/^h[1-6]$/.test(elementName)) {
+				var level = parseInt(elementName[1]);
+				// Close any headings opened with a smaller level
+				while (level <= headingStack[headingStack.length-1]) {
+					xhtml.push('</section>');
+					headingStack.pop();
+				}
+
+				// Wrap heading in a section
+				xhtml.push('<section ' + makeAttrString(element) + '>');
+				xhtml.push('<' + elementName + '>');
+				headingStack.push(level);
+			} else {
+				xhtml.push('<' + elementName + nsDeclaration + makeAttrString(element) + '>');
+			}
+			child = serializeChildren(element, child, unrecognized, ephemera, xhtml, headingStack);
 			xhtml.push('</' + elementName + '>');
 		}
 		return child;
@@ -320,10 +336,10 @@ function(
 	 *        An array that will receive snippets of XHTML,
 	 *        which if joined will yield the XHTML string.
 	 */
-	function serialize(node, ephemera, xhtml) {
+	function serialize(node, ephemera, xhtml, headingStack) {
 		var nodeType = node.nodeType;
 		if (1 === nodeType) {
-			serializeElement(node, node.firstChild, isUnrecognized(node), ephemera, xhtml);
+			serializeElement(node, node.firstChild, isUnrecognized(node), ephemera, xhtml, headingStack);
 		} else if (3 === node.nodeType) {
 			xhtml.push(encodePcdata(node.nodeValue));
 		} else if (8 === node.nodeType) {
@@ -355,7 +371,11 @@ function(
 		 */
 		contentsToXhtml: function(element, ephemera) {
 			var xhtml = [];
-			serializeChildren(element, element.firstChild, false, ephemera, xhtml);
+			var headingStack = [];
+			serializeChildren(element, element.firstChild, false, ephemera, xhtml, headingStack);
+			for (var i = 0; i < headingStack.length; i++) {
+				xhtml.push('</section>');
+			}
 			return xhtml.join("");
 		},
 
@@ -424,7 +444,8 @@ function(
 		 */
 		nodeToXhtml: function(node, ephemera) {
 			var xhtml = [];
-			serialize(node, ephemera, xhtml);
+			var headingStack = [];
+			serialize(node, ephemera, xhtml, headingStack);
 			return xhtml.join("");
 		}
 	};

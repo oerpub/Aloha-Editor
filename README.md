@@ -1,19 +1,29 @@
-# Welcome to the WYSIWHAT fork of the Aloha Editor
+# Welcome to the OERPUB fork of the Aloha Editor
 
-Thanks for checking us out! You can play with some of our demos by going to our [Demo Page](http://wysiwhat.github.com/Aloha-Editor/)
+We are adapting the Aloha editor for creating books, textbooks and other structured content. We are adding mathematics editing and 
+the ability to add educational features like examples, exercises, equations, and glossary entries.   
 
-Most of our development is done in the `dev` branch, specifically in the [Plugins](src/plugins) directory.
+**Copyright:** Contributions to this repository by the OERPUB project contractors are Copyright (c) 2013 Kathi Fletcher. 
 
-Additionally, there are long-lived 2 branches we created that serve as production branches for our groups:
+**Funding:** Funding to the OERPUB fork of Aloha Editor for editing textbook content has been funded by the Shuttleworth Foundation through a fellowship and project funds to Kathi Fletcher.
 
-* `cnx-master` : Used by http://cnx.org
-* `oerpub-master` : Used by http://oerpub.org
+**Demos:** Thanks for checking us out! You can play with some of our demos by going to our [Demo Page](http://oerpub.github.io/Aloha-Editor/)
 
-These branches may also contain code snippets specific to those organizations (ie toolbar configs)
+**Plugins:** Development is done in branches off of `master`, which are then tested on the `dev` branch, specifically in the [Plugins](src/plugins) directory.
+
+**Quickstart:** To get a development enviroment set up quickly and start working on the editor, 
+use the [following instructions](quickstart.rst). The instructions are for Ubuntu using nginx as the webserver, but you can of course use apache or if you have a mac
+the webserver that is already present.
+
+**Development Workflow:** If you develop please look at our [dev workflow](dev-workflow.md)
 
 The `gh-pages` branch contains demo HTML files that point to CDN versions of external packages so people can play with the demos.
+`gh-pages` is periodically merged from `master` when new features are released.
 
-Original Aloha Readme follows.
+
+---
+
+# Original Aloha Readme follows.
 
 ---
 

@@ -1,0 +1,16 @@
+{
+  "name": "Aloha-Editor",
+  "version": "0.9.3",
+  "homepage": "https://github.com/oerpub/Aloha-Editor",
+  "authors": [
+    "Philip Schatz <phil@cnx.org>"
+  ],
+  "moduleType": [
+    "amd"
+  ],
+  "license": "AGPL",
+  "dependencies": {
+    "bootstrap": "~3.3",
+    "font-awesome": "~4.3"
+  }
+}

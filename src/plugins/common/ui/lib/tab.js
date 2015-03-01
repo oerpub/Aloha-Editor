@@ -74,7 +74,7 @@ define([
 			this.panels = this.container.data('panels');
 			this.id = 'tab-ui-container-' + (++idCounter);
 			this.panel = $('<div>', {id : this.id, 'unselectable': 'on'});
-			this.handle = $('<li><a href="' + location.href.replace(/#.*$/) + '#' + this.id + '">' +
+			this.handle = $('<li><a href="' + location.href.replace(/#.*$/, '') + '#' + this.id + '">' +
 				settings.label + '</a></li>');
 
 			for (i = 0; i < components.length; i++) {
@@ -143,11 +143,11 @@ define([
 		},
 
 		foreground: function() {
-			this.container.tabs('select', this.index);
+			//this.container.tabs('select', this.index);
 		},
 
 		childForeground: function(childComponent) {
-			this.foreground();
+			//this.foreground();
 		},
 
 		hasVisibleComponents: function () {
@@ -195,7 +195,7 @@ define([
 			}
 			this.handle.show();
 			this.visible = true;
-			
+
 			// Hiding all tabs may hide the toolbar, so showing the
 			// first tab again must also show the toolbar.
 			this.container.show();

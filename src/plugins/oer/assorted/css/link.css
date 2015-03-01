@@ -1,0 +1,58 @@
+/*
+ * CSSS to style the Edit LInk dialog box,
+ * as defined in bubble/link
+ */
+
+/* hide future features */
+
+#link-destination {
+  display: none;
+}
+
+
+/* style the  Edit LInk dialog box */
+
+/* For some reason all modals have this id. */
+#linkModal {
+  height: auto;
+}
+
+#link-contents {
+  width: 500px;
+}
+
+#link-external {
+  width: 500px;
+}
+
+#link-text label {
+  font-weight: normal;
+}
+
+#link-tab-external label {
+  font-weight: normal;
+}
+
+/* style the link popover */
+
+.link-popover {
+  width: auto;
+  min-width: 236px; /* bootstrap's default popover width */
+  max-width: none; /* override bootstrap default so that the link options don't wrap */
+}
+
+.link-popover-details .edit-link,
+.link-popover-details .delete-link,
+.link-popover-details .visit-link {
+  white-space: nowrap;
+}
+
+.aloha.popover .link-popover-details button, .visit-link{
+  padding: 0 10px;
+}
+
+/* Add a separator after the 1st 2 buttons */
+.aloha.popover button.edit-link,
+.aloha.popover button.delete-link {
+  border-right: 1px solid #bbb;
+}

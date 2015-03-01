@@ -1,0 +1,37 @@
+
+[data-type=metadata] {
+  min-height:50px;
+  position: relative;
+  padding: 5px;
+}
+
+
+[data-type="metadata"] > * {
+  display: none;
+}
+
+[data-type="metadata"] > [data-type="title"] {
+  color: #f16c36 !important;
+  display: block;
+}
+
+[data-type="metadata"] .contributors *:not('.authors') {
+  display: none;
+}
+
+[data-type="metadata"] .contributors {
+  display: block;
+}
+
+[data-type=metadata]:hover {
+  -webkit-transition: background 250ms;
+  transition: background 250ms; 
+  background: #eee;
+}
+
+[data-type=metadata]:hover:after {
+  content: "Click to edit title, authors, license, etc.";
+  top: 2px;
+  right: 5px;
+  position: absolute;
+}

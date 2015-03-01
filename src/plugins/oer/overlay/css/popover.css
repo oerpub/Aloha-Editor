@@ -1,0 +1,13 @@
+.aloha.popover button {
+    border: 1px;
+    padding: 4px 12px;
+}
+
+.aloha.popover label {
+    font-weight: bold;
+    padding-left: 20px;
+}
+
+.aloha.popover .popover-content {
+    padding: 9px 14px;
+}
