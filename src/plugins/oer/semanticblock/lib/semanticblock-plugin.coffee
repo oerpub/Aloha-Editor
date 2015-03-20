@@ -18,12 +18,14 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
             <h3 class="modal-title"></h3>
           </div>
           <div class="modal-body">
-            <strong>Custom class</strong>
             <p>
-                Give this element a custom "class". Nothing obvious will change in your document.
+                Give this element a custom "class" or "type". Nothing obvious will change in your document.
                 This is for advanced book styling and requires support from the publishing system.
             </p>
+            <strong>Custom class</strong>
             <input type="text" placeholder="custom element class" name="custom_class">
+            <strong>Custom type</strong>
+            <input type="text" placeholder="custom element type" name="custom_type">
           </div>
           <div class="modal-footer">
             <button class="btn btn-primary action submit">Save changes</button>
@@ -116,6 +118,9 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
       elementName = getLabel($element)
       dialog.find('h3').text('Edit options for this ' + elementName)
       dialog.find('[name=custom_class]').val $element.attr('data-class')
+      dialog.find('[name=custom_type]').val $element.attr('data-type')
+      $element.removeAttr('data-class') if $element.attr('data-class') is ''
+      $element.removeAttr('data-type') if $element.attr('data-type') is ''
       dialog.data 'element', $element
   ,
     name: 'click'
