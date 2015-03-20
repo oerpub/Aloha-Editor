@@ -221,6 +221,8 @@
         'figure/css' : '../plugins/oer/figure/css',
         'math'     : '../plugins/oer/math/lib',
         'math/css' : '../plugins/oer/math/css',
+        'simulation'     : '../plugins/oer/simulation/lib',
+        'simulation/css' : '../plugins/oer/simulation/css',
         'assorted' : '../plugins/oer/assorted/lib',
         'assorted/css': '../plugins/oer/assorted/css',
         'note'     : '../plugins/oer/note/lib',
