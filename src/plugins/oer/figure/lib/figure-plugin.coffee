@@ -13,7 +13,9 @@ define [
 
     if $(element).find('figcaption').children().length != 1
       $(element).find('figcaption').wrapInner('<p>')
-
+    # figure is being inserted into content wrapped in div.semantic-container
+    # div.semantic-container is wrapped in a p tag by Aloha which is not valid HTML
+    $('.semantic-container').unwrap()
     $(element).find('figcaption > p').aloha()
 
   deactivate = (element) ->
@@ -36,11 +38,10 @@ define [
       if not $placeholder.parents('figure').length
         $figure.prepend('<div class="title">')
         $figure.append('<figcaption>')
-        
+
         semanticBlock.insertOverPlaceholder($figure, $placeholder)
       else
         $placeholder.replaceWith($figure)
     init: () ->
       plugin = @
       semanticBlock.register(plugin)
-
