@@ -15,7 +15,8 @@ define [
       $(element).find('figcaption').wrapInner('<p>')
     # figure is being inserted into content wrapped in div.semantic-container
     # div.semantic-container is wrapped in a p tag by Aloha which is not valid HTML
-    $('.semantic-container').unwrap()
+    if $('.semantic-container').parent('p').length > 0
+      $('.semantic-container').unwrap()
     $(element).find('figcaption > p').aloha()
 
   deactivate = (element) ->
