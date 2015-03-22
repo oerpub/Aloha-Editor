@@ -7,7 +7,9 @@
       if ($(element).find('figcaption').children().length !== 1) {
         $(element).find('figcaption').wrapInner('<p>');
       }
-      $('.semantic-container').unwrap();
+      if ($('.semantic-container').parent('p').length > 0) {
+        $('.semantic-container').unwrap();
+      }
       return $(element).find('figcaption > p').aloha();
     };
     deactivate = function(element) {
