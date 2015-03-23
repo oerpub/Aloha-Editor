@@ -3,12 +3,14 @@
   define(['aloha', 'jquery', 'aloha/plugin', 'semanticblock/semanticblock-plugin', 'css!figure/css/figure-plugin.css'], function(Aloha, jQuery, Plugin, semanticBlock) {
     var activate, deactivate;
     activate = function(element) {
+      var wrappingDiv;
+      wrappingDiv = $(element).closest('.semantic-container');
       $(element).find('div.title').aloha();
       if ($(element).find('figcaption').children().length !== 1) {
         $(element).find('figcaption').wrapInner('<p>');
       }
-      if ($('.semantic-container').parent('p').length > 0) {
-        $('.semantic-container').unwrap();
+      if (wrappingDiv.parent('p').length) {
+        wrappingDiv.unwrap();
       }
       return $(element).find('figcaption > p').aloha();
     };
