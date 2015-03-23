@@ -436,6 +436,7 @@
                 'assorted/assorted-plugin',
                 'toolbar/toolbar-plugin',
                 'math/math-plugin',
+                'simulation/simulation-plugin',
                 'note/note-plugin',
                 'semanticblock/semanticblock-plugin',
                 'copy/copy-plugin',
