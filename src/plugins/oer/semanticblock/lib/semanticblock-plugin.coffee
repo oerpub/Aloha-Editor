@@ -136,7 +136,9 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
       $dialog.modal 'hide'
       $element = $dialog.data('element')
       $element.attr 'data-class', $dialog.find('[name=custom_class]').val()
+      $element.attr 'data-type', $dialog.find('[name=custom_type]').val()
       $element.removeAttr('data-class') if $element.attr('data-class') is ''
+      $element.removeAttr('data-type') if $element.attr('data-type') is ''
   ,
     name: 'mouseover'
     selector: '.semantic-container'
