@@ -2,6 +2,10 @@
     content: "Exercise";
 }
 
+.exercise::before {
+  text-transform: capitalize;
+}
+
 .exercise.aloha-oer-block {
     border: 0 !important;
     padding: 0 !important;
@@ -33,10 +37,10 @@
     color: #AAA;
     padding: 5px;
     border: 1px dashed #ccc;
-    display: none; 
+    display: none;
 }
 .semantic-container.active > .exercise > .solution-placeholder {
-    display: block; 
+    display: block;
 }
 
 .exercise .solution-controls {

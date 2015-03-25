@@ -126,7 +126,7 @@ define [
     Plugin.create('exercise', {
       getLabel: ($element) ->
         if $element.is('.exercise')
-          return 'Exercise'
+          return $element.attr('data-label')
         else if $element.is('.solution')
           return 'Solution'
 
@@ -192,7 +192,7 @@ define [
                                               .aloha-oer-block.exercise > .type-container > ul > li > *', (e) ->
           $el = jQuery(@)
           $el.parents('.type-container').first().find('.type').text $el.text()
-          $el.parents('.aloha-oer-block').first().attr 'data-label', $el.data('type')
+          $el.parents('.aloha-oer-block').first().attr 'data-label', $el.data('label')
 
           $el.parents('.type-container').find('.dropdown-menu li').each (i, li) =>
             jQuery(li).removeClass('checked')
