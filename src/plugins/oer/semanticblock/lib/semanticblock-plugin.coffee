@@ -139,6 +139,7 @@ define ['aloha', 'block/block', 'block/blockmanager', 'aloha/plugin', 'aloha/plu
       $element.attr 'data-type', $dialog.find('[name=custom_type]').val()
       $element.removeAttr('data-class') if $element.attr('data-class') is ''
       $element.removeAttr('data-type') if $element.attr('data-type') is ''
+      Aloha.trigger 'aloha-smart-content-changed', 'triggerType': 'block-change'
   ,
     name: 'mouseover'
     selector: '.semantic-container'

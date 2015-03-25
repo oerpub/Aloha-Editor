@@ -29,7 +29,7 @@ define [
     # - `label`: **Required** Shows up in dropdown
     # - `typeClass` :  **Required** The classname to enable this plugin on
     # - `hasTitle`: **Required** `true` if the element allows optional titles
-    # - `dataClass` : subtype for this label 
+    # - `dataClass` : subtype for this label
     # - `type`: value in the `data-label` attribute.
     # - `tagName`: Default: `div`. The HTML element name to use when creating a new note
     # - `titleTagName`: Default: `div`. The HTML element name to use when creating a new title
@@ -81,6 +81,7 @@ define [
                       jQuery(li).removeClass('checked')
                       if jQuery(li).children('span').text() == dropType.label
                         jQuery(li).addClass('checked')
+              Aloha.trigger 'aloha-smart-content-changed', 'triggerType': 'block-change'
 
               $option.on 'click', () =>
                 # Remove the title if this type does not have one
