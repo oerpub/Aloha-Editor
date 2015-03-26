@@ -196,6 +196,7 @@ define [
 
           $el.parents('.type-container').find('.dropdown-menu li').each (i, li) =>
             jQuery(li).removeClass('checked')
+          jQuery(Aloha).trigger 'aloha-smart-content-changed', 'triggerType': 'block-change'
           $el.parents('li').first().addClass('checked')
         )
     })

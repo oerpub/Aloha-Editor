@@ -130,8 +130,11 @@
             $element.removeAttr('data-class');
           }
           if ($element.attr('data-type') === '') {
-            return $element.removeAttr('data-type');
+            $element.removeAttr('data-type');
           }
+          return Aloha.trigger('aloha-smart-content-changed', {
+            'triggerType': 'block-change'
+          });
         }
       }, {
         name: 'mouseover',

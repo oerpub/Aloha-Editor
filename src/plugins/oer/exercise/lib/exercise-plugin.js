@@ -146,6 +146,9 @@
               return jQuery(li).removeClass('checked');
             };
           })(this));
+          jQuery(Aloha).trigger('aloha-smart-content-changed', {
+            'triggerType': 'block-change'
+          });
           return $el.parents('li').first().addClass('checked');
         });
       }
