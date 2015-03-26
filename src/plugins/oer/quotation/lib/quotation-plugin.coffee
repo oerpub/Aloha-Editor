@@ -17,7 +17,7 @@ define [
       $element.attr('data-format-whitelist', '["p"]')
       Ephemera.markAttr($element, 'data-format-whitelist')
 
-      $element.text('Type the text of your quotation here.')
+      $element.attr('placeholder', 'Type the text of your quotation here.')
       $element.aloha()
       $element.addClass('aloha-block-dropzone')
     deactivate: ($element) ->
