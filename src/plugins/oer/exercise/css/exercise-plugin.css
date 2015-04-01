@@ -71,3 +71,7 @@
     cursor: pointer;
     border-left: 1px solid #999;
 }
+
+.exercise ol[data-number-style="lower-alpha"] {
+  list-style-type: lower-alpha;
+}
