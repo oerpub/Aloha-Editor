@@ -443,8 +443,8 @@ define [
 
     figure = $img.parents('figure').last()
     if not figure.children('.add-figure-left').length
-      $('<span class="add-figure-left">+</span>').prependTo(figure)
-      $('<span class="add-figure-right">+</span>').appendTo(figure)
+      $('<span class="add-figure-left aloha-ephemera">+</span>').prependTo(figure)
+      $('<span class="add-figure-right aloha-ephemera">+</span>').appendTo(figure)
 
     setEditText $img
 
