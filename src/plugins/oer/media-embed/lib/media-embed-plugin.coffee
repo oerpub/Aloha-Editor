@@ -10,31 +10,36 @@ define [
   'css!media-embed/css/media-embed-plugin.css'], (Aloha, Plugin, jQuery, Ephemera, UI, Button, Figure, semanticBlock) ->
 
   DIALOG = '''
-<div id="mediaEmbedDialog" class="modal hide fade" tabindex="-1" role="dialog" data-backdrop="false">
+<div class="mediaEmbedDialog modal fade" tabindex="-1" role="dialog" data-backdrop="true">
+<div class="modal-dialog">
+<div class="modal-content">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
     <h3>Add video, slides or other media</h3>
   </div>
   <div class="modal-body">
     <form>
-      <label style="display: inline-block">
-        URL: 
-        <input type="text" name="videoUrl" size="90">
-      </label>
-      <button class="btn">Go</button>
-
-      <div class="text-error hide">
+    <div class="form-group">
+      <label> URL: </label>
+        <input type="text" name="videoUrl" style="width: 85%">
+        <button class="btn">Go</button>
+      </div>
+      </form>
+      <div class="alert alert-danger">
         We could not determine how to include the media. Please check the URL for the media and try again or cancel.
       </div>
-    </form>
   </div>
   <div class="modal-footer">
     <button class="btn" data-dismiss="modal">Cancel</button>
   </div>
+  </div>
+  </div>
 </div>
 '''
   CONFIRM_DIALOG = '''
-<div id="mediaConfirmEmbedDialog" class="modal hide fade" tabindex="-1" role="dialog" data-backdrop="false">
+<div id="mediaConfirmEmbedDialog" class="modal fade" tabindex="-1" role="dialog" data-backdrop="false">
+<div class="modal-dialog">
+<div class="modal-content">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
     <h3>Add video, slides or other media</h3>
@@ -46,13 +51,15 @@ define [
     <button class="btn cancel">Back</button>
     <button class="btn primary embed">Insert Now</button>
   </div>
+  </div>
+  </div>
 </div>
 '''
 
   TEMPLATE = '''
 <figure>
   <div data-type="title"></div>
-  <div data-type="alternates"> 
+  <div data-type="alternates">
   </div>
   <meta itemprop="url" content=""/>
   <span itemscope="itemscope" itemtype="http://schema.org/Person" itemprop="author">
@@ -61,7 +68,7 @@ define [
   </span>
   <meta itemprop="accessibilityFeature" content="captions" />
   <figcaption>
-    <a itemprop="url" href="">Source</a>: by 
+    <a itemprop="url" href="">Source</a>: by
     <a itemprop="author" href=""></a>
   </figcaption>
 </figure>
@@ -74,14 +81,9 @@ define [
     #flickr: 'http://www.flickr.com/services/oembed'
 
   embed = Plugin.create 'mediaEmbed',
-
-    placeholder: null # Keep track of an inserted place holder
-
     ignore: '[data-type="title"],[data-type="alternates"],.noembed-embed,.noembed-embed *'
-
     create: (thing) ->
       $thing = $(TEMPLATE)
-
       $thing.find('[data-type="title"]').text(thing.title)
       $thing.find('[itemprop="url"]').attr('content', thing.url)
       $thing.find('[itemprop="author"] [itemprop="name"]').attr('content', thing.author)
@@ -94,9 +96,11 @@ define [
 
       $caption = $thing.find('figcaption').remove()
       $figure  = Figure.insertOverPlaceholder($thing.contents(), @placeholder)
+
       @placeholder = null
 
       $figure.find('figcaption').find('.aloha-editable').html($caption.contents())
+      Aloha.trigger 'aloha-smart-content-changed', 'triggerType': 'block-change'
 
     confirm: (thing) =>
       $dialog = $('#mediaConfirmEmbedDialog')
@@ -117,8 +121,9 @@ define [
         e.preventDefault(true)
         $dialog.modal 'hide'
         embed.showDialog()
+        $('input').val(thing.url)
 
-      $dialog.find('.embed').off('.embed').on 'click', (e) ->
+      $dialog.find('.embed').off('click').on 'click', (e) ->
         e.preventDefault(true)
         $dialog.modal 'hide'
         embed.create
@@ -166,12 +171,13 @@ define [
           promise.reject()
 
       promise
- 
-    showDialog: () ->
-      $dialog = $('#mediaEmbedDialog')
-      $dialog = $(DIALOG) if not $dialog.length
 
-      $dialog.find('.text-error').hide()
+    showDialog: () ->
+      $dialog = $('.mediaEmbedDialog')
+      $dialog = $(DIALOG) if not $dialog.length
+      $dialog.modal('show')
+
+      $dialog.find('.alert').hide()
       $dialog.find('input').val('')
 
       $dialog.find('form').off('submit').submit (e) =>
@@ -181,7 +187,7 @@ define [
           .done ->
             $dialog.modal 'hide'
           .fail ->
-            $dialog.find('.text-error').show()
+            $dialog.find('.alert').show()
 
       $dialog.find('[data-dismiss]').on 'click', (e) =>
         @placeholder.remove()
@@ -190,6 +196,7 @@ define [
         if e.which == 27
           @placeholder.remove()
           @placeholder = null
+
       $dialog.modal 'show'
 
     init: () ->
@@ -204,6 +211,7 @@ define [
       # Add a listener
       UI.adopt "insert-mediaEmbed", Button,
         click: =>
+          @placeholder = Figure.insertPlaceholder()
           @showDialog()
 
       # For legacy toolbars
@@ -213,6 +221,3 @@ define [
           @showDialog()
 
       semanticBlock.register(this)
-
-
-
