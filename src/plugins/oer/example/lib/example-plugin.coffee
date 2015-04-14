@@ -57,58 +57,59 @@ define [
 
       $body = $element.contents().not($title)
 
-      jQuery.each types, (i, type) =>
-        if $element.is(type.selector)
+      if types.enableTypes
+        jQuery.each types, (i, type) =>
+          if $element.is(type.selector)
 
-          label = type.label
+            label = type.label
 
-          typeContainer = TYPE_CONTAINER.clone()
-          # Add dropdown elements for each possible type
-          if types.length > 1
-            jQuery.each types, (i, dropType) =>
-              $option = jQuery('<li><a href="#"></a></li>')
-              $option.appendTo(typeContainer.find('.dropdown-menu'))
-              $option = $option.children('a')
-              $option.text(dropType.label)
-              typeContainer.find('.type-dropdown').on 'click', =>
-                jQuery.each types, (i, dropType) =>
-                  if $element.attr('data-label') == dropType.dataClass
-                    typeContainer.find('.dropdown-menu li').each (i, li) =>
-                      jQuery(li).removeClass('checked')
-                      if jQuery(li).children('a').text() == dropType.label
-                        jQuery(li).addClass('checked')
+            typeContainer = TYPE_CONTAINER.clone()
+            # Add dropdown elements for each possible type
+            if types.length > 1
+              jQuery.each types, (i, dropType) =>
+                $option = jQuery('<li><a href="#"></a></li>')
+                $option.appendTo(typeContainer.find('.dropdown-menu'))
+                $option = $option.children('a')
+                $option.text(dropType.label)
+                typeContainer.find('.type-dropdown').on 'click', =>
+                  jQuery.each types, (i, dropType) =>
+                    if $element.attr('data-label') == dropType.dataClass
+                      typeContainer.find('.dropdown-menu li').each (i, li) =>
+                        jQuery(li).removeClass('checked')
+                        if jQuery(li).children('a').text() == dropType.label
+                          jQuery(li).addClass('checked')
 
-              $option.on 'click', (e) =>
-                e.preventDefault()
-                # Remove the title if this type does not have one
-                if dropType.hasTitle
-                  # If there is no `.title` element then add one in and enable it as an Aloha block
-                  if not $element.children('.title')[0]
-                    $newTitle = jQuery("<#{dropType.titleTagName or 'span'} class='title'></#{dropType.titleTagName or 'span'}")
-                    $element.append($newTitle)
-                    $newTitle.aloha()
+                $option.on 'click', (e) =>
+                  e.preventDefault()
+                  # Remove the title if this type does not have one
+                  if dropType.hasTitle
+                    # If there is no `.title` element then add one in and enable it as an Aloha block
+                    if not $element.children('.title')[0]
+                      $newTitle = jQuery("<#{dropType.titleTagName or 'span'} class='title'></#{dropType.titleTagName or 'span'}")
+                      $element.append($newTitle)
+                      $newTitle.aloha()
 
-                else
-                  $element.children('.title').remove()
+                  else
+                    $element.children('.title').remove()
 
-                typeContainer.find('.type').text(dropType.label)
+                  typeContainer.find('.type').text(dropType.label)
 
-                # Remove the `data-label` if this type does not have one
-                if dropType.dataClass
-                  $element.attr('data-label', dropType.dataClass)
-                else
-                  $element.removeAttr('data-label')
+                  # Remove the `data-label` if this type does not have one
+                  if dropType.dataClass
+                    $element.attr('data-label', dropType.dataClass)
+                  else
+                    $element.removeAttr('data-label')
 
-                # Remove all notish class names and then add this one in
-                for key of exampleishClasses
-                  $element.removeClass key
-                $element.addClass(dropType.typeClass)
-          else
-            typeContainer.find('.dropdown-menu').remove()
-            typeContainer.find('.type').removeAttr('data-toggle')
+                  # Remove all notish class names and then add this one in
+                  for key of exampleishClasses
+                    $element.removeClass key
+                  $element.addClass(dropType.typeClass)
+            else
+              typeContainer.find('.dropdown-menu').remove()
+              typeContainer.find('.type').removeAttr('data-toggle')
 
-          typeContainer.find('.type').text(type.label)
-          typeContainer.prependTo($element)
+            typeContainer.find('.type').text(type.label)
+            typeContainer.prependTo($element)
 
       # Create the body and add some placeholder text
       jQuery('<div>')
