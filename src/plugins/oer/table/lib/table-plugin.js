@@ -20,21 +20,21 @@ function(Aloha, Plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, 
 			sNode = range.startContainer,
 			eNodeLength =(eNode.nodeType == 3)
 				? eNode.length
-				: eNode.childNodes.length;		
-		
+				: eNode.childNodes.length;
+
 		if(sNode.nodeType == 3 &&
 				sNode.parentNode.tagName == 'P' &&
 					sNode.parentNode.childNodes.length == 1 &&
 						/^(\s|%A0)$/.test( escape( sNode.data))){
 			sNode.data = '';
 			range.startOffset = 0;
-			
+
 			// In case ... <p> []</p>
 			if(eNode == sNode){
 				range.endOffset = 0;
 			}
 		}
-		
+
 		// If the table is not allowed to be nested inside the startContainer,
 		// then it will have to be split in order to insert the table.
 		// We will therefore check if the selection touches the start and/or
@@ -43,12 +43,12 @@ function(Aloha, Plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, 
 		// split we can check whether or not they should be removed
 		if(!GENTICS.Utils.Dom.allowsNesting(
 				sNode.nodeType == 3 ? sNode.parentNode : sNode, table)){
-			
+
 			if(range.startOffset == 0){
 				$( sNode.nodeType == 3 ? sNode.parentNode : sNode)
 					.addClass( 'aloha-table-cleanme');
 			}
-			
+
 			if(range.endOffset == eNodeLength){
 				$( eNode.nodeType == 3 ? eNode.parentNode : eNode)
 					.addClass( 'aloha-table-cleanme');
@@ -59,7 +59,7 @@ function(Aloha, Plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, 
 	function cleanupAfterInsertion(){
 		var dirty = $('.aloha-table-cleanme').removeClass(
 						'aloha-table-cleanme');
-		
+
 		for (var i=0; i<dirty.length; i++){
 			if ($.trim($(dirty[i]).html()) == '' &&
 					!GENTICS.Utils.Dom.isEditingHost(dirty[i])){
@@ -117,11 +117,11 @@ function(Aloha, Plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, 
         getSelection().removeAllRanges();
         getSelection().addRange(range);
     }
-  
+
     return Plugin.create('table', {
         defaults: {
         },
-        selector: 'table',
+        selector: 'table:not(.noembed-meta-info)',
         getLabel: function() {
           return 'Table';
         },
@@ -134,7 +134,7 @@ function(Aloha, Plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, 
             ;
 
           // this reference is broken by the above rejiggering
-          $element = $body.find('table').first(); 
+          $element = $body.find('table').first();
 
           // wraps element in a bunch of wrappers i'm not totally sure are necessary
           prepareTable($element);
@@ -171,7 +171,7 @@ function(Aloha, Plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, 
                     if ( inTable ) {
                         // default action for 'return' is to insert a new line,
                         // so we want this and thus do not call e.preventDefault() here
-                        e.stopPropagation(); 
+                        e.stopPropagation();
                         e.stopImmediatePropagation();
                     }
                 });
