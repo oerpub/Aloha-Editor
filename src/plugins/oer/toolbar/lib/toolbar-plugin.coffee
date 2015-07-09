@@ -118,9 +118,9 @@ define [ 'jquery', 'aloha', 'aloha/plugin', 'PubSub', 'ui/button' ], (
       defaultFormat: 'p'
       formats:
         'p':   'Normal Text'
-        'h1':  'Heading'
-        'h2':  'Subheading'
-        'h3':  'SubSubHeading'
+        'h1':  'Heading 1'
+        'h2':  'Heading 2'
+        'h3':  'Heading 3'
         'pre': 'Code'
     }
     init: ->
