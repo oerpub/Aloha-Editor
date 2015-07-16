@@ -142,7 +142,7 @@ define [ 'jquery', 'aloha', 'aloha/plugin', 'PubSub', 'ui/button' ], (
 
         Aloha.Selection.changeMarkupOnSelection Aloha.jQuery("<#{hTag}></#{hTag}>")
         # Change the label for the Heading button to match the newly selected formatting
-        jQuery('.current-heading')[0].innerHTML = $el[0].innerHTML
+        jQuery('.currentHeading')[0].innerHTML = $el[0].innerHTML
         # Attach the id and classes back onto the new element
         $oldEl = Aloha.jQuery(rangeObject.getCommonAncestorContainer())
         $newEl = Aloha.jQuery(Aloha.Selection.getRangeObject().getCommonAncestorContainer())

@@ -169,7 +169,7 @@
             GENTICS.Utils.Dom.extendToWord(rangeObject);
           }
           Aloha.Selection.changeMarkupOnSelection(Aloha.jQuery("<" + hTag + "></" + hTag + ">"));
-          jQuery('.current-heading')[0].innerHTML = $el[0].innerHTML;
+          jQuery('.currentHeading')[0].innerHTML = $el[0].innerHTML;
           $oldEl = Aloha.jQuery(rangeObject.getCommonAncestorContainer());
           $newEl = Aloha.jQuery(Aloha.Selection.getRangeObject().getCommonAncestorContainer());
           $newEl.addClass($oldEl.attr('class'));
