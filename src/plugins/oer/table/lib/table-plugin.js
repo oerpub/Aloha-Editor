@@ -510,9 +510,9 @@ function(Aloha, Plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, 
                     var tr = document.createElement('tr');
                     // create "cols"-number of columns
                     for (var j = 0; j < cols; j++) {
-                        var text = document.createTextNode('\u00a0');
+                        var cellContainer = document.createElement('p');
                         var td = document.createElement('td');
-                        td.appendChild(text);
+                        td.appendChild(cellContainer);
                         tr.appendChild(td);
                     }
                     tbody.appendChild(tr);

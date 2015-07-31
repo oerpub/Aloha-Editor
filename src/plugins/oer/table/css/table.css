@@ -32,6 +32,10 @@
     text-align: left;
 }
 
+.aloha-editable td {
+  padding: 1em;
+}
+
 /* create dialog */
 .aloha-table-createdialog {
 	z-index: 99999;
