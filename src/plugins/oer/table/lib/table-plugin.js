@@ -15,6 +15,12 @@ function(Aloha, Plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, 
 
 	var GENTICS = window.GENTICS;
 
+  function smartContentChanged(){
+    Aloha.trigger('aloha-smart-content-changed', {
+      'triggerType': 'block-change'
+    });
+  }
+
 	function prepareRangeContainersForInsertion(range, table){
 		var	eNode = range.endContainer,
 			sNode = range.startContainer,
@@ -378,6 +384,7 @@ function(Aloha, Plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, 
                 click: function(){
                     that.currentTable.parents('.semantic-container').remove();
                     that.currentTable = $();
+                    smartContentChanged();
                 },
                 preview: function(){
                     that.currentTable.addClass("delete-table");
@@ -523,6 +530,7 @@ function(Aloha, Plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, 
 
                 // not sure if this is necessary, but leaving anyway
                 cleanupAfterInsertion();
+                smartContentChanged();
             } else {
                 this.error('There is no active Editable where the table can be inserted!');
             }
