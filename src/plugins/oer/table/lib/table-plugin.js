@@ -15,7 +15,7 @@ function(Aloha, Plugin, $, Ui, Button, PubSub, Dialog, Ephemera, semanticBlock, 
 
 	var GENTICS = window.GENTICS;
 
-  function smartContentChanged() {
+  function smartContentChanged(){
     Aloha.trigger('aloha-smart-content-changed', {
       'triggerType': 'block-change'
     });
