@@ -171,12 +171,26 @@
               }
             });
             if ('note' === className && !typeName) {
-              return UI.adopt("insertNote", Button, {
+              UI.adopt("insertNote", Button, {
                 click: function() {
                   return semanticBlock.insertAtCursor(newTemplate.clone());
                 }
               });
             }
+            return semanticBlock.registerEvent('click', '.aloha-oer-block.note > .type-container > ul > li > *', function(e) {
+              var $el;
+              $el = jQuery(this);
+              $el.parents('.aloha-oer-block').first().attr('data-label', $el.text().toLowerCase());
+              $el.parents('.type-container').find('.dropdown-menu li').each((function(_this) {
+                return function(i, li) {
+                  return jQuery(li).removeClass('checked');
+                };
+              })(this));
+              jQuery(Aloha).trigger('aloha-smart-content-changed', {
+                'triggerType': 'block-change'
+              });
+              return $el.parents('li').first().addClass('checked');
+            });
           };
         })(this));
         return semanticBlock.register(this);

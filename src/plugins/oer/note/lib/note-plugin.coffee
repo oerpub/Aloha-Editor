@@ -200,4 +200,14 @@ define [
           UI.adopt "insertNote", Button,
             click: -> semanticBlock.insertAtCursor(newTemplate.clone())
 
+        semanticBlock.registerEvent('click', '.aloha-oer-block.note > .type-container > ul > li > *', (e) ->
+          $el = jQuery(@)
+          $el.parents('.aloha-oer-block').first().attr 'data-label', $el.text().toLowerCase()
+
+          $el.parents('.type-container').find('.dropdown-menu li').each (i, li) =>
+            jQuery(li).removeClass('checked')
+          jQuery(Aloha).trigger 'aloha-smart-content-changed', 'triggerType': 'block-change'
+          $el.parents('li').first().addClass('checked')
+        )
+
       semanticBlock.register(this)
