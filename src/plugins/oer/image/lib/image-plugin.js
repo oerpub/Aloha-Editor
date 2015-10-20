@@ -6,7 +6,7 @@ function(Aloha, plugin, $, Ui, Button, PubSub) {
 
 	var GENTICS = window.GENTICS;
 
-    var DIALOG = 
+    var DIALOG =
     '<div class="image-options">' +
     '    <a class="upload-image-link" href="javascript:;">Choose a file</a> OR <a class="upload-url-link" href="javascript:;">get file from the Web</a>' +
     '    <div class="placeholder preview hide">' +
@@ -148,7 +148,12 @@ function(Aloha, plugin, $, Ui, Button, PubSub) {
                     var $placeholder = $dialog.find('.placeholder.preview'),
                         $img = $placeholder.find('img'),
                         url = $dialog.find('.upload-url-form .image-url').val();
+
                     $img.attr('src', url);
+                    var type = url.substr(5, url.indexOf(';'));
+                    if (type && type.substr(0, 5) === 'image') {
+                        $img.data('media-type', type);
+                    }
                     $placeholder.show();
                 return e.preventDefault();
             });
