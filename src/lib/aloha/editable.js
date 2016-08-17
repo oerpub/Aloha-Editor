@@ -904,7 +904,7 @@ define([
 			if (event && event.originalEvent) {
 				// regex to strip unicode
 				re = new RegExp("U\\+(\\w{4})");
-				match = re.exec(event.originalEvent.keyIdentifier);
+				match = re.exec(event.originalEvent.key);
 
 				// Use among browsers reliable which http://api.jquery.com/keypress
 				uniChar = (this.keyCodeMap[this.keyCode] || String.fromCharCode(event.which) || 'unknown');
@@ -928,7 +928,7 @@ define([
 				this.sccTimerDelay = window.setTimeout(function () {
 					Aloha.trigger('aloha-smart-content-changed', {
 						'editable': me,
-						'keyIdentifier': event.originalEvent.keyIdentifier,
+						'keyIdentifier': event.originalEvent.key,
 						'keyCode': event.keyCode,
 						'char': uniChar,
 						'triggerType': 'keypress', // keypress, timer, blur, paste
